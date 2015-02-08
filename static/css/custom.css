@@ -17,10 +17,6 @@ body {
     font-size: 15em;
 }
 
-.headerButtons {
-    float: right;
-}
-
 #controlBar {
     text-align: center;
 }
@@ -67,4 +63,25 @@ body {
     cursor: pointer;
     padding-right: 12px;
     padding-top: 10px;
+    z-index: 10;
+}
+
+.topRightPanel {
+    margin-top: -50px;
+    padding: 0 10px;
+    border-bottom: solid #000000 0.5em;
+    border-left:  solid #000000 0.5em;
+    text-align: right;
+    display: none;
+    min-width: 475px;
+}
+@media (max-width: 700px) {
+    .topRightPanel {
+        border-left: none;
+        width: 100%;
+    }
+}
+
+.beneath {
+    z-index: -100;
 }

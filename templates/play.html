@@ -2,11 +2,35 @@
 {% block content %}
     <nav class="navigationBar">
         <span class="navbar-brand">{{ config['APP_NAME'] }}</span>
-        <div class="headerButtons">
-            <span class="glyphicon glyphicon-info-sign clickableIcon"></span>
-            <span class="glyphicon glyphicon-cog clickableIcon"></span>
+        <div class="pull-right">
+            <span id="infoButton" class="glyphicon glyphicon-info-sign clickableIcon"></span>
+            <span id="settingsButton" class="glyphicon glyphicon-cog clickableIcon"></span>
         </div>
     </nav>
+
+    <div id="settingsPanel" class="topRightPanel pull-right">
+        <div class="navbar beneath"></div>
+        <p>
+            <span>Turn down the lights</span>
+            <button class="btn btn-default">Dark Mode</button>
+        </p>
+        <p>
+            <span>Show me something very different</span>
+            <button class="btn btn-default">Obscure Mode</button>
+        </p>
+        <p>
+            <span>Turn off the colors</span>
+            <button class="btn btn-default">Colorless</button>
+        </p>
+    </div>
+
+    <div id="infoPanel" class="topRightPanel pull-right">
+        <div class="navbar beneath"></div>
+        <p>{{ config['APP_NAME'] }} is a place to hear music without having to choose it</p>
+        <p>It was made by Nicholas Gibson and Nicholas Hrynuik</p>
+    </div>
+
+    <div class="clearfix"></div>
 
     <div id="stationInfo">
         <h4 class="stationFact">Current song: <span id="currentSong">Song number one</span></h4>
@@ -16,27 +40,31 @@
     <nav id="controlBar" class="navbar-fixed-bottom">
         <div class="btn-group mainButtons">
             <p class="changeStationText"> &nbsp;</p>
-            <button type="button" class="btn btn-default">
+            <button id="backButton" type="button" class="btn btn-default">
                 <span class="glyphicon glyphicon-step-backward"></span>
             </button>
-            <button type="button" class="btn btn-default">
+            <button id="playButton" type="button" class="btn btn-default">
                 <span class="glyphicon glyphicon-play"></span>
             </button>
-            <button type="button" class="btn btn-default">
+            <button id="stopButton" type="button" class="btn btn-default">
                 <span class="glyphicon glyphicon-stop"></span>
             </button>
         </div>
         <div class="btn-group mainButtons">
             <p class="changeStationText">Change station</p>
-            <button type="button" class="btn btn-default">
+            <button id="nextButton1" type="button" class="btn btn-default">
                 <span class="glyphicon glyphicon-step-forward"></span>
             </button>
-            <button type="button" class="btn btn-default">
+            <button id="nextButton2" type="button" class="btn btn-default">
                 <span class="glyphicon glyphicon-forward"></span>
             </button>
-            <button type="button" class="btn btn-default">
+            <button id="nextButton3" type="button" class="btn btn-default">
                 <span class="glyphicon glyphicon-fast-forward"></span>
             </button>
         </div>
     </nav>
+
+
+    <audio id="player"></audio>
+
 {% endblock %}
