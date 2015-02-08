@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+    <nav class="navigationBar">
+        <span class="navbar-brand">{{ config['APP_NAME'] }}</span>
+        <div class="headerButtons">
+            <span class="glyphicon glyphicon-info-sign clickableIcon"></span>
+            <span class="glyphicon glyphicon-cog clickableIcon"></span>
+        </div>
+    </nav>
+
+    <div id="stationInfo">
+        <h4 class="stationFact">Current song: <span id="currentSong">Song number one</span></h4>
+        <h4 class="stationFact">Current station: <span id="currentStation">Station number one</span></h4>
+    </div>
+
+    <nav id="controlBar" class="navbar-fixed-bottom">
+        <div class="btn-group mainButtons">
+            <p class="changeStationText"> &nbsp;</p>
+            <button type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-step-backward"></span>
+            </button>
+            <button type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-play"></span>
+            </button>
+            <button type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-stop"></span>
+            </button>
+        </div>
+        <div class="btn-group mainButtons">
+            <p class="changeStationText">Change station</p>
+            <button type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-step-forward"></span>
+            </button>
+            <button type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-forward"></span>
+            </button>
+            <button type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-fast-forward"></span>
+            </button>
+        </div>
+    </nav>
+{% endblock %}

@@ -3,12 +3,14 @@
     <div class="container">
         <div id="mainLanding">
             <h1>
-                Don't care radio
+                {{ config['APP_NAME'] }}
             </h1>
             <p class="lead">
                 Play whatever
             </p>
-            <i class="glyphicon glyphicon-play-circle large-play"></i>
+            <a href="/play">
+                <i class="glyphicon glyphicon-play-circle large-play"></i>
+            </a>
         </div>
     </div>
 {% endblock %}

@@ -1,8 +1,70 @@
+body {
+    padding-top: 50px;
+}
+
 #mainLanding {
     padding: 40px 15px;
     text-align: center;
 }
 
+#mainPlay {
+    padding: 40px 15px;
+    text-align: center;
+}
+
 .large-play {
+    color: #000000;
     font-size: 15em;
+}
+
+.headerButtons {
+    float: right;
+}
+
+#controlBar {
+    text-align: center;
+}
+
+.mainButtons button {
+    font-size: 2em;
+    margin-bottom: 25px;
+}
+
+.changeStationText {
+    font-weight: bold;
+    font-size: 1.25em;
+    margin-bottom: 0;
+}
+
+.stationFact {
+    text-align: center;
+    margin-top: 30px;
+}
+
+#stationInfo {
+    margin-top: 40px;
+    border-top: solid #000000 0.5em;
+    border-bottom: solid #000000 0.5em;
+}
+
+#currentSong {
+    font-weight: bold;
+}
+
+#currentStation {
+    font-weight: bold;
+}
+
+.navigationBar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%
+}
+
+.clickableIcon {
+    font-size: 1.5em;
+    cursor: pointer;
+    padding-right: 12px;
+    padding-top: 10px;
 }

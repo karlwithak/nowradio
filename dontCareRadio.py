@@ -4,11 +4,18 @@ from flask import Flask, render_template
 #   template to show them.
 
 app = Flask(__name__)
+app.config['APP_NAME'] = "Don't Care Radio"
 
 
 @app.route('/')
-def hello_world():
+def render_landing():
     return render_template("landing.html")
+
+
+@app.route('/play')
+@app.route('/play/')
+def render_play():
+    return render_template("play.html")
 
 
 if __name__ == '__main__':
