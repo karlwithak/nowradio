@@ -9,12 +9,10 @@ app = Flask(__name__)
 app.config['APP_NAME'] = "Don't Care Radio"
 
 stations = {
-    'rock0': ['rock0Station0', 'rock0station1', 'rock0station2'],
-    'rock1': ['rock1Station0', 'rock1station1', 'rock1station2'],
-    'rock2': ['rock2Station0', 'rock2station1', 'rock2station2'],
-    'pop0': ['pop0Station0', 'pop0station1', 'pop0station2'],
-    'pop1': ['pop1Station0', 'pop1station1', 'pop1station2'],
-    'pop2': ['pop2Station0', 'pop2station1', 'pop2station2'],
+    'soft-rock': ['67.212.189.19:8080', 'streaming.softnep.net:8083'],
+    'hard-rock': ['67.213.213.143:8048', '77.74.192.50:8000'],
+    'house': ['stream.house-radio.com', 'fire1.neradio.com'],
+    'ambient': ['radio.108.pl:8002', '85.25.86.69:8100'],
 }
 
 '''['http://sc8.1.fm:8030/;?icy=http',

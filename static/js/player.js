@@ -3,8 +3,8 @@ $(function() {
      * Global Variables
      */
    var genresDict = {
-        'rock' : ['rock0', 'rock1', 'rock2'],
-        'pop'  : ['pop0', 'pop1', 'pop2']
+        'electronic'  : ['house', 'ambient'],
+        'rock' : ['soft-rock', 'hard-rock']
     };
     var buttons = {
         'play' : $('button#playButton'),
@@ -17,6 +17,8 @@ $(function() {
     var playerState = getStopPlayManager();
     var player = $('audio#player');
     var stationsManager = getStationsManager();
+    var urlPost = '/;?icy=http';
+    var urlPre = '//';
 
 
     /**
@@ -24,9 +26,11 @@ $(function() {
      */
     playStack.push(0);
     buttons.back.prop('disabled', true);
-    //var startStation = stationsManager.getSameSubGenre();
-    //player.attr('src', startStation);
-    //playerState.play();
+    setTimeout(function () {
+        var startStation = stationsManager.getSameSubGenre();
+        setSource(startStation);
+        playerState.play();
+    }, 250);
 
 
     /**
@@ -60,7 +64,7 @@ $(function() {
         if (playStack.length === 1) {
             buttons.back.prop('disabled', true);
         }
-        player.attr('src', playStack[playStack.length - 1]);
+        setSource(playStack[playStack.length - 1]);
         playerState.play();
     });
 
@@ -69,8 +73,8 @@ $(function() {
      * Functions
      */
     function changeStation(src) {
-        //player.attr('src', src);
-        //playerState.play();
+        setSource(src);
+        playerState.play();
         playStack.push(src);
         buttons.back.prop('disabled', false);
         console.log(src)
@@ -78,6 +82,12 @@ $(function() {
 
     function updateStations(genre, subGenre, callback) {
         $.get('/get-stations/', {'genre': genre, 'subGenre' : subGenre}, callback);
+    }
+
+    function setSource(src) {
+        src = urlPre + src + urlPost;
+        console.log(src);
+        player.attr('src', src);
     }
 
 
@@ -147,7 +157,6 @@ $(function() {
         }
         return {
             getSameSubGenre : function () {
-                console.log("in getter: " + stations);
                 var station = stations.pop();
                 if (stations.length == 0) {
                     updateStations(genreName, subGenreName, stationSetter);
