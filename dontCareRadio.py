@@ -1,7 +1,5 @@
-from flask import Flask, render_template, session, request, jsonify
+from flask import Flask, render_template, request, jsonify
 import requests
-from secrets import secret_key
-from os import urandom
 # This file is the first that is called when someone goes to a page on out website.
 # It looks at the url that they entered and decided what computation to do and what
 #   template to show them.
@@ -28,8 +26,6 @@ def render_landing():
 
 @app.route('/play/')
 def render_play():
-    if 'id' not in session:
-        session['id'] = "hat"
     return render_template("play.html")
 
 
@@ -45,5 +41,4 @@ def get_station_info():
 
 
 if __name__ == '__main__':
-    app.secret_key = secret_key
     app.run()
