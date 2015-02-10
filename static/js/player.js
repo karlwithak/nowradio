@@ -7,28 +7,26 @@ $(function() {
         'rock' : ['soft-rock', 'hard-rock']
     };
     var buttons = {
-        'play' : $('button#playButton'),
-        'stop' : $('button#stopButton'),
-        'next1': $('button#nextButton1'),
-        'next2': $('button#nextButton2'),
-        'next3': $('button#nextButton3'),
-        'back' : $('button#backButton')};
+        'play'   : $('button#playButton'),
+        'stop'   : $('button#stopButton'),
+        'next1'  : $('button#nextButton1'),
+        'next2'  : $('button#nextButton2'),
+        'next3'  : $('button#nextButton3'),
+        'back'   : $('button#backButton'),
+        'refresh': $('span#refreshSongButton')};
     var playStack = [];
     var playerState = getStopPlayManager();
     var player = $('audio#player');
     var stationsManager = getStationsManager();
-    var urlPost = '/;?icy=http';
-    var urlPre = '//';
+    var urlManager = getUrlManager();
 
 
     /**
      * Setup
      */
-    playStack.push(0);
     buttons.back.prop('disabled', true);
     setTimeout(function () {
-        var startStation = stationsManager.getSameSubGenre();
-        setSource(startStation);
+        stationsManager.getSameSubGenre();
         playerState.play();
     }, 250);
 
@@ -36,28 +34,15 @@ $(function() {
     /**
      * Listeners
      */
-    buttons.stop.click(function() {
-        playerState.stop();
-    });
+    buttons.stop.click(playerState.stop);
 
-    buttons.play.click(function() {
-        playerState.play();
-    });
+    buttons.play.click(playerState.play);
     
-    buttons.next1.click(function() {
-        var nextStation = stationsManager.getSameSubGenre();
-        changeStation(nextStation);
-    });
+    buttons.next1.click(stationsManager.getSameSubGenre);
 
-    buttons.next2.click(function() {
-        var nextStation = stationsManager.getSameGenre();
-        changeStation(nextStation);
-    });
+    buttons.next2.click(stationsManager.getSameGenre);
 
-    buttons.next3.click(function() {
-        var nextStation = stationsManager.getDiffGenre();
-        changeStation(nextStation);
-    });
+    buttons.next3.click(stationsManager.getDiffGenre);
 
     buttons.back.click(function() {
         playStack.pop();
@@ -68,6 +53,8 @@ $(function() {
         playerState.play();
     });
 
+    buttons.refresh.click(updateSongName);
+
 
     /**
      * Functions
@@ -77,7 +64,7 @@ $(function() {
         playerState.play();
         playStack.push(src);
         buttons.back.prop('disabled', false);
-        console.log(src)
+        updateSongName();
     }
 
     function updateStations(genre, subGenre, callback) {
@@ -85,9 +72,20 @@ $(function() {
     }
 
     function setSource(src) {
-        src = urlPre + src + urlPost;
-        console.log(src);
-        player.attr('src', src);
+        urlManager.setUrl(src);
+        player.attr('src', urlManager.getMediaUrl());
+    }
+
+    function updateSongName() {
+        var infoUrl = "http:" + urlManager.getSevenUrl();
+        $.get('/get-station-info/', {'stationUrl' : infoUrl}, setSongName, 'html');
+    }
+
+    function setSongName(data) {
+        var re = /<[^<]*>/gi;
+        data = data.replace(re, '');
+        data = data.slice(data.lastIndexOf(',') + 1);
+        $('span#currentSong').text(data);
     }
 
 
@@ -120,13 +118,13 @@ $(function() {
         return {
             getDiffGenre : function() {
                 position = (position + 1) % genreManagers.length;
-                return genreManagers[position].getSameGenre(0);
+                changeStation(genreManagers[position].getSameGenre(0));
             },
             getSameGenre : function() {
-                return genreManagers[position].getSameGenre(1);
+                changeStation(genreManagers[position].getSameGenre(1));
             },
             getSameSubGenre : function() {
-                return genreManagers[position].getSameSubGenre();
+                changeStation(genreManagers[position].getSameSubGenre());
             }
         }
     }
@@ -162,6 +160,24 @@ $(function() {
                     updateStations(genreName, subGenreName, stationSetter);
                 }
                 return station;
+            }
+        }
+    }
+
+    function getUrlManager() {
+        var url = '';
+        var mediaPost = '/;?icy=http';
+        var sevenPost = '/7.html';
+        var urlPre = '//';
+        return {
+            setUrl : function (newUrl) {
+                url = newUrl;
+            },
+            getMediaUrl : function () {
+                return urlPre + url + mediaPost
+            } ,
+            getSevenUrl : function () {
+                return urlPre + url + sevenPost;
             }
         }
     }

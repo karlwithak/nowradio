@@ -39,6 +39,7 @@ body {
 
 #stationInfo {
     margin-top: 40px;
+    padding: 15px;
     border-top: solid #000000 0.5em;
     border-bottom: solid #000000 0.5em;
 }
@@ -79,9 +80,10 @@ body {
     .topRightPanel {
         border-left: none;
         width: 100%;
+        min-width: 0;
     }
 }
 
-.beneath {
-    z-index: -100;
+.navbarSpacer {
+    height: 50px;
 }

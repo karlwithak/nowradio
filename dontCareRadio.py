@@ -1,4 +1,5 @@
 from flask import Flask, render_template, session, request, jsonify
+import requests
 from secrets import secret_key
 from os import urandom
 # This file is the first that is called when someone goes to a page on out website.
@@ -14,6 +15,7 @@ stations = {
     'house': ['stream.house-radio.com', 'fire1.neradio.com'],
     'ambient': ['radio.108.pl:8002', '85.25.86.69:8100'],
 }
+request_header = {'User-Agent': 'Mozilla/5.0'}
 
 '''['http://sc8.1.fm:8030/;?icy=http',
 'http://stream.house-radio.com/;?icy=http',
@@ -35,6 +37,11 @@ def render_play():
 def get_stations():
     sub_genre = request.args.get('subGenre', '')
     return jsonify(stations=stations[sub_genre])
+
+@app.route('/get-station-info/')
+def get_station_info():
+    result = requests.get(request.args.get('stationUrl'), headers=request_header)
+    return result.text
 
 
 if __name__ == '__main__':
