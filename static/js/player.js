@@ -84,7 +84,11 @@ $(function() {
     function setSongName(data) {
         var re = /<[^<]*>/gi;
         data = data.replace(re, '');
-        data = data.slice(data.lastIndexOf(',') + 1);
+        var x = 1;
+        for (var i=0; i < 5; i++) {
+            x = a.indexOf(',', x + 1);
+        }
+        data = data.slice(x);
         $('span#currentSong').text(data);
     }
 
