@@ -26,6 +26,7 @@ $(function() {
      */
     buttons.back.prop('disabled', true);
     setTimeout(stationsManager.getSameSubGenre, 900);
+    setInterval(updateSongName, 15000);
 
 
     /**
@@ -73,7 +74,7 @@ $(function() {
         var re = /<[^<]*>/gi;
         data = data.replace(re, '');
         console.log(data);
-        var x = 1;
+        var x = 0;
         for (var i=0; i < 6; i++) {
             x = data.indexOf(',', x + 1);
         }
@@ -122,10 +123,6 @@ $(function() {
                 changeStation(station);
             },
             getSameSubGenre : function() {
-                if (!playlistManager.isAtEnd()) {
-                    playlistManager.goForward();
-                    return;
-                }
                 var station = genreManagers[position].getSameSubGenre();
                 playlistManager.addNew(station);
                 changeStation(station);
@@ -192,9 +189,6 @@ $(function() {
         var index = -1;
         var end = -1;
         return {
-            isAtEnd : function () {
-                return index == end;
-            },
             goBack : function () {
                 if (index == 0) {
                     console.error("tried to go back too far in playlist");
@@ -206,20 +200,11 @@ $(function() {
                 }
                 changeStation(playlist[index]);
             },
-            goForward : function () {
-                if (index == end) {
-                    console.error("tried to go forward to far in playlist");
-                    return playlist[end];
-                }
-                index += 1;
-                buttons.back.prop('disabled', false);
-                changeStation(playlist[index]);
-            },
             addNew : function (station) {
                 index += 1;
                 end = index;
                 playlist[index] = station;
-                if (index > 0 )buttons.back.prop('disabled', false);
+                if (index > 0)buttons.back.prop('disabled', false);
             }
         }
     }
