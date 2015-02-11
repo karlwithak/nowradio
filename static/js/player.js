@@ -14,7 +14,7 @@ $(function() {
         'next3'  : $('button#nextButton3'),
         'back'   : $('button#backButton'),
         'refresh': $('span#refreshSongButton')};
-    var playStack = [];
+    var playlistManager = getPlaylistManager();
     var playerState = getStopPlayManager();
     var player = $('audio#player');
     var stationsManager = getStationsManager();
@@ -25,10 +25,7 @@ $(function() {
      * Setup
      */
     buttons.back.prop('disabled', true);
-    setTimeout(function () {
-        stationsManager.getSameSubGenre();
-        playerState.play();
-    }, 250);
+    setTimeout(stationsManager.getSameSubGenre, 900);
 
 
     /**
@@ -44,14 +41,7 @@ $(function() {
 
     buttons.next3.click(stationsManager.getDiffGenre);
 
-    buttons.back.click(function() {
-        playStack.pop();
-        if (playStack.length === 1) {
-            buttons.back.prop('disabled', true);
-        }
-        setSource(playStack[playStack.length - 1]);
-        playerState.play();
-    });
+    buttons.back.click(playlistManager.goBack);
 
     buttons.refresh.click(updateSongName);
 
@@ -62,8 +52,6 @@ $(function() {
     function changeStation(src) {
         setSource(src);
         playerState.play();
-        playStack.push(src);
-        buttons.back.prop('disabled', false);
         updateSongName();
     }
 
@@ -84,6 +72,7 @@ $(function() {
     function setSongName(data) {
         var re = /<[^<]*>/gi;
         data = data.replace(re, '');
+        console.log(data);
         var x = 1;
         for (var i=0; i < 6; i++) {
             x = data.indexOf(',', x + 1);
@@ -123,13 +112,23 @@ $(function() {
         return {
             getDiffGenre : function() {
                 position = (position + 1) % genreManagers.length;
-                changeStation(genreManagers[position].getSameGenre(0));
+                var station = genreManagers[position].getSameGenre(0);
+                playlistManager.addNew(station);
+                changeStation(station);
             },
             getSameGenre : function() {
-                changeStation(genreManagers[position].getSameGenre(1));
+                var station = genreManagers[position].getSameGenre(1);
+                playlistManager.addNew(station);
+                changeStation(station);
             },
             getSameSubGenre : function() {
-                changeStation(genreManagers[position].getSameSubGenre());
+                if (!playlistManager.isAtEnd()) {
+                    playlistManager.goForward();
+                    return;
+                }
+                var station = genreManagers[position].getSameSubGenre();
+                playlistManager.addNew(station);
+                changeStation(station);
             }
         }
     }
@@ -183,6 +182,44 @@ $(function() {
             } ,
             getSevenUrl : function () {
                 return urlPre + url + sevenPost;
+            }
+        }
+    }
+
+    // Warning to future nick, this is a strange data structure!
+    function getPlaylistManager() {
+        var playlist = [];
+        var index = -1;
+        var end = -1;
+        return {
+            isAtEnd : function () {
+                return index == end;
+            },
+            goBack : function () {
+                if (index == 0) {
+                    console.error("tried to go back too far in playlist");
+                    return playlist[end];
+                }
+                index -= 1;
+                if (index == 0) {
+                    buttons.back.prop('disabled', true);
+                }
+                changeStation(playlist[index]);
+            },
+            goForward : function () {
+                if (index == end) {
+                    console.error("tried to go forward to far in playlist");
+                    return playlist[end];
+                }
+                index += 1;
+                buttons.back.prop('disabled', false);
+                changeStation(playlist[index]);
+            },
+            addNew : function (station) {
+                index += 1;
+                end = index;
+                playlist[index] = station;
+                if (index > 0 )buttons.back.prop('disabled', false);
             }
         }
     }
