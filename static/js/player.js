@@ -126,6 +126,13 @@ $(function() {
                 var station = genreManagers[position].getSameSubGenre();
                 playlistManager.addNew(station);
                 changeStation(station);
+            },
+            getGenreAndSubGenre : function() {
+                return [position, genreManagers[position].getSubGenre()]
+            },
+            recoverGenreAndSubGenre : function(genreInfo) {
+                position = genreInfo[0];
+                genreManagers[position].setSubGenre(genreInfo[1])
             }
         }
     }
@@ -143,6 +150,12 @@ $(function() {
             },
             getSameSubGenre : function () {
                 return subGenreManagers[position].getSameSubGenre();
+            },
+            getSubGenre : function () {
+                return position;
+            },
+            setSubGenre : function (subGenre) {
+                position = subGenre;
             }
         }
     }
@@ -198,12 +211,14 @@ $(function() {
                 if (index == 0) {
                     buttons.back.prop('disabled', true);
                 }
-                changeStation(playlist[index]);
+                stationsManager.recoverGenreAndSubGenre(playlist[index][1]);
+                changeStation(playlist[index][0]);
             },
             addNew : function (station) {
+                var genreInfo = stationsManager.getGenreAndSubGenre();
                 index += 1;
                 end = index;
-                playlist[index] = station;
+                playlist[index] = [station, genreInfo];
                 if (index > 0)buttons.back.prop('disabled', false);
             }
         }
