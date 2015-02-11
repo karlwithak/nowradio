@@ -85,10 +85,11 @@ $(function() {
         var re = /<[^<]*>/gi;
         data = data.replace(re, '');
         var x = 1;
-        for (var i=0; i < 5; i++) {
-            x = a.indexOf(',', x + 1);
+        for (var i=0; i < 6; i++) {
+            x = data.indexOf(',', x + 1);
         }
-        data = data.slice(x);
+        data = data.slice(x + 1);
+        console.log(data);
         $('span#currentSong').text(data);
     }
 
