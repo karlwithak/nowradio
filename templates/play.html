@@ -1,4 +1,20 @@
 {% extends "base.html" %}
+{% block landing %}
+    <div class="container">
+        <div id="mainLanding">
+            <h1>
+                {{ config['APP_NAME'] }}
+            </h1>
+            <p class="lead">
+                Play whatever
+            </p>
+            <a id="bigPlayButton" class="large-play" href="#">
+                <i class="glyphicon glyphicon-play-circle"></i>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
 {% block content %}
     <nav class="navigationBar">
         <span class="navbar-brand">{{ config['APP_NAME'] }}</span>
@@ -72,6 +88,6 @@
     </nav>
 
 
-    <audio id="player"></audio>
+    <audio id="player" muted="true"></audio>
 
 {% endblock %}

@@ -7,6 +7,7 @@ $(function() {
         'rock' : ['soft-rock', 'hard-rock']
     };
     var buttons = {
+        'bigPlay': $('a#bigPlayButton'),
         'play'   : $('button#playButton'),
         'stop'   : $('button#stopButton'),
         'next1'  : $('button#nextButton1'),
@@ -27,8 +28,8 @@ $(function() {
     /**
      * Setup
      */
-    setTimeout(stationsManager.getSameSubGenre, 900);
     setInterval(updateSongName, 15000);
+    setTimeout(stationsManager.getSameSubGenre, 1000);
 
 
     /**
@@ -51,6 +52,12 @@ $(function() {
     buttons.mute.click(volumeManager.soundoff);
 
     buttons.unmute.click(volumeManager.soundon);
+
+    buttons.bigPlay.click(function () {
+        $('div#landingContainer').hide();
+        $('div#mainContainer').show();
+        volumeManager.soundon();
+    });
 
 
     /**

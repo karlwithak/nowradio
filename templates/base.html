@@ -13,7 +13,13 @@
     <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
 </head>
 <body>
-    {% block content %} {% endblock %}
+    <div id="landingContainer">
+        {% block landing %} {% endblock %}
+    </div>
+    <div id="mainContainer" style="display: none;">
+        {% block content %} {% endblock %}
+    </div>
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/custom.js') }}"></script>

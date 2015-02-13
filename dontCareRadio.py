@@ -21,11 +21,6 @@ request_header = {'User-Agent': 'Mozilla/5.0'}
 
 @app.route('/')
 def render_landing():
-    return render_template("landing.html")
-
-
-@app.route('/play/')
-def render_play():
     return render_template("play.html")
 
 
