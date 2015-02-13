@@ -2,7 +2,7 @@ $(function() {
     /**
      * Global Variables
      */
-   var genresDict = {
+    var genresDict = {
         'electronic'  : ['house', 'ambient'],
         'rock' : ['soft-rock', 'hard-rock']
     };
@@ -13,18 +13,20 @@ $(function() {
         'next2'  : $('button#nextButton2'),
         'next3'  : $('button#nextButton3'),
         'back'   : $('button#backButton'),
-        'refresh': $('span#refreshSongButton')};
+        'refresh': $('span#refreshSongButton'),
+        'mute'   : $('span#muteButton'),
+        'unmute' : $('span#unmuteButton')};
     var playlistManager = getPlaylistManager();
     var playerState = getStopPlayManager();
     var player = $('audio#player');
     var stationsManager = getStationsManager();
     var urlManager = getUrlManager();
+    var volumeManager = getVolumeManager();
 
 
     /**
      * Setup
      */
-    buttons.back.prop('disabled', true);
     setTimeout(stationsManager.getSameSubGenre, 900);
     setInterval(updateSongName, 15000);
 
@@ -45,6 +47,10 @@ $(function() {
     buttons.back.click(playlistManager.goBack);
 
     buttons.refresh.click(updateSongName);
+
+    buttons.mute.click(volumeManager.soundoff);
+
+    buttons.unmute.click(volumeManager.soundon);
 
 
     /**
@@ -198,6 +204,7 @@ $(function() {
 
     // Warning to future nick, this is a strange data structure!
     function getPlaylistManager() {
+        buttons.back.prop('disabled', true);
         var playlist = [];
         var index = -1;
         var end = -1;
@@ -220,6 +227,22 @@ $(function() {
                 end = index;
                 playlist[index] = [station, genreInfo];
                 if (index > 0)buttons.back.prop('disabled', false);
+            }
+        }
+    }
+
+    function getVolumeManager() {
+        buttons.unmute.hide();
+        return {
+            soundoff : function() {
+                player[0].muted = true;
+                buttons.mute.hide();
+                buttons.unmute.show();
+            },
+            soundon : function() {
+                player[0].muted = false;
+                buttons.mute.show();
+                buttons.unmute.hide();
             }
         }
     }

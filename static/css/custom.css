@@ -32,16 +32,20 @@ body {
     margin-bottom: 0;
 }
 
-.stationFact {
-    text-align: center;
-    margin-top: 30px;
+.verticalCenter {
+    min-height: 100%;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
 }
 
 #stationInfo {
-    margin-top: 40px;
+    text-align: center;
+    border-top: solid #000000 0.25em;
+    border-bottom: solid #000000 0.25em;
+    font-size: 2em;
+    width: 100%;
     padding: 15px;
-    border-top: solid #000000 0.5em;
-    border-bottom: solid #000000 0.5em;
 }
 
 #currentSong {
@@ -86,4 +90,12 @@ body {
 
 .navbarSpacer {
     height: 50px;
+}
+
+#playerContainer {
+    border: solid black 0.25em;
+    display: inline-block;
+    border-radius: 1.9em;
+    padding: 10px 15px 0;
+    margin-bottom: 10px;
 }

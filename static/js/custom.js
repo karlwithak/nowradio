@@ -8,7 +8,5 @@ $(function() {
         $('div#settingsPanel').toggle();
         $('div#infoPanel').hide();
     });
-
-    $()
 });
 

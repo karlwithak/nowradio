@@ -5,6 +5,8 @@
         <div class="pull-right">
             <span id="infoButton" class="glyphicon glyphicon-info-sign clickableIcon"></span>
             <span id="settingsButton" class="glyphicon glyphicon-cog clickableIcon"></span>
+            <span id="muteButton" class="glyphicon glyphicon-volume-off clickableIcon"></span>
+            <span id="unmuteButton" class="glyphicon glyphicon-volume-up clickableIcon"></span>
         </div>
     </nav>
 
@@ -32,40 +34,40 @@
 
     <div class="clearfix"></div>
 
-    <div id="stationInfo">
-        <div class="stationFact">
-            <span id="refreshSongButton" class="glyphicon glyphicon-refresh clickableIcon"></span>
-            <span class="h3">Currently Playing:</span> <span id="currentSong" class="h3">Song</span>
-        </div>
-        <div class="stationFact">
-            <span class="h3">Current station:</span> <span id="currentStation" class="h3">Station</span>
+    <div class="verticalCenter">
+        <div id="stationInfo">
+            <!--<span id="refreshSongButton" class="glyphicon glyphicon-refresh clickableIcon"></span>-->
+            <span>Currently Playing:</span> <span id="currentSong">Song</span>
         </div>
     </div>
 
+
     <nav id="controlBar" class="navbar-fixed-bottom">
-        <div class="btn-group mainButtons">
-            <p class="changeStationText"> &nbsp;</p>
-            <button id="backButton" type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-step-backward"></span>
-            </button>
-            <button id="playButton" type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-play"></span>
-            </button>
-            <button id="stopButton" type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-stop"></span>
-            </button>
-        </div>
-        <div class="btn-group mainButtons">
-            <p class="changeStationText">Change station</p>
-            <button id="nextButton1" type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-step-forward"></span>
-            </button>
-            <button id="nextButton2" type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-forward"></span>
-            </button>
-            <button id="nextButton3" type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-fast-forward"></span>
-            </button>
+        <div id="playerContainer">
+            <div class="btn-group mainButtons">
+                <p class="changeStationText"> &nbsp;</p>
+                <button id="backButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+                <button id="playButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-play"></span>
+                </button>
+                <button id="stopButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-pause"></span>
+                </button>
+            </div>
+            <div class="btn-group mainButtons">
+                <p class="changeStationText">Change station</p>
+                <button id="nextButton1" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+                <button id="nextButton2" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-forward"></span>
+                </button>
+                <button id="nextButton3" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-fast-forward"></span>
+                </button>
+            </div>
         </div>
     </nav>
 
