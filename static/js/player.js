@@ -80,7 +80,7 @@ $(function() {
 
     function updateSongName() {
         var infoUrl = "http:" + urlManager.getSevenUrl();
-        $.get('/get-station-info/', {'stationUrl' : infoUrl}, setSongName, 'html');
+        $.get('/get-station-info/?stationUrl='+infoUrl,  setSongName, 'html');
     }
 
     function setSongName(data) {
