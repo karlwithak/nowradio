@@ -29,5 +29,11 @@ def get_stations():
     sub_genre = request.args.get('subGenre', '')
     return jsonify(stations=stations[sub_genre])
 
+@app.route('/get-station-info/')
+def get_station_info():
+    result = requests.get(request.args.get('stationUrl'), headers=request_header)
+    return result.text
+
+
 if __name__ == '__main__':
     app.run()

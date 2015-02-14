@@ -24,14 +24,6 @@ $(function() {
     var urlManager = getUrlManager();
     var volumeManager = getVolumeManager();
 
-
-    /**
-     * Setup
-     */
-    setInterval(updateSongName, 15000);
-    setTimeout(stationsManager.getSameSubGenre, 1000);
-
-
     /**
      * Listeners
      */
@@ -58,7 +50,6 @@ $(function() {
         $('div#mainContainer').show();
         volumeManager.soundon();
     });
-
 
     /**
      * Functions
@@ -253,4 +244,13 @@ $(function() {
             }
         }
     }
+
+
+    /**
+     * Setup
+     */
+    setInterval(updateSongName, 15000);
+    setTimeout(stationsManager.getSameSubGenre, 1000);
+    buttons.mute.click();
 });
+
