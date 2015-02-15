@@ -1,45 +1,44 @@
 import threading
 import requests
-import time
 request_header = {'User-Agent': 'Mozilla/5.0'}
+
+
+def handle_response(r, url):
+    try:
+        if r.status_code in (200, 304) and len(r.text) < 500:
+            content = r.text[r.text.index("<body>") + 6:r.text.index("</body>")]
+            server_status = content[content.index(",") + 1]
+            if server_status == '1' and content.count(",") == 6:
+                print(url)
+    except Exception:
+        return
+
 
 def worker(worker_list):
     for url in worker_list:
         try:
-            r = requests.get(
-                url[0:url.rindex("/") + 1] + "7.html",
-                headers=request_header,
-                timeout=4)
-            if r.status_code not in (200, 304):
-                pass  #print "status code:" + str(r.status_code) + " + url" + url
-            else:
-                print r.text[64:]
-                p.release()
-        except requests.ConnectionError:
-            pass  #print "ConnectionError on url:" + url
-        except requests.Timeout:
-            pass  #print "Timeout on url:" + url
+            if url.count("/") == 3:
+                url = url[0:url.index("/", 8) + 1]
+                r = requests.get(
+                    url + "7.html",
+                    headers=request_header,
+                    timeout=1)
+                handle_response(r, url)
+        except Exception:
+            continue
 
 
-def runner(url_list):
-    total_stations = 41545
-    step = 100
+def runner(url_list, total_stations):
+    step = total_stations/30
     for i in range(0, total_stations, step):
         t = threading.Thread(target=worker, args=([url_list[i:i+step]]))
         threads.append(t)
         t.start()
 
-p = threading.Semaphore()
 threads = []
-f = open("urls2.txt")
-urls = f.read()
-startTime = time.time()
-runner(urls.split('\n')[:-1])
+f = open("urls/part5.txt")
+urls = f.read().split('\n')[:-1]
+f.close()
+runner(urls, len(urls))
 for thread in threads:
     thread.join()
-counter = 0
-while p.acquire(False):
-    counter += 1
-print "found " + str(counter) + " legit stations"
-print time.time() - startTime
-f.close()
