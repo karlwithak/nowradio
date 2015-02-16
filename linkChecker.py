@@ -2,6 +2,11 @@ import threading
 import requests
 request_header = {'User-Agent': 'Mozilla/5.0'}
 
+# This program reads urls from a file and outputs only urls that point to a legit station that
+#   is currently broadcasting
+
+file_name = "urls/bingUrls.txt"
+
 
 def handle_response(r, url):
     try:
@@ -28,17 +33,23 @@ def worker(worker_list):
             continue
 
 
-def runner(url_list, total_stations):
+def runner(url_list, threads):
+    total_stations = len(url_list)
     step = total_stations/30
     for i in range(0, total_stations, step):
         t = threading.Thread(target=worker, args=([url_list[i:i+step]]))
         threads.append(t)
         t.start()
+    for thread in threads:
+        thread.join()
 
-threads = []
-f = open("urls/part5.txt")
-urls = f.read().split('\n')[:-1]
-f.close()
-runner(urls, len(urls))
-for thread in threads:
-    thread.join()
+
+def main():
+    threads = []
+    with open(file_name) as myfile:
+        urls = myfile.read().split('\n')[:-1]
+    runner(urls, threads)
+
+
+if __name__ == '__main__':
+    main()
