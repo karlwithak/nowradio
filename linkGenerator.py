@@ -1,6 +1,9 @@
 from xml.etree.ElementTree import fromstring
 import requests
 
+# This program queries Yandex to get potential station urls and writes to given file
+
+file_name = "urls2.txt"
 
 def findurl(roo):
     for child in roo:
@@ -42,13 +45,6 @@ def urlpage():
             print("page " + str(n) + " sec" + str(k))
         k += 1
 
-
-
-
-
-
-f = open("urls2.txt", "w")
-
+f = open(file_name)
 urlpage()
-
 f.close()
