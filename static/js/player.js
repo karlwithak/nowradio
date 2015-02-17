@@ -2,10 +2,20 @@ $(function() {
     /**
      * Global Variables
      */
-    var genresDict = {
-        'electronic'  : ['house', 'ambient'],
-        'rock' : ['soft-rock', 'hard-rock']
-    };
+    var genreList = [
+        'electronic',
+        'rock',
+        'jazz',
+        'blues',
+        'pop',
+        'classical',
+        'dance',
+        'house',
+        'hop',
+        'country',
+        'chill',
+        'talk'
+    ];
     var buttons = {
         'bigPlay': $('a#bigPlayButton'),
         'play'   : $('button#playButton'),
@@ -31,9 +41,7 @@ $(function() {
 
     buttons.play.click(playerState.play);
     
-    buttons.next1.click(stationsManager.getSameSubGenre);
-
-    buttons.next2.click(stationsManager.getSameGenre);
+    buttons.next1.click(stationsManager.getSameGenre);
 
     buttons.next3.click(stationsManager.getDiffGenre);
 
@@ -60,8 +68,8 @@ $(function() {
         updateSongName();
     }
 
-    function updateStations(genre, subGenre, callback) {
-        $.get('/get-stations/', {'genre': genre, 'subGenre' : subGenre}, callback);
+    function updateStations(genre, updateCount, callback) {
+        $.get('/get-stations/', {'genre': genre, 'page' : updateCount}, callback);
     }
 
     function setSource(src) {
@@ -70,20 +78,18 @@ $(function() {
     }
 
     function updateSongName() {
-        var infoUrl = "http:" + urlManager.getSevenUrl();
+        var infoUrl = urlManager.getSevenUrl();
         $.get('/get-station-info/?stationUrl='+infoUrl,  setSongName, 'html');
     }
 
     function setSongName(data) {
         var re = /<[^<]*>/gi;
         data = data.replace(re, '');
-        console.log(data);
         var x = 0;
         for (var i=0; i < 6; i++) {
             x = data.indexOf(',', x + 1);
         }
         data = data.slice(x + 1);
-        console.log(data);
         $('span#currentSong').text(data);
     }
 
@@ -108,74 +114,47 @@ $(function() {
 
     function getStationsManager() {
         var genreManagers = [];
-        for (var key in genresDict) {
-            if (genresDict.hasOwnProperty(key)) {
-                genreManagers.push(getGenreManager(key));
-            }
+        for (var genreName in genreList) {
+            genreManagers.push(getGenreManager(genreList[genreName]));
         }
         var position = 0;
         return {
             getDiffGenre : function() {
                 position = (position + 1) % genreManagers.length;
-                var station = genreManagers[position].getSameGenre(0);
+                var station = genreManagers[position].getSameGenre();
                 playlistManager.addNew(station);
                 changeStation(station);
             },
             getSameGenre : function() {
-                var station = genreManagers[position].getSameGenre(1);
+                var station = genreManagers[position].getSameGenre();
                 playlistManager.addNew(station);
                 changeStation(station);
             },
-            getSameSubGenre : function() {
-                var station = genreManagers[position].getSameSubGenre();
-                playlistManager.addNew(station);
-                changeStation(station);
+            getActiveGenre : function() {
+                return position
             },
-            getGenreAndSubGenre : function() {
-                return [position, genreManagers[position].getSubGenre()]
-            },
-            recoverGenreAndSubGenre : function(genreInfo) {
-                position = genreInfo[0];
-                genreManagers[position].setSubGenre(genreInfo[1])
+            setActiveGenre : function(genreInfo) {
+                position = genreInfo;
             }
         }
     }
 
     function getGenreManager(genreName) {
-        var subGenreManagers = [];
-        genresDict[genreName].forEach(function(element) {
-            subGenreManagers.push(getSubGenreManager(element, genreName));
-        });
-        var position = 0;
-        return {
-            getSameGenre : function (advance) {
-                position = (position + advance) % subGenreManagers.length;
-                return subGenreManagers[position].getSameSubGenre();
-            },
-            getSameSubGenre : function () {
-                return subGenreManagers[position].getSameSubGenre();
-            },
-            getSubGenre : function () {
-                return position;
-            },
-            setSubGenre : function (subGenre) {
-                position = subGenre;
-            }
-        }
-    }
-
-    function getSubGenreManager(subGenreName, genreName) {
         var stations = [];
-        updateStations(genreName, subGenreName, stationSetter);
+        var updateCount = 0;
+        updateStations(genreName, updateCount, stationSetter);
 
         function stationSetter(data) {
-            stations = data['stations'];
+            stations = data['stations'].reduce(function(left, right) {
+               return left.concat(right);
+            });
         }
         return {
-            getSameSubGenre : function () {
+            getSameGenre : function () {
                 var station = stations.pop();
                 if (stations.length == 0) {
-                    updateStations(genreName, subGenreName, stationSetter);
+                    updateCount += 1;
+                    updateStations(genreName, updateCount, stationSetter);
                 }
                 return station;
             }
@@ -184,18 +163,17 @@ $(function() {
 
     function getUrlManager() {
         var url = '';
-        var mediaPost = '/;?icy=http';
-        var sevenPost = '/7.html';
-        var urlPre = '//';
+        var mediaPost = ';?icy=http';
+        var sevenPost = '7.html';
         return {
             setUrl : function (newUrl) {
                 url = newUrl;
             },
             getMediaUrl : function () {
-                return urlPre + url + mediaPost
+                return url + mediaPost
             } ,
             getSevenUrl : function () {
-                return urlPre + url + sevenPost;
+                return  url + sevenPost;
             }
         }
     }
@@ -216,11 +194,11 @@ $(function() {
                 if (index == 0) {
                     buttons.back.prop('disabled', true);
                 }
-                stationsManager.recoverGenreAndSubGenre(playlist[index][1]);
+                stationsManager.setActiveGenre(playlist[index][1]);
                 changeStation(playlist[index][0]);
             },
             addNew : function (station) {
-                var genreInfo = stationsManager.getGenreAndSubGenre();
+                var genreInfo = stationsManager.getActiveGenre();
                 index += 1;
                 end = index;
                 playlist[index] = [station, genreInfo];
@@ -250,7 +228,7 @@ $(function() {
      * Setup
      */
     setInterval(updateSongName, 15000);
-    setTimeout(stationsManager.getSameSubGenre, 1000);
+    setTimeout(stationsManager.getSameGenre, 1000);
     buttons.mute.click();
 });
 

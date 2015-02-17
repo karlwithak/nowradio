@@ -81,7 +81,6 @@ def main():
     try:
         conn = psycopg2.connect("dbname=radiodb user=radiodb host=localhost password=%s" % dbpass)
     except psycopg2.DatabaseError:
-        print("could not connect to db")
         exit("could not connect to db")
     threads = []
     runner(urls, conn, threads)

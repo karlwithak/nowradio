@@ -16,8 +16,8 @@ get_urls_between_ids = "SELECT id, url FROM station_info " \
 
 update_station_by_id = "UPDATE station_info " \
                        "SET (active_listeners, max_listeners, peak_listeners, last_updated, is_up)" \
-                       "  = (%s, %s, %s, NOW(), %s) " \
-                       "WHERE id = %s;"
+                       "  = (%(active)s, %(max)s, %(peak)s, NOW(), %(is_up)s) " \
+                       "WHERE id = %(id)s;"
 
 set_station_down = "UPDATE station_info " \
                    "SET is_up = FALSE " \
@@ -43,12 +43,14 @@ def worker(lo_id, hi_id, connection):
         else:
             if response.status_code in (200, 304) and response.text.count(",") >= 6:
                 info = response.text.split(",")
-                is_up = bool(info[1])
-                peak_listeners = info[2]
-                max_listeners = info[3]
-                active_listeners = info[4]
-                cur.execute(update_station_by_id,
-                            (active_listeners, max_listeners, peak_listeners, is_up, id_url[0]))
+                data = {
+                    'is_up':  bool(info[1]),
+                    'peak':   info[2],
+                    'max':    info[3],
+                    'active': info[4],
+                    'id':     id_url[0]
+                }
+                cur.execute(update_station_by_id, data)
             else:
                 print("bad response: " + url)
     cur.close()
