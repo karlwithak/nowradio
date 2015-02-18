@@ -33,6 +33,7 @@ $(function() {
     var stationsManager = getStationsManager();
     var urlManager = getUrlManager();
     var volumeManager = getVolumeManager();
+    var colorManager = getColorManager();
 
     /**
      * Listeners
@@ -219,6 +220,24 @@ $(function() {
                 player[0].muted = false;
                 buttons.mute.show();
                 buttons.unmute.hide();
+            }
+        }
+    }
+
+    function getColorManager() {
+        var elems = {
+            'body'          : $("body"),
+            'infoPanel'     : $("div#infoPanel"),
+            'settingsPanel' : $("div#settingsPanel"),
+            'stationInfo'   : $("div#stationInfo")
+        };
+        return {
+            setColors : function(foreground, background) {
+                elems.body.css('background-color', background);
+                elems.body.css('color', foreground);
+                elems.infoPanel.css('border-color', foreground);
+                elems.settingsPanel.css('border-color', foreground);
+                elems.stationInfo.css('border-color', foreground)
             }
         }
     }
