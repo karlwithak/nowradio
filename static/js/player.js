@@ -146,7 +146,7 @@ $(function() {
 
         function stationSetter(data) {
             stations = data['stations'].reduce(function(left, right) {
-               return left.concat(right);
+               return right.concat(left);
             });
         }
         return {
