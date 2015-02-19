@@ -34,9 +34,10 @@ body {
 
 .verticalCenter {
     min-height: 100%;
-    min-height: 85vh;
+    min-height: 90vh;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
 #stationInfo {
