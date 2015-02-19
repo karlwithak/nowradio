@@ -34,9 +34,10 @@ body {
 
 .verticalCenter {
     min-height: 100%;
-    min-height: 85vh;
+    min-height: 90vh;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
 #stationInfo {
@@ -93,9 +94,7 @@ body {
 }
 
 #playerContainer {
-    border: solid black 0.25em;
     display: inline-block;
-    border-radius: 0.5em;
     padding: 10px 15px 0;
     margin-bottom: 10px;
 }

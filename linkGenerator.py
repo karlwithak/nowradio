@@ -31,14 +31,14 @@ def urlpage():
         n = 0
         while n < 11:
             r = requests.get("http://xmlsearch.yandex.com/xmlsearch?user="
-                         "karlwithak&key=03.304384900:f9010bc4fa6edb0e00c4d"
-                         "309532ba3e8&query=%22SHOUTcast+Administrator%22"
-                         "+%2B+%22m+"
-                         + str(k) + "s%22"
-                         "&l10n="
-                         "en&sortby=tm.order%3Dascending&filter"
-                         "=none&groupby=attr%3D%22%22.mode%3Dflat.groups-on-page"
-                         "%3D99.docs-in-group%3D1&page=" + str(n))
+                             "karlwithak&key=03.304384900:f9010bc4fa6edb0e00c4d"
+                             "309532ba3e8&query=%22SHOUTcast+Administrator%22"
+                             "+%2B+%22m+"
+                             + str(k) + "s%22"
+                             "&l10n="
+                             "en&sortby=tm.order%3Dascending&filter"
+                             "=none&groupby=attr%3D%22%22.mode%3Dflat.groups-on-page"
+                             "%3D99.docs-in-group%3D1&page=" + str(n))
             root = fromstring(r.text.encode("utf-8"))
             findurl(root)
             n += 1

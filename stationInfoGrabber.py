@@ -2,6 +2,7 @@ import requests
 from lxml import html
 import threading
 import psycopg2
+from dbManager import Queries, dbpass
 
 # This program looks at all urls in the given file and puts the station information into the
 #   database if they are up and serving mp3 and don't cause any other problems
@@ -9,22 +10,13 @@ import psycopg2
 #   will not update things like active listeners
 # This is good because we do don't not have to make unnecessary requests to station servers
 
-dbpass = "VG9kYXkgaXMgYSBsb3ZlbHkgZGF5LCBpc24ndCBpdD8K"  # TODO hide?
 filename = "urls/uniqueCheckedUrls.txt"
-
-insert_query = "INSERT INTO station_info " \
-               "(url, active_listeners, max_listeners, peak_listeners, name, genre) " \
-               "VALUES (%(url)s, %(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s);"
-
-select_query = "SELECT 1 " \
-               "FROM station_info " \
-               "WHERE url = %s"
 
 
 def worker(url_list, connection):
     cur = connection.cursor()
     for url in url_list:
-        cur.execute(select_query, (url,))
+        cur.execute(Queries.check_for_station, (url,))
         if cur.rowcount == 1:
             print("skipping existing url: " + url)
             continue
@@ -47,7 +39,7 @@ def worker(url_list, connection):
                         'peak':   peak_listeners,
                         'name':   name,
                         'genre':  genre}
-                    cur.execute(insert_query, data)
+                    cur.execute(Queries.insert_station, data)
                 else:
                     print("got non-numeric data for: " + url)
         except requests.ConnectionError:
@@ -81,7 +73,6 @@ def main():
     try:
         conn = psycopg2.connect("dbname=radiodb user=radiodb host=localhost password=%s" % dbpass)
     except psycopg2.DatabaseError:
-        print("could not connect to db")
         exit("could not connect to db")
     threads = []
     runner(urls, conn, threads)
