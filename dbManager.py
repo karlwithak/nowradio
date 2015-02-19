@@ -40,7 +40,7 @@ class Queries:
     get_urls_by_genre = '''
         SELECT max(url)
         FROM station_info
-        WHERE name ILIKE %(genre_name)s OR genre ILIKE %(genre_name)s
+        WHERE genre ILIKE ANY(%(genre_names)s)
         GROUP BY name, genre
         ORDER BY max(active_listeners) DESC
         LIMIT %(page_size)s

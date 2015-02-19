@@ -32,9 +32,10 @@ def render_landing():
 @app.route('/get-stations/')
 def get_stations():
     db_cur = db_conn.cursor()
-    app.logger.info("%s, %s", request.args.get('genre', ''), request.args.get('page', ''))
+    genre_names = genre_list[int(request.args.get('genre', ''))]
+    app.logger.info("%s, %s", genre_names, request.args.get('page', ''))
     data = {
-        'genre_name':  "%" + request.args.get('genre', '') + "%",
+        'genre_names': genre_names,
         'page_number': page_size * int(request.args.get('page', '')),
         'page_size':   page_size
     }
@@ -44,9 +45,9 @@ def get_stations():
     return jsonify(stations=results)
 
 
-@app.route('/get-genre-list/')
-def get_genre_list():
-    return jsonify(genreList=genre_list)
+@app.route('/get-genre-count/')
+def get_genre_count():
+    return jsonify(genreCount=len(genre_list))
 
 
 if __name__ == '__main__':

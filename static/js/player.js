@@ -103,10 +103,9 @@ $(function() {
     function getStationsManager() {
         var genreManagers = [];
         var position = 0;
-        $.get('/get-genre-list/', function(data) {
-            var genreList = data['genreList'];
-            for (var genreName in genreList) {
-                genreManagers.push(getGenreManager(genreList[genreName]));
+        $.get('/get-genre-count/', function(data) {
+            for (var i = 0; i < data['genreCount']; i++) {
+                genreManagers.push(getGenreManager(i));
             }
         });
         return {
