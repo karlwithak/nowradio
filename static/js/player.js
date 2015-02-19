@@ -2,20 +2,7 @@ $(function() {
     /**
      * Global Variables
      */
-    var genreList = [
-        'electronic',
-        'rock',
-        'jazz',
-        'blues',
-        'pop',
-        'classical',
-        'dance',
-        'house',
-        'hop',
-        'country',
-        'chill',
-        'talk'
-    ];
+
     var buttons = {
         'bigPlay': $('a#bigPlayButton'),
         'play'   : $('button#playButton'),
@@ -115,10 +102,13 @@ $(function() {
 
     function getStationsManager() {
         var genreManagers = [];
-        for (var genreName in genreList) {
-            genreManagers.push(getGenreManager(genreList[genreName]));
-        }
         var position = 0;
+        $.get('/get-genre-list/', function(data) {
+            var genreList = data['genreList'];
+            for (var genreName in genreList) {
+                genreManagers.push(getGenreManager(genreList[genreName]));
+            }
+        });
         return {
             getDiffGenre : function() {
                 position = (position + 1) % genreManagers.length;

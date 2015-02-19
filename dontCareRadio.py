@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, jsonify
 import psycopg2
 import logging
 from dbManager import Queries, dbpass
+from model import genre_list
 # This file is the first that is called when someone goes to a page on our website.
 # It looks at the url that they entered and decides what computation to do and what
 #   template to show them.
@@ -41,6 +42,12 @@ def get_stations():
     results = db_cur.fetchall()
     app.logger.info(str(results))
     return jsonify(stations=results)
+
+
+@app.route('/get-genre-list/')
+def get_genre_list():
+    return jsonify(genreList=genre_list)
+
 
 if __name__ == '__main__':
     app.run()
