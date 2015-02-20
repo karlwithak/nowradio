@@ -160,7 +160,7 @@ $(function() {
                 url = newUrl;
             },
             getMediaUrl : function () {
-                return url + mediaPost
+                return url + mediaPost;
             } ,
             getSevenUrl : function () {
                 return  url + sevenPost;
@@ -226,7 +226,7 @@ $(function() {
                 elems.body.css('color', foreground);
                 elems.infoPanel.css('border-color', foreground);
                 elems.settingsPanel.css('border-color', foreground);
-                elems.stationInfo.css('border-color', foreground)
+                elems.stationInfo.css('border-color', foreground);
             }
         }
     }

@@ -42,6 +42,7 @@ def get_stations():
     db_cur.execute(Queries.get_urls_by_genre, data)
     results = db_cur.fetchall()
     app.logger.info(str(results))
+    db_cur.close()
     return jsonify(stations=results)
 
 

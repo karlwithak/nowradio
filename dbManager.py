@@ -46,3 +46,12 @@ class Queries:
         LIMIT %(page_size)s
         OFFSET %(page_number)s
     '''
+    get_all_urls = '''
+        SELECT id, url
+        FROM station_info
+    '''
+    set_ip_for_id = '''
+        UPDATE station_info
+        SET (ip_addr) = (%s)
+        WHERE id = %s
+    '''
