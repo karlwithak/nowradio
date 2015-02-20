@@ -7,8 +7,8 @@ class Queries:
 
     insert_station = '''
         INSERT INTO station_info
-        (url, active_listeners, max_listeners, peak_listeners, name, genre)
-        VALUES (%(url)s, %(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s);
+        (url, active_listeners, max_listeners, peak_listeners, name, genre, ip_addr, is_up)
+        VALUES (%(url)s, %(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s, %(ip)s, TRUE);
     '''
     check_for_station = '''
         SELECT 1
