@@ -38,10 +38,10 @@ class Queries:
         WHERE id = %s
     '''
     get_urls_by_genre = '''
-        SELECT max(url)
+        SELECT ip_addr
         FROM station_info
-        WHERE genre ILIKE ANY(%(genre_names)s)
-        GROUP BY name, genre
+        WHERE genre ILIKE ANY(%(genre_names)s) AND is_up = TRUE
+        GROUP BY ip_addr, name
         ORDER BY max(active_listeners) DESC
         LIMIT %(page_size)s
         OFFSET %(page_number)s
