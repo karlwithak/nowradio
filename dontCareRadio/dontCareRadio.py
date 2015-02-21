@@ -14,7 +14,7 @@ from model import genre_list
 app = Flask(__name__)
 
 app.config['APP_NAME'] = "Don't Care Radio"
-app.config.from_pyfile('conf/flask.conf.py')
+app.config.from_pyfile('../conf/flask.conf.py')
 file_handler = FileHandler('/var/log/flask/info.log')
 file_handler.setLevel(logging.INFO)
 app.logger.addHandler(file_handler)
