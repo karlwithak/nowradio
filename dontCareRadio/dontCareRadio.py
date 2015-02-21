@@ -11,7 +11,7 @@ from model import genre_list
 # It looks at the url that they entered and decides what computation to do and what
 #   template to show them.
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../templates")
 
 app.config['APP_NAME'] = "Don't Care Radio"
 app.config.from_pyfile('../conf/flask.conf.py')
