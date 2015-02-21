@@ -18,11 +18,12 @@ filename = "../urls/uniqueCheckedUrls.txt"
 def worker(url_list, connection):
     cur = connection.cursor()
     for url in url_list:
-        cur.execute(Queries.check_for_station, (url,))
-        if cur.rowcount == 1:
-            print("skipping existing url: " + url)
-            continue
         try:
+            ip_addr = ourUtils.ip_from_url(url)
+            cur.execute(Queries.check_for_station, (ip_addr,))
+            if cur.rowcount == 1:
+                print("skipping existing url: " + url)
+                continue
             page = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=1)
             info = html.fromstring(page.text).xpath("//b")
             if info[0].text == "Server is currently up and public." and info[6].text == "audio/mpeg":
@@ -32,7 +33,6 @@ def worker(url_list, connection):
                 peak_listeners = info[3].text
                 name = info[5].text
                 genre = info[7].text
-                ip_addr = ourUtils.ip_from_url(url)
                 if cur_listeners.isdigit() and max_listeners.isdigit() and peak_listeners.isdigit():
                     print("adding new url: " + url)
                     data = {

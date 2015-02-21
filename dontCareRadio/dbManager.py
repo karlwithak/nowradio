@@ -13,7 +13,7 @@ class Queries:
     check_for_station = '''
         SELECT 1
         FROM station_info
-        WHERE url = %s
+        WHERE ip_addr = %s
     '''
     get_highest_id = '''
         SELECT id
