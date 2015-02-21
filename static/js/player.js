@@ -2,7 +2,21 @@ $(function() {
     /**
      * Global Variables
      */
-
+    var colors = [
+        "#bbd",
+        "#bdb",
+        "#bdf",
+        "#bfd",
+        "#dbb",
+        "#dbf",
+        "#ddd",
+        "#dfb",
+        "#dff",
+        "#fbd",
+        "#fdb",
+        "#fdf",
+        "#ffd"
+    ];
     var buttons = {
         'bigPlay': $('a#bigPlayButton'),
         'play'   : $('button#playButton'),
@@ -50,19 +64,16 @@ $(function() {
     /**
      * Functions
      */
-    function changeStation(src) {
-        setSource(src);
+    function changeStation(src, genreNum) {
+        colorManager.setColors("black", colors[genreNum]);
+        urlManager.setUrl(src);
+        player.attr('src', urlManager.getMediaUrl());
         playerState.play();
         updateSongName();
     }
 
     function updateStations(genre, updateCount, callback) {
         $.get('/get-stations/', {'genre': genre, 'page' : updateCount}, callback);
-    }
-
-    function setSource(src) {
-        urlManager.setUrl(src);
-        player.attr('src', urlManager.getMediaUrl());
     }
 
     function updateSongName() {
@@ -102,7 +113,7 @@ $(function() {
 
     function getStationsManager() {
         var genreManagers = [];
-        var position = 0;
+        var genreNum = 0;
         $.get('/get-genre-count/', function(data) {
             for (var i = 0; i < data['genreCount']; i++) {
                 genreManagers.push(getGenreManager(i));
@@ -110,21 +121,21 @@ $(function() {
         });
         return {
             getDiffGenre : function() {
-                position = (position + 1) % genreManagers.length;
-                var station = genreManagers[position].getSameGenre();
+                genreNum = (genreNum + 1) % genreManagers.length;
+                var station = genreManagers[genreNum].getSameGenre();
                 playlistManager.addNew(station);
-                changeStation(station);
+                changeStation(station, genreNum);
             },
             getSameGenre : function() {
-                var station = genreManagers[position].getSameGenre();
+                var station = genreManagers[genreNum].getSameGenre();
                 playlistManager.addNew(station);
-                changeStation(station);
+                changeStation(station, genreNum);
             },
             getActiveGenre : function() {
-                return position
+                return genreNum
             },
             setActiveGenre : function(genreInfo) {
-                position = genreInfo;
+                genreNum = genreInfo;
             }
         }
     }
@@ -187,7 +198,7 @@ $(function() {
                     buttons.back.prop('disabled', true);
                 }
                 stationsManager.setActiveGenre(playlist[index][1]);
-                changeStation(playlist[index][0]);
+                changeStation(playlist[index][0], playlist[index][1]);
             },
             addNew : function (station) {
                 var genreInfo = stationsManager.getActiveGenre();
@@ -240,7 +251,7 @@ $(function() {
     if (window.location.hash.length != 0) {
         var url = atob(window.location.hash.substring(1));
         playlistManager.addNew(url);
-        changeStation(url);
+        changeStation(url, 0); // TODO: get this info from server
         buttons.bigPlay.click();
     } else {
         setTimeout(stationsManager.getSameGenre, 1000);

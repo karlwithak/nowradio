@@ -3,6 +3,8 @@ import psycopg2
 from dbManager import Queries, dbpass
 import ourUtils
 
+# This program reads urls from a file and prints their corresponding ip addresses
+
 filename = "../urls/uniqueCheckedUrls.txt"
 
 
