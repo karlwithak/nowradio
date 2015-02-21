@@ -7,8 +7,8 @@ class Queries:
 
     insert_station = '''
         INSERT INTO station_info
-        (url, active_listeners, max_listeners, peak_listeners, name, genre)
-        VALUES (%(url)s, %(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s);
+        (url, active_listeners, max_listeners, peak_listeners, name, genre, ip_addr, is_up)
+        VALUES (%(url)s, %(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s, %(ip)s, TRUE);
     '''
     check_for_station = '''
         SELECT 1
@@ -38,11 +38,20 @@ class Queries:
         WHERE id = %s
     '''
     get_urls_by_genre = '''
-        SELECT max(url)
+        SELECT ip_addr
         FROM station_info
-        WHERE genre ILIKE ANY(%(genre_names)s)
-        GROUP BY name, genre
+        WHERE genre ILIKE ANY(%(genre_names)s) AND is_up = TRUE
+        GROUP BY ip_addr, name
         ORDER BY max(active_listeners) DESC
         LIMIT %(page_size)s
         OFFSET %(page_number)s
+    '''
+    get_all_urls = '''
+        SELECT id, url
+        FROM station_info
+    '''
+    set_ip_for_id = '''
+        UPDATE station_info
+        SET (ip_addr) = (%s)
+        WHERE id = %s
     '''

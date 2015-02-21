@@ -153,17 +153,19 @@ $(function() {
 
     function getUrlManager() {
         var url = '';
-        var mediaPost = ';?icy=http';
-        var sevenPost = '7.html';
+        var pre = "http://";
+        var mediaPost = '/;?icy=http';
+        var sevenPost = '/7.html';
         return {
             setUrl : function (newUrl) {
                 url = newUrl;
+                window.history.replaceState(null, null, "#" + btoa(url));
             },
             getMediaUrl : function () {
-                return url + mediaPost
+                return pre + url + mediaPost;
             } ,
             getSevenUrl : function () {
-                return  url + sevenPost;
+                return  pre + url + sevenPost;
             }
         }
     }
@@ -226,7 +228,7 @@ $(function() {
                 elems.body.css('color', foreground);
                 elems.infoPanel.css('border-color', foreground);
                 elems.settingsPanel.css('border-color', foreground);
-                elems.stationInfo.css('border-color', foreground)
+                elems.stationInfo.css('border-color', foreground);
             }
         }
     }
@@ -235,8 +237,15 @@ $(function() {
     /**
      * Setup
      */
-    setInterval(updateSongName, 15000);
-    setTimeout(stationsManager.getSameGenre, 1000);
-    buttons.mute.click();
+    if (window.location.hash.length != 0) {
+        var url = atob(window.location.hash.substring(1));
+        playlistManager.addNew(url);
+        changeStation(url);
+        buttons.bigPlay.click();
+    } else {
+        setTimeout(stationsManager.getSameGenre, 1000);
+        buttons.mute.click();
+    }
+    setInterval(updateSongName, 12000);
 });
 

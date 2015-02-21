@@ -2,7 +2,9 @@ import requests
 from lxml import html
 import threading
 import psycopg2
+import socket
 from dbManager import Queries, dbpass
+import ourUtils
 
 # This program looks at all urls in the given file and puts the station information into the
 #   database if they are up and serving mp3 and don't cause any other problems
@@ -30,6 +32,7 @@ def worker(url_list, connection):
                 peak_listeners = info[3].text
                 name = info[5].text
                 genre = info[7].text
+                ip_addr = ourUtils.ip_from_url(url)
                 if cur_listeners.isdigit() and max_listeners.isdigit() and peak_listeners.isdigit():
                     print("adding new url: " + url)
                     data = {
@@ -38,7 +41,9 @@ def worker(url_list, connection):
                         'max':    max_listeners,
                         'peak':   peak_listeners,
                         'name':   name,
-                        'genre':  genre}
+                        'genre':  genre,
+                        'ip':     ip_addr
+                    }
                     cur.execute(Queries.insert_station, data)
                 else:
                     print("got non-numeric data for: " + url)
@@ -51,6 +56,8 @@ def worker(url_list, connection):
         except psycopg2.DataError as e:
             print("uh oh, data error on " + url)
             print("stack trace: \n" + str(e))
+        except socket.gaierror:
+            print("socket error on " + url)
     cur.close()
 
 
