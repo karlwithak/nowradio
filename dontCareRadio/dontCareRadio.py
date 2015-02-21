@@ -50,5 +50,12 @@ def get_genre_count():
     return jsonify(genreCount=len(model.genre_names))
 
 
+@app.route('/get-genre-by-ip/')
+def get_genre_by_ip():
+    ip = request.args.get('ip', '')
+    results = ourUtils.db_quick_query(db_conn, Queries.get_our_genre_by_ip, (ip,))[0]
+    genre_num = model.genre_names.index(results[0])
+    return jsonify(genreNum=genre_num)
+
 if __name__ == '__main__':
     app.run()

@@ -136,6 +136,9 @@ $(function() {
             },
             setActiveGenre : function(genreInfo) {
                 genreNum = genreInfo;
+            },
+            removeStationFromGenre : function(station, genreNum) {
+                genreManagers[genreNum].removeStation(station)
             }
         }
     }
@@ -158,6 +161,17 @@ $(function() {
                     updateStations(genreName, updateCount, stationSetter);
                 }
                 return station;
+            },
+            removeStation : function (station) {
+                // The stations might not have been loaded yet, so keep trying until they are
+                var removeStationInterval = window.setInterval(doRemoval, 200);
+                function doRemoval() {
+                    if (stations.length > 0) {
+                        window.clearInterval(removeStationInterval);
+                        var stationIndex = stations.indexOf(station);
+                        if (stationIndex > -1) stations.splice(stationIndex, 1)
+                    }
+                }
             }
         }
     }
@@ -249,14 +263,21 @@ $(function() {
      * Setup
      */
     if (window.location.hash.length != 0) {
+        // If the page is loaded with a #base64StringHere then play that station
         var url = atob(window.location.hash.substring(1));
         playlistManager.addNew(url);
-        changeStation(url, 0); // TODO: get this info from server
-        buttons.bigPlay.click();
+        $.get('/get-genre-by-ip/', {'ip': url}, function(data) {
+            var genreNum = data['genreNum'];
+            stationsManager.setActiveGenre(genreNum);
+            changeStation(url, genreNum);
+            buttons.bigPlay.click();
+            stationsManager.removeStationFromGenre(url, genreNum)
+        });
+
     } else {
         setTimeout(stationsManager.getSameGenre, 1000);
-        buttons.mute.click();
+        volumeManager.soundoff()
     }
-    setInterval(updateSongName, 12000);
+    setInterval(updateSongName, 10000);
 });
 

@@ -55,3 +55,8 @@ class Queries:
         SET (ip_addr) = (%s)
         WHERE id = %s
     '''
+    get_our_genre_by_ip = '''
+        SELECT our_genre
+        FROM station_info
+        WHERE ip_addr = %s
+    '''
