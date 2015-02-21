@@ -1,10 +1,13 @@
 import requests
 from lxml import html
 import threading
-import psycopg2
 import socket
+
+import psycopg2
+
 from dbManager import Queries, dbpass
-import ourUtils
+from dontCareRadio import ourUtils
+
 
 # This program looks at all urls in the given file and puts the station information into the
 #   database if they are up and serving mp3 and don't cause any other problems
@@ -12,7 +15,7 @@ import ourUtils
 #   will not update things like active listeners
 # This is good because we do don't not have to make unnecessary requests to station servers
 
-filename = "urls/uniqueCheckedUrls.txt"
+filename = "../urls/uniqueCheckedUrls.txt"
 
 
 def worker(url_list, connection):

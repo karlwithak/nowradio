@@ -3,7 +3,7 @@ import requests
 
 # This program queries Yandex to get potential station urls and writes to given file
 
-file_name = "urls2.txt"
+file_name = "../urls/urls2.txt"
 
 def findurl(roo):
     for child in roo:

@@ -5,7 +5,7 @@ request_header = {'User-Agent': 'Mozilla/5.0'}
 # This program reads urls from a file and outputs only urls that point to a legit station that
 #   is currently broadcasting
 
-file_name = "urls/bingUrls.txt"
+file_name = "../urls/bingUrls.txt"
 
 
 def handle_response(r, url):
