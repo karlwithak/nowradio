@@ -21,11 +21,6 @@ class Queries:
         ORDER BY id DESC
         LIMIT 1
     '''
-    get_urls_between_ids = '''
-        SELECT id, url
-        FROM station_info
-        WHERE id BETWEEN %s AND %s
-    '''
     update_station_by_id = '''
         UPDATE station_info
         SET (active_listeners, max_listeners, peak_listeners, last_updated, is_up)

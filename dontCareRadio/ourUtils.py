@@ -5,9 +5,10 @@ import threading
 def ip_from_url(url):
     """
     Takes a url with our without port and returns equivalent ip address
-    :param url: url with or without 'http://' and trailing slash
-    :return: ip address that points to the same location as url, with no slashes at all
+    :type url: string
+    :rtype string
     """
+    url = url[0:url.index("/", 8) + 1]
     url = url.replace("http://", "")[:-1]
     port = ""
     if ":" in url:
@@ -18,10 +19,10 @@ def ip_from_url(url):
 
 def multi_thread_runner(data_list, worker, extra_arg=None):
     """
-    Helps to write multi-threaded code
-    :param data_list: the list of arguments, a subset of which will be passed to each worker
-    :param worker: a function that takes a subset of data_list an extra_arg (if given)
-    :param extra_arg: an extra argument to pass to each worker. ex: db connection
+    Helps to write multi-threaded code by dispatching subsets of data to worker threads
+    :type data_list: list
+    :type worker: (list, (object | None)) -> None
+    :type extra_arg: object | None
     :return: None
     """
     threads = []
@@ -45,8 +46,9 @@ def multi_thread_runner(data_list, worker, extra_arg=None):
 def db_quick_query(db_conn, query, data=None):
     """
     Creates cursor, does query, gets result to be returned, closes cursor
-    :param db_conn: psycopg2 database connection
-    :param query: SQL query as string
+    :type db_conn: psycopg2.connection
+    :type query: string
+    :type data: list | dict | tuple | None
     :return: result of the query
     """
     cursor = db_conn.cursor()
