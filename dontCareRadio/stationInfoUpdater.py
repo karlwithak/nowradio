@@ -3,7 +3,7 @@ import threading
 
 import psycopg2
 
-from dontCareRadio.dbManager import Queries, dbpass
+from dbManager import Queries, dbpass
 
 
 # This program goes through the list of stations in the db and updates information such as

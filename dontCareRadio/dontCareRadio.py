@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify
 import psycopg2
 
 from dbManager import Queries, dbpass
-from dontCareRadio.model import genre_list
+from model import genre_list
 
 # This file is the first that is called when someone goes to a page on our website.
 # It looks at the url that they entered and decides what computation to do and what

@@ -6,7 +6,7 @@ import socket
 import psycopg2
 
 from dbManager import Queries, dbpass
-from dontCareRadio import ourUtils
+import ourUtils
 
 
 # This program looks at all urls in the given file and puts the station information into the
