@@ -35,11 +35,16 @@ class Queries:
     get_urls_by_genre = '''
         SELECT ip_addr
         FROM station_info
-        WHERE genre ILIKE ANY(%(genre_names)s) AND is_up = TRUE
+        WHERE our_genre = %(genre_name)s AND is_up = TRUE
         GROUP BY ip_addr, name
         ORDER BY max(active_listeners) DESC
         LIMIT %(page_size)s
         OFFSET %(page_number)s
+    '''
+    set_our_genre_by_genre = '''
+        UPDATE station_info
+        SET our_genre = %(our_genre)s
+        WHERE genre ILIKE ANY(%(genre_names)s)
     '''
     get_all_urls = '''
         SELECT id, url

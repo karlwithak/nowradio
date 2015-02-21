@@ -3,11 +3,25 @@ genre_list = [
     ['rock%'],
     ['jazz%'],
     ['blues%'],
-    ['pop%'],
+    ['pop%', 'top40%'],
     ['classical%'],
-    ['dance%'],
-    ['house%'],
-    ['hip%'],
+    ['house%', 'dance%', 'party%'],
+    ['hip%', 'rap%'],
     ['country%'],
-    ['chill%'],
+    ['chill%', 'ambient%'],
 ]
+
+genre_names = [
+    'electro',
+    'rock',
+    'jazz',
+    'blues',
+    'pop',
+    'classical',
+    'dance',
+    'hiphop',
+    'country',
+    'chill'
+]
+
+assert len(genre_list) == len(genre_names)

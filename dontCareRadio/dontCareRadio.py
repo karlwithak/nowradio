@@ -3,7 +3,7 @@ import logging
 from flask import Flask, render_template, request, jsonify
 import psycopg2
 from dbManager import Queries, dbpass
-from model import genre_list
+import model
 import ourUtils
 
 # This file is the first that is called when someone goes to a page on our website.
@@ -33,10 +33,10 @@ def render_landing():
 
 @app.route('/get-stations/')
 def get_stations():
-    genre_names = genre_list[int(request.args.get('genre', ''))]
-    app.logger.info("%s, %s", genre_names, request.args.get('page', ''))
+    genre_name = model.genre_names[int(request.args.get('genre', ''))]
+    app.logger.info("%s, %s", genre_name, request.args.get('page', ''))
     data = {
-        'genre_names': genre_names,
+        'genre_name': genre_name,
         'page_number': page_size * int(request.args.get('page', '')),
         'page_size':   page_size
     }
@@ -47,7 +47,7 @@ def get_stations():
 
 @app.route('/get-genre-count/')
 def get_genre_count():
-    return jsonify(genreCount=len(genre_list))
+    return jsonify(genreCount=len(model.genre_names))
 
 
 if __name__ == '__main__':
