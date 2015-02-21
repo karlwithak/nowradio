@@ -1,7 +1,10 @@
 import requests
 import threading
+
 import psycopg2
-from dbManager import Queries, dbpass
+
+from dontCareRadio.dbManager import Queries, dbpass
+
 
 # This program goes through the list of stations in the db and updates information such as
 #   current listeners, max listeners, peak listeners, status(up or not)

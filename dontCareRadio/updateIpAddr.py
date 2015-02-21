@@ -1,8 +1,10 @@
-from dbManager import Queries, dbpass
-import psycopg2
 import socket
-import ourUtils
 import threading
+
+import psycopg2
+
+from dbManager import Queries, dbpass
+from dontCareRadio import ourUtils
 
 
 def worker(id_url_list, conn):
