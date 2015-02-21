@@ -65,7 +65,7 @@ $(function() {
      * Functions
      */
     function changeStation(src, genreNum) {
-        colorManager.setColors("black", colors[genreNum]);
+        colorManager.setColors(colors[genreNum]);
         urlManager.setUrl(src);
         player.attr('src', urlManager.getMediaUrl());
         playerState.play();
@@ -138,7 +138,14 @@ $(function() {
                 genreNum = genreInfo;
             },
             removeStationFromGenre : function(station, genreNum) {
-                genreManagers[genreNum].removeStation(station)
+                // The genreManagers list might not be populated yet, so keep trying until it is
+                var removeStationFromGenreInterval = window.setInterval(doRemovalFromGenre, 200);
+                function doRemovalFromGenre() {
+                    if (genreManagers.length > 0) {
+                        clearInterval(removeStationFromGenreInterval);
+                        genreManagers[genreNum].removeStation(station)
+                    }
+                }
             }
         }
     }
@@ -248,12 +255,10 @@ $(function() {
             'stationInfo'   : $("div#stationInfo")
         };
         return {
-            setColors : function(foreground, background) {
-                elems.body.css('background-color', background);
-                elems.body.css('color', foreground);
-                elems.infoPanel.css('border-color', foreground);
-                elems.settingsPanel.css('border-color', foreground);
-                elems.stationInfo.css('border-color', foreground);
+            setColors : function(background) {
+                elems.body.animate({
+                   backgroundColor: background
+                }, 1000);
             }
         }
     }
