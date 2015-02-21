@@ -1,11 +1,10 @@
 from logging import FileHandler
 import logging
-
 from flask import Flask, render_template, request, jsonify
 import psycopg2
-
 from dbManager import Queries, dbpass
 from model import genre_list
+import ourUtils
 
 # This file is the first that is called when someone goes to a page on our website.
 # It looks at the url that they entered and decides what computation to do and what
@@ -34,7 +33,6 @@ def render_landing():
 
 @app.route('/get-stations/')
 def get_stations():
-    db_cur = db_conn.cursor()
     genre_names = genre_list[int(request.args.get('genre', ''))]
     app.logger.info("%s, %s", genre_names, request.args.get('page', ''))
     data = {
@@ -42,10 +40,8 @@ def get_stations():
         'page_number': page_size * int(request.args.get('page', '')),
         'page_size':   page_size
     }
-    db_cur.execute(Queries.get_urls_by_genre, data)
-    results = db_cur.fetchall()
+    results = ourUtils.db_quick_query(db_conn, Queries.get_urls_by_genre, data)
     app.logger.info(str(results))
-    db_cur.close()
     return jsonify(stations=results)
 
 

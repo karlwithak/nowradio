@@ -45,10 +45,7 @@ def main():
     except psycopg2.DatabaseError:
         print("could not connect to db")
         exit("could not connect to db")
-    main_cur = conn.cursor()
-    main_cur.execute(Queries.get_all_urls)
-    id_url_list = main_cur.fetchall()
-    main_cur.close()
+    id_url_list = ourUtils.db_quick_query(Queries.get_all_urls)
     ourUtils.multi_thread_runner(id_url_list, worker, conn)
     conn.commit()
     conn.close()

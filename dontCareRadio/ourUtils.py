@@ -41,3 +41,16 @@ def multi_thread_runner(data_list, worker, extra_arg=None):
     for thread in threads:
         thread.join()
 
+
+def db_quick_query(db_conn, query, data=None):
+    """
+    Creates cursor, does query, gets result to be returned, closes cursor
+    :param db_conn: psycopg2 database connection
+    :param query: SQL query as string
+    :return: result of the query
+    """
+    cursor = db_conn.cursor()
+    cursor.execute(query, data)
+    result = cursor.fetchall()
+    cursor.close()
+    return result
