@@ -1,10 +1,7 @@
 import requests
 from lxml import html
-import threading
 import socket
-
 import psycopg2
-
 from dbManager import Queries, dbpass
 import ourUtils
 
@@ -64,18 +61,6 @@ def worker(url_list, connection):
     cur.close()
 
 
-def runner(url_list, connection, threads):
-    total_stations = len(url_list)
-    thread_count = 25
-    step = total_stations/thread_count
-    for i in range(0, total_stations, step):
-        t = threading.Thread(target=worker, args=(url_list[i:i+step], connection))
-        threads.append(t)
-        t.start()
-    for thread in threads:
-        thread.join()
-
-
 def main():
     with open(filename) as myfile:
         urls = myfile.read().split('\n')[:-1]
@@ -84,8 +69,7 @@ def main():
         conn = psycopg2.connect("dbname=radiodb user=radiodb host=localhost password=%s" % dbpass)
     except psycopg2.DatabaseError:
         exit("could not connect to db")
-    threads = []
-    runner(urls, conn, threads)
+    ourUtils.multi_thread_runner(urls, worker, conn)
     conn.commit()
     conn.close()
 

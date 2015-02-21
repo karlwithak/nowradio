@@ -1,8 +1,5 @@
 import socket
-import threading
-
 import psycopg2
-
 from dbManager import Queries, dbpass
 import ourUtils
 
@@ -24,16 +21,8 @@ def main():
     main_cur = conn.cursor()
     main_cur.execute(Queries.get_all_urls)
     id_url_list = main_cur.fetchall()
-    threads = []
-    thread_count = 25
-    step = len(id_url_list)/thread_count
-    for i in range(0, len(id_url_list), step):
-        t = threading.Thread(target=worker, args=(id_url_list[i:i + step], conn))
-        threads.append(t)
-        t.start()
-    for thread in threads:
-        thread.join()
     main_cur.close()
+    ourUtils.multi_thread_runner(id_url_list, worker, conn)
     conn.commit()
     conn.close()
 

@@ -1,8 +1,6 @@
 import requests
-import threading
-
+import ourUtils
 import psycopg2
-
 from dbManager import Queries, dbpass
 
 
@@ -10,10 +8,8 @@ from dbManager import Queries, dbpass
 #   current listeners, max listeners, peak listeners, status(up or not)
 
 
-def worker(lo_id, hi_id, connection):
+def worker(id_url_list, connection):
     cur = connection.cursor()
-    cur.execute(Queries.get_urls_between_ids, (lo_id, hi_id))
-    id_url_list = cur.fetchall()
     for id_url in id_url_list:
         url = id_url[1] + '7.html'
         try:
@@ -42,21 +38,6 @@ def worker(lo_id, hi_id, connection):
     cur.close()
 
 
-def runner(connection, threads):
-    runner_cur = connection.cursor()
-    runner_cur.execute(Queries.get_highest_id)
-    top_id = runner_cur.fetchone()[0]
-    thread_count = 50
-    step = top_id/thread_count
-    for i in range(0, top_id, step):
-        t = threading.Thread(target=worker, args=(i, i + step, connection))
-        threads.append(t)
-        t.start()
-    for thread in threads:
-        thread.join()
-    runner_cur.close()
-
-
 def main():
     conn = None
     try:
@@ -64,8 +45,11 @@ def main():
     except psycopg2.DatabaseError:
         print("could not connect to db")
         exit("could not connect to db")
-    threads = []
-    runner(conn, threads)
+    main_cur = conn.cursor()
+    main_cur.execute(Queries.get_all_urls)
+    id_url_list = main_cur.fetchall()
+    main_cur.close()
+    ourUtils.multi_thread_runner(id_url_list, worker, conn)
     conn.commit()
     conn.close()
 
