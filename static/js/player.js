@@ -32,53 +32,17 @@ $(function() {
         'refresh': $('span#refreshSongButton'),
         'mute'   : $('span#muteButton'),
         'unmute' : $('span#unmuteButton')};
-    var playlistManager = getPlaylistManager();
-    var playerState = getStopPlayManager();
     var player = $('audio#player');
-    var stationsManager = getStationsManager();
-    var urlManager = getUrlManager();
-    var volumeManager = getVolumeManager();
-    var colorManager = getColorManager();
-    var keyUpManager = getKeyUpManager();
 
     /**
-     * Listeners
-     */
-    buttons.stop.click(playerState.stop);
-
-    buttons.play.click(playerState.play);
-    
-    buttons.next1.click(stationsManager.getSameGenre);
-
-    buttons.next3.click(stationsManager.getDiffGenre);
-
-    buttons.back.click(playlistManager.goBack);
-
-    buttons.refresh.click(updateSongName);
-
-    buttons.mute.click(volumeManager.soundOff);
-
-    buttons.unmute.click(volumeManager.soundOn);
-
-    buttons.bigPlay.click(function () {
-        $('div#landingContainer').hide();
-        $('div#mainContainer').show();
-        volumeManager.soundOn();
-    });
-
-    /**
-     * Functions
+     * Functions - Random functions that should probably be in one of the closures...
      */
     function changeStation(src, genreNum) {
         colorManager.setColors(colors[genreNum]);
         urlManager.setUrl(src);
         player.attr('src', urlManager.getMediaUrl());
-        playerState.play();
+        playerStateManager.play();
         updateSongName();
-    }
-
-    function updateStations(genre, updateCount, callback) {
-        $.get('/get-stations/', {'genre': genre, 'page' : updateCount}, callback);
     }
 
     function updateSongName() {
@@ -99,9 +63,9 @@ $(function() {
 
 
     /**
-     * Closures
+     * Closures - Each one is like an 'object' that controls a certain aspect of the app
      */
-    function getStopPlayManager() {
+    var playerStateManager = (function() {
         var playingNow = false;
         return {
             stop : function() {
@@ -125,9 +89,9 @@ $(function() {
                 }
             }
         };
-    }
+    }());
 
-    function getStationsManager() {
+    var stationsManager = (function() {
         var genreManagers = [];
         var genreNum = 0;
         $.get('/get-genre-count/', function(data) {
@@ -164,44 +128,49 @@ $(function() {
                 }
             }
         };
-    }
 
-    function getGenreManager(genreName) {
-        var stations = [];
-        var updateCount = 0;
-        updateStations(genreName, updateCount, stationSetter);
+        function getGenreManager(genreName) {
+            var stations = [];
+            var updateCount = 0;
+            updateStations(genreName, updateCount, stationSetter);
 
-        function stationSetter(data) {
-            stations = data['stations'].reduce(function(left, right) {
-               return right.concat(left);
-            });
-        }
-        return {
-            getSameGenre : function () {
-                var station = stations.pop();
-                if (stations.length === 0) {
-                    updateCount += 1;
-                    updateStations(genreName, updateCount, stationSetter);
-                }
-                return station;
-            },
-            removeStation : function (station) {
-                // The stations might not have been loaded yet, so keep trying until they are
-                var removeStationInterval = window.setInterval(doRemoval, 200);
-                function doRemoval() {
-                    if (stations.length > 0) {
-                        window.clearInterval(removeStationInterval);
-                        var stationIndex = stations.indexOf(station);
-                        if (stationIndex > -1) {
-                            stations.splice(stationIndex, 1);
+            function stationSetter(data) {
+                stations = data['stations'].reduce(function(left, right) {
+                   return right.concat(left);
+                });
+            }
+            return {
+                getSameGenre : function () {
+                    var station = stations.pop();
+                    if (stations.length === 0) {
+                        updateCount += 1;
+                        updateStations(genreName, updateCount, stationSetter);
+                    }
+                    return station;
+                },
+                removeStation : function (station) {
+                    // The stations might not have been loaded yet, so keep trying until they are
+                    var removeStationInterval = window.setInterval(doRemoval, 200);
+                    function doRemoval() {
+                        if (stations.length > 0) {
+                            window.clearInterval(removeStationInterval);
+                            var stationIndex = stations.indexOf(station);
+                            if (stationIndex > -1) {
+                                stations.splice(stationIndex, 1);
+                            }
                         }
                     }
                 }
-            }
-        };
-    }
+            };
+        }
 
-    function getUrlManager() {
+        function updateStations(genre, updateCount, callback) {
+            $.get('/get-stations/', {'genre': genre, 'page' : updateCount}, callback);
+        }
+    }());
+
+
+    var urlManager = (function() {
         var url = '';
         var pre = "http://";
         var mediaPost = '/;?icy=http';
@@ -218,10 +187,10 @@ $(function() {
                 return  pre + url + sevenPost;
             }
         };
-    }
+    }());
 
     // Warning to future nick, this is a strange data structure!
-    function getPlaylistManager() {
+    var playlistManager = (function() {
         buttons.back.prop('disabled', true);
         var playlist = [];
         var index = -1;
@@ -249,9 +218,9 @@ $(function() {
                 }
             }
         };
-    }
+    }());
 
-    function getVolumeManager() {
+    var volumeManager = (function() {
         buttons.unmute.hide();
         var soundOnNow = false;
         return {
@@ -275,9 +244,9 @@ $(function() {
                 }
             }
         };
-    }
+    }());
 
-    function getColorManager() {
+    var colorManager = (function() {
         var elems = {
             'body'          : $("body"),
             'infoPanel'     : $("div#infoPanel"),
@@ -291,10 +260,11 @@ $(function() {
                 }, 1000);
             }
         };
-    }
+    }());
 
-    function getKeyUpManager() {
+    var keyUpManager = (function() {
         var singleRightPress = false;
+        var timeOutInterval;
         function clearRightPress() {
             singleRightPress = false;
             stationsManager.getSameGenre();
@@ -302,27 +272,46 @@ $(function() {
         return {
              handleKeyUp : function(event) {
                 if (event.keyCode === 32) {
-                    playerState.toggle();
+                    playerStateManager.toggle();
                 } else if (event.keyCode === 77) {
                     volumeManager.soundToggle();
                 } else if (event.keyCode === 37) {
-                    playlistManager.goBack();
+                    buttons.back.click();
                 } else if (event.keyCode === 39) {
                     if (singleRightPress) {
                         stationsManager.getDiffGenre();
                         singleRightPress = false;
+                        clearInterval(timeOutInterval);
                     } else {
                         singleRightPress = true;
-                        window.setTimeout(clearRightPress, 333);
+                        timeOutInterval = window.setTimeout(clearRightPress, 333);
                     }
                 }
             }
         };
-    }
+    }());
 
 
     /**
-     * Setup
+     * Listeners - Handle certain user actions
+     */
+    buttons.stop.click(playerStateManager.stop);
+    buttons.play.click(playerStateManager.play);
+    buttons.next1.click(stationsManager.getSameGenre);
+    buttons.next3.click(stationsManager.getDiffGenre);
+    buttons.back.click(playlistManager.goBack);
+    buttons.refresh.click(updateSongName);
+    buttons.mute.click(volumeManager.soundOff);
+    buttons.unmute.click(volumeManager.soundOn);
+    buttons.bigPlay.click(function () {
+        $('div#landingContainer').hide();
+        $('div#mainContainer').show();
+        volumeManager.soundOn();
+    });
+
+
+    /**
+     * Setup - Set everything in motion
      */
     if (window.location.hash.length !== 0) {
         // If the page is loaded with a #base64StringHere then play that station
