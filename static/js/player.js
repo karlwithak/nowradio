@@ -38,7 +38,7 @@ $(function() {
      * Functions - Random functions that should probably be in one of the closures...
      */
     function changeStation(src, genreNum) {
-        colorManager.setColors(colors[genreNum]);
+        colorManager.changeGenreColor(colors[genreNum]);
         urlManager.setUrl(src);
         player.attr('src', urlManager.getMediaUrl());
         playerStateManager.play();
@@ -247,6 +247,7 @@ $(function() {
     }());
 
     var colorManager = (function() {
+        var genreColor = "white";
         var elems = {
             'body'          : $("body"),
             'infoPanel'     : $("div#infoPanel"),
@@ -258,6 +259,15 @@ $(function() {
                 elems.body.animate({
                    backgroundColor: background
                 }, 1000);
+            },
+            changeGenreColor : function(color) {
+                elems.body.animate({
+                   backgroundColor: "#ffffff"
+                }, 50);
+                genreColor = color;
+            },
+            setToGenreColor : function() {
+                this.setColors(genreColor);
             }
         };
     }());
@@ -308,7 +318,9 @@ $(function() {
         $('div#mainContainer').show();
         volumeManager.soundOn();
     });
-
+    player.bind("canplay", function () {
+        colorManager.setToGenreColor();
+    });
 
     /**
      * Setup - Set everything in motion
