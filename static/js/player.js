@@ -94,9 +94,9 @@ $(function() {
     var stationsManager = (function() {
         var genreManagers = [];
         var genreNum = 0;
-        $.get('/get-genre-count/', function(data) {
-            for (var i = 0; i < data['genreCount']; i++) {
-                genreManagers.push(getGenreManager(i));
+        $.get('/get-initial-stations/', function(data) {
+            for (var i = 0; i < data['stations'].length; i++) {
+                genreManagers.push(getGenreManager(data['stations'][i]));
             }
         });
         return {
@@ -129,24 +129,13 @@ $(function() {
             }
         };
 
-        function getGenreManager(genreName) {
-            var stations = [];
-            var updateCount = 0;
-            updateStations(genreName, updateCount, stationSetter);
-
-            function stationSetter(data) {
-                stations = data['stations'].reduce(function(left, right) {
-                   return right.concat(left);
-                });
-            }
+        function getGenreManager(stationsList) {
+            var stations = stationsList;
+            var stationNum = 0;
             return {
                 getSameGenre : function () {
-                    var station = stations.pop();
-                    if (stations.length === 0) {
-                        updateCount += 1;
-                        updateStations(genreName, updateCount, stationSetter);
-                    }
-                    return station;
+                    stationNum = (stationNum + 1) % stations.length ;
+                    return stations[stationNum];
                 },
                 removeStation : function (station) {
                     // The stations might not have been loaded yet, so keep trying until they are
@@ -162,10 +151,6 @@ $(function() {
                     }
                 }
             };
-        }
-
-        function updateStations(genre, updateCount, callback) {
-            $.get('/get-stations/', {'genre': genre, 'page' : updateCount}, callback);
         }
     }());
 

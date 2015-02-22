@@ -39,7 +39,6 @@ class Queries:
         GROUP BY ip_addr, name
         ORDER BY max(active_listeners) DESC
         LIMIT %(page_size)s
-        OFFSET %(page_number)s
     '''
     set_our_genre_by_genre = '''
         UPDATE station_info

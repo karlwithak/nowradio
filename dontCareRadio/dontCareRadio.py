@@ -17,7 +17,7 @@ app.config.from_pyfile('../conf/flask.conf.py')
 file_handler = FileHandler('/var/log/flask/info.log')
 file_handler.setLevel(logging.INFO)
 app.logger.addHandler(file_handler)
-page_size = 10
+page_size = 100
 
 
 try:
@@ -31,23 +31,17 @@ def render_landing():
     return render_template("player.html")
 
 
-@app.route('/get-stations/')
-def get_stations():
-    genre_name = model.genre_names[int(request.args.get('genre', ''))]
-    app.logger.info("%s, %s", genre_name, request.args.get('page', ''))
-    data = {
-        'genre_name': genre_name,
-        'page_number': page_size * int(request.args.get('page', '')),
-        'page_size':   page_size
-    }
-    results = ourUtils.db_quick_query(db_conn, Queries.get_urls_by_genre, data)
-    app.logger.info(str(results))
-    return jsonify(stations=results)
-
-
-@app.route('/get-genre-count/')
-def get_genre_count():
-    return jsonify(genreCount=len(model.genre_names))
+@app.route('/get-initial-stations/')
+def get_initial_stations():
+    cur = db_conn.cursor()
+    stations = []
+    data = {'page_size': page_size}
+    for genre in model.genre_names:
+        data['genre_name'] = genre
+        cur.execute(Queries.get_urls_by_genre, data)
+        result = [url for sublist in cur.fetchall() for url in sublist]
+        stations.append(result)
+    return jsonify(stations=stations)
 
 
 @app.route('/get-genre-by-ip/')
