@@ -1,4 +1,7 @@
+/*global $:false */
+
 $(function() {
+    "use strict";
     $('span#infoButton').click(function() {
         $('div#infoPanel').toggle();
         $('div#settingsPanel').hide();

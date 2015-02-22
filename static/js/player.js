@@ -1,4 +1,8 @@
+/*global $:false */
+/*jshint -W069 */
+
 $(function() {
+    "use strict";
     /**
      * Global Variables
      */
@@ -35,6 +39,7 @@ $(function() {
     var urlManager = getUrlManager();
     var volumeManager = getVolumeManager();
     var colorManager = getColorManager();
+    var keyUpManager = getKeyUpManager();
 
     /**
      * Listeners
@@ -51,14 +56,14 @@ $(function() {
 
     buttons.refresh.click(updateSongName);
 
-    buttons.mute.click(volumeManager.soundoff);
+    buttons.mute.click(volumeManager.soundOff);
 
-    buttons.unmute.click(volumeManager.soundon);
+    buttons.unmute.click(volumeManager.soundOn);
 
     buttons.bigPlay.click(function () {
         $('div#landingContainer').hide();
         $('div#mainContainer').show();
-        volumeManager.soundon();
+        volumeManager.soundOn();
     });
 
     /**
@@ -97,16 +102,27 @@ $(function() {
      * Closures
      */
     function getStopPlayManager() {
+        var playingNow = false;
         return {
             stop : function() {
                 buttons.stop.hide();
                 buttons.play.show();
                 player[0].pause();
+                playingNow = false;
             },
             play : function() {
                 buttons.play.hide();
                 buttons.stop.show();
                 player[0].play();
+                playingNow = true;
+            },
+            toggle : function() {
+                if (playingNow) {
+                    this.stop();
+                }
+                else {
+                    this.play();
+                }
             }
         };
     }
@@ -132,7 +148,7 @@ $(function() {
                 changeStation(station, genreNum);
             },
             getActiveGenre : function() {
-                return genreNum
+                return genreNum;
             },
             setActiveGenre : function(genreInfo) {
                 genreNum = genreInfo;
@@ -143,11 +159,11 @@ $(function() {
                 function doRemovalFromGenre() {
                     if (genreManagers.length > 0) {
                         clearInterval(removeStationFromGenreInterval);
-                        genreManagers[genreNum].removeStation(station)
+                        genreManagers[genreNum].removeStation(station);
                     }
                 }
             }
-        }
+        };
     }
 
     function getGenreManager(genreName) {
@@ -163,7 +179,7 @@ $(function() {
         return {
             getSameGenre : function () {
                 var station = stations.pop();
-                if (stations.length == 0) {
+                if (stations.length === 0) {
                     updateCount += 1;
                     updateStations(genreName, updateCount, stationSetter);
                 }
@@ -176,11 +192,13 @@ $(function() {
                     if (stations.length > 0) {
                         window.clearInterval(removeStationInterval);
                         var stationIndex = stations.indexOf(station);
-                        if (stationIndex > -1) stations.splice(stationIndex, 1)
+                        if (stationIndex > -1) {
+                            stations.splice(stationIndex, 1);
+                        }
                     }
                 }
             }
-        }
+        };
     }
 
     function getUrlManager() {
@@ -199,7 +217,7 @@ $(function() {
             getSevenUrl : function () {
                 return  pre + url + sevenPost;
             }
-        }
+        };
     }
 
     // Warning to future nick, this is a strange data structure!
@@ -210,12 +228,12 @@ $(function() {
         var end = -1;
         return {
             goBack : function () {
-                if (index == 0) {
-                    console.error("tried to go back too far in playlist");
+                if (index === 0) {
+                    window.console.error("tried to go back too far in playlist");
                     return playlist[end];
                 }
                 index -= 1;
-                if (index == 0) {
+                if (index === 0) {
                     buttons.back.prop('disabled', true);
                 }
                 stationsManager.setActiveGenre(playlist[index][1]);
@@ -226,25 +244,37 @@ $(function() {
                 index += 1;
                 end = index;
                 playlist[index] = [station, genreInfo];
-                if (index > 0)buttons.back.prop('disabled', false);
+                if (index > 0) {
+                    buttons.back.prop('disabled', false);
+                }
             }
-        }
+        };
     }
 
     function getVolumeManager() {
         buttons.unmute.hide();
+        var soundOnNow = false;
         return {
-            soundoff : function() {
+            soundOff : function() {
                 player[0].muted = true;
                 buttons.mute.hide();
                 buttons.unmute.show();
+                soundOnNow = false;
             },
-            soundon : function() {
+            soundOn : function() {
                 player[0].muted = false;
                 buttons.mute.show();
                 buttons.unmute.hide();
+                soundOnNow = true;
+            },
+            soundToggle : function() {
+                if (soundOnNow) {
+                    this.soundOff();
+                } else {
+                    this.soundOn();
+                }
             }
-        }
+        };
     }
 
     function getColorManager() {
@@ -260,29 +290,57 @@ $(function() {
                    backgroundColor: background
                 }, 1000);
             }
+        };
+    }
+
+    function getKeyUpManager() {
+        var singleRightPress = false;
+        function clearRightPress() {
+            singleRightPress = false;
+            stationsManager.getSameGenre();
         }
+        return {
+             handleKeyUp : function(event) {
+                if (event.keyCode === 32) {
+                    playerState.toggle();
+                } else if (event.keyCode === 77) {
+                    volumeManager.soundToggle();
+                } else if (event.keyCode === 37) {
+                    playlistManager.goBack();
+                } else if (event.keyCode === 39) {
+                    if (singleRightPress) {
+                        stationsManager.getDiffGenre();
+                        singleRightPress = false;
+                    } else {
+                        singleRightPress = true;
+                        window.setTimeout(clearRightPress, 333);
+                    }
+                }
+            }
+        };
     }
 
 
     /**
      * Setup
      */
-    if (window.location.hash.length != 0) {
+    if (window.location.hash.length !== 0) {
         // If the page is loaded with a #base64StringHere then play that station
+        buttons.bigPlay.click();
         var url = atob(window.location.hash.substring(1));
         playlistManager.addNew(url);
         $.get('/get-genre-by-ip/', {'ip': url}, function(data) {
             var genreNum = data['genreNum'];
             stationsManager.setActiveGenre(genreNum);
             changeStation(url, genreNum);
-            buttons.bigPlay.click();
-            stationsManager.removeStationFromGenre(url, genreNum)
+            stationsManager.removeStationFromGenre(url, genreNum);
         });
 
     } else {
         setTimeout(stationsManager.getSameGenre, 1000);
-        volumeManager.soundoff()
+        volumeManager.soundOff();
     }
     setInterval(updateSongName, 10000);
+    window.onkeyup = keyUpManager.handleKeyUp;
 });
 
