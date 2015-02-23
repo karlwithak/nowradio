@@ -29,7 +29,6 @@ $(function() {
         'next2'  : $('button#nextButton2'),
         'next3'  : $('button#nextButton3'),
         'back'   : $('button#backButton'),
-        'refresh': $('span#refreshSongButton'),
         'mute'   : $('span#muteButton'),
         'unmute' : $('span#unmuteButton')};
     var player = $('audio#player');
@@ -42,23 +41,7 @@ $(function() {
         urlManager.setUrl(src);
         player.attr('src', urlManager.getMediaUrl());
         playerStateManager.play();
-        updateSongName();
-    }
-
-    function updateSongName() {
-        var infoUrl = urlManager.getSevenUrl();
-        $.get('/get-station-info/?stationUrl='+infoUrl,  setSongName, 'html');
-    }
-
-    function setSongName(data) {
-        var re = /<[^<]*>/gi;
-        data = data.replace(re, '');
-        var x = 0;
-        for (var i=0; i < 6; i++) {
-            x = data.indexOf(',', x + 1);
-        }
-        data = data.slice(x + 1);
-        $('span#currentSong').text(data);
+        songNameManager.updateName();
     }
 
 
@@ -82,10 +65,10 @@ $(function() {
             },
             toggle : function() {
                 if (playingNow) {
-                    this.stop();
+                    playerStateManager.stop();
                 }
                 else {
-                    this.play();
+                    playerStateManager.play();
                 }
             }
         };
@@ -223,9 +206,9 @@ $(function() {
             },
             soundToggle : function() {
                 if (soundOnNow) {
-                    this.soundOff();
+                    volumeManager.soundOff();
                 } else {
-                    this.soundOn();
+                    volumeManager.soundOn();
                 }
             }
         };
@@ -252,7 +235,7 @@ $(function() {
                 genreColor = color;
             },
             setToGenreColor : function() {
-                this.setColors(genreColor);
+                colorManager.setColors(genreColor);
             }
         };
     }());
@@ -286,6 +269,33 @@ $(function() {
         };
     }());
 
+    var songNameManager = (function () {
+        var stationName = "";
+        return {
+            updateName : function() {
+                var infoUrl = urlManager.getSevenUrl();
+                $.get('/get-station-info/?stationUrl='+infoUrl,  songNameManager.setName, 'html');
+            },
+            setName : function(data) {
+                var re = /<[^<]*>/gi;
+                data = data.replace(re, '');
+                var x = 0;
+                for (var i=0; i < 6; i++) {
+                    x = data.indexOf(',', x + 1);
+                }
+                data = data.slice(x + 1);
+                // Check to see if this new station is playing the same song as the last one,
+                //  if so, it's probably a duplicate station so go to the next one
+                if (data === stationName) {
+                    stationsManager.getSameGenre();
+                } else {
+                    $('span#currentSong').text(data);
+                    stationName = data;
+                }
+            }
+        };
+    }());
+
 
     /**
      * Listeners - Handle certain user actions
@@ -295,7 +305,6 @@ $(function() {
     buttons.next1.click(stationsManager.getSameGenre);
     buttons.next3.click(stationsManager.getDiffGenre);
     buttons.back.click(playlistManager.goBack);
-    buttons.refresh.click(updateSongName);
     buttons.mute.click(volumeManager.soundOff);
     buttons.unmute.click(volumeManager.soundOn);
     buttons.bigPlay.click(function () {
@@ -303,9 +312,8 @@ $(function() {
         $('div#mainContainer').show();
         volumeManager.soundOn();
     });
-    player.bind("canplay", function () {
-        colorManager.setToGenreColor();
-    });
+    player.bind("canplay", colorManager.setToGenreColor);
+
 
     /**
      * Setup - Set everything in motion
@@ -326,7 +334,7 @@ $(function() {
         setTimeout(stationsManager.getSameGenre, 1000);
         volumeManager.soundOff();
     }
-    setInterval(updateSongName, 10000);
+    setInterval(songNameManager.updateName, 10000);
     window.onkeyup = keyUpManager.handleKeyUp;
 });
 
