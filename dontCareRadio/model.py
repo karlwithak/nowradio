@@ -1,25 +1,25 @@
 genre_list = [
     ['electro%', 'techno%'],
-    ['rock%', 'metal%', 'classic rock%'],
-    ['jazz%', 'smooth jazz%' 'blues%'],
-    ['pop%', 'top40%', 'top 40%' 'hit%'],
-    ['classical%'],
     ['house%', 'dance%', 'party%', 'club%', 'edm%'],
+    ['pop%', 'top40%', 'top 40%' 'hit%'],
     ['hip%', 'rap%', 'rnb%', 'r&b%'],
-    ['country%'],
+    ['country%', 'blues%'],
+    ['rock%', 'metal%', 'classic rock%'],
+    ['jazz%', 'smooth jazz%'],
+    ['classical%'],
     ['chill%', 'ambient%', 'downtempo%', 'lounge%'],
     ['vari%', 'misc%', 'alternative%', 'mixed%', 'assorted']
 ]
 
 genre_names = [
     'electro',
-    'rock',
-    'jazz',
-    'pop',
-    'classical',
     'dance',
+    'pop',
     'hiphop',
     'country',
+    'rock',
+    'jazz',
+    'classical',
     'chill',
     'misc'
 ]
