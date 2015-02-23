@@ -271,6 +271,7 @@ $(function() {
 
     var songNameManager = (function () {
         var stationName = "";
+        setInterval(songNameManager.updateName, 10000);
         return {
             updateName : function() {
                 var infoUrl = urlManager.getSevenUrl();
@@ -334,7 +335,6 @@ $(function() {
         setTimeout(stationsManager.getSameGenre, 1000);
         volumeManager.soundOff();
     }
-    setInterval(songNameManager.updateName, 10000);
     window.onkeyup = keyUpManager.handleKeyUp;
 });
 
