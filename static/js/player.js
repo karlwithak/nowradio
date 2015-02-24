@@ -41,7 +41,7 @@ $(function() {
         urlManager.setUrl(src);
         player.attr('src', urlManager.getMediaUrl());
         playerStateManager.play();
-        songNameManager.updateName();
+        songNameManager.updateName(true);
     }
 
 
@@ -271,30 +271,39 @@ $(function() {
 
     var songNameManager = (function () {
         var stationName = "";
-        setInterval(songNameManager.updateName, 10000);
-        return {
-            updateName : function() {
-                var infoUrl = urlManager.getSevenUrl();
-                $.get('/get-station-info/?stationUrl='+infoUrl,  songNameManager.setName, 'html');
-            },
-            setName : function(data) {
-                var re = /<[^<]*>/gi;
-                data = data.replace(re, '');
-                var x = 0;
-                for (var i=0; i < 6; i++) {
-                    x = data.indexOf(',', x + 1);
-                }
-                data = data.slice(x + 1);
-                // Check to see if this new station is playing the same song as the last one,
-                //  if so, it's probably a duplicate station so go to the next one
-                if (data === stationName) {
-                    stationsManager.getSameGenre();
-                } else {
-                    $('span#currentSong').text(data);
-                    stationName = data;
-                }
+        var duplicateSongCheck = false;
+        var intervalId = -1;
+        function _setName(data) {
+            var re = /<[^<]*>/gi;
+            data = data.replace(re, '');
+            var x = 0;
+            for (var i=0; i < 6; i++) {
+                x = data.indexOf(',', x + 1);
             }
-        };
+            data = data.slice(x + 1);
+            // Check to see if this new station is playing the same song as the last one,
+            //  if so, it's probably a duplicate station so go to the next one
+            if (data === stationName && duplicateSongCheck) {
+                stationsManager.getSameGenre();
+            } else {
+                $('span#currentSong').text(data);
+                stationName = data;
+                duplicateSongCheck = false;
+                intervalId = setInterval(_updateName, 5000);
+            }
+        }
+        function _updateName(doDuplicateSongCheck) {
+            window.console.log("updating name");
+            if (intervalId !== -1) {
+                clearInterval(intervalId);
+            }
+            if (doDuplicateSongCheck === true) {
+                duplicateSongCheck = doDuplicateSongCheck;
+            }
+            var infoUrl = urlManager.getSevenUrl();
+            $.get('/get-station-info/?stationUrl='+infoUrl,  _setName, 'html');
+        }
+        return { updateName : _updateName };
     }());
 
 
