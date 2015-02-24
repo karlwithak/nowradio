@@ -50,28 +50,29 @@ $(function() {
      */
     var playerStateManager = (function() {
         var playingNow = false;
-        return {
-            stop : function() {
-                buttons.stop.hide();
-                buttons.play.show();
-                player[0].pause();
-                playingNow = false;
-            },
-            play : function() {
-                buttons.play.hide();
-                buttons.stop.show();
-                player[0].play();
-                playingNow = true;
-            },
-            toggle : function() {
-                if (playingNow) {
-                    playerStateManager.stop();
-                }
-                else {
-                    playerStateManager.play();
-                }
+
+        function _stop() {
+            buttons.stop.hide();
+            buttons.play.show();
+            player[0].pause();
+            playingNow = false;
+        }
+        function _play() {
+            buttons.play.hide();
+            buttons.stop.show();
+            player[0].play();
+            playingNow = true;
+        }
+        function _toggle() {
+            if (playingNow) {
+                _stop();
             }
-        };
+            else {
+                _play();
+            }
+        }
+
+        return { stop : _stop, play : _play, toggle : _toggle };
     }());
 
     var stationsManager = (function() {
@@ -79,62 +80,67 @@ $(function() {
         var genreNum = 0;
         $.get('/get-initial-stations/', function(data) {
             for (var i = 0; i < data['stations'].length; i++) {
-                genreManagers.push(getGenreManager(data['stations'][i]));
+                genreManagers.push(_getGenreManager(data['stations'][i]));
             }
         });
-        return {
-            getDiffGenre : function() {
-                genreNum = (genreNum + 1) % genreManagers.length;
-                var station = genreManagers[genreNum].getSameGenre();
-                playlistManager.addNew(station);
-                changeStation(station, genreNum);
-            },
-            getSameGenre : function() {
-                var station = genreManagers[genreNum].getSameGenre();
-                playlistManager.addNew(station);
-                changeStation(station, genreNum);
-            },
-            getActiveGenre : function() {
-                return genreNum;
-            },
-            setActiveGenre : function(genreInfo) {
-                genreNum = genreInfo;
-            },
-            removeStationFromGenre : function(station, genreNum) {
-                // The genreManagers list might not be populated yet, so keep trying until it is
-                var removeStationFromGenreInterval = window.setInterval(doRemovalFromGenre, 200);
-                function doRemovalFromGenre() {
-                    if (genreManagers.length > 0) {
-                        clearInterval(removeStationFromGenreInterval);
-                        genreManagers[genreNum].removeStation(station);
-                    }
+
+        function _getDiffGenre() {
+            genreNum = (genreNum + 1) % genreManagers.length;
+            var station = genreManagers[genreNum].getSameGenre();
+            playlistManager.addNew(station);
+            changeStation(station, genreNum);
+        }
+        function _getSameGenre() {
+            var station = genreManagers[genreNum].getSameGenre();
+            playlistManager.addNew(station);
+            changeStation(station, genreNum);
+        }
+        function _getActiveGenre() {
+            return genreNum;
+        }
+        function _setActiveGenre(genreInfo) {
+            genreNum = genreInfo;
+        }
+        function _removeStationFromGenre(station, genreNum) {
+            // The genreManagers list might not be populated yet, so keep trying until it is
+            var removeStationFromGenreInterval = window.setInterval(doRemovalFromGenre, 200);
+            function doRemovalFromGenre() {
+                if (genreManagers.length > 0) {
+                    clearInterval(removeStationFromGenreInterval);
+                    genreManagers[genreNum].removeStation(station);
                 }
             }
-        };
-
-        function getGenreManager(stationsList) {
+        }
+        function _getGenreManager(stationsList) {
             var stations = stationsList;
             var stationNum = 0;
-            return {
-                getSameGenre : function () {
-                    stationNum = (stationNum + 1) % stations.length ;
-                    return stations[stationNum];
-                },
-                removeStation : function (station) {
-                    // The stations might not have been loaded yet, so keep trying until they are
-                    var removeStationInterval = window.setInterval(doRemoval, 200);
-                    function doRemoval() {
-                        if (stations.length > 0) {
-                            window.clearInterval(removeStationInterval);
-                            var stationIndex = stations.indexOf(station);
-                            if (stationIndex > -1) {
-                                stations.splice(stationIndex, 1);
-                            }
+
+            function _getSameGenre() {
+                stationNum = (stationNum + 1) % stations.length ;
+                return stations[stationNum];
+            }
+            function _removeStation(station) {
+                // The stations might not have been loaded yet, so keep trying until they are
+                var removeStationInterval = window.setInterval(doRemoval, 200);
+                function doRemoval() {
+                    if (stations.length > 0) {
+                        window.clearInterval(removeStationInterval);
+                        var stationIndex = stations.indexOf(station);
+                        if (stationIndex > -1) {
+                            stations.splice(stationIndex, 1);
                         }
                     }
                 }
-            };
+            }
+
+            return { getSameGenre : _getSameGenre, removeStation : _removeStation};
         }
+
+        return {
+            getDiffGenre : _getDiffGenre, getSameGenre : _getSameGenre,
+            getActiveGenre: _getActiveGenre, setActiveGenre : _setActiveGenre,
+            removeStationFromGenre: _removeStationFromGenre
+        };
     }());
 
 
@@ -143,18 +149,19 @@ $(function() {
         var pre = "http://";
         var mediaPost = '/;?icy=http';
         var sevenPost = '/7.html';
-        return {
-            setUrl : function (newUrl) {
-                url = newUrl;
-                window.history.replaceState(null, null, "#" + btoa(url));
-            },
-            getMediaUrl : function () {
-                return pre + url + mediaPost;
-            } ,
-            getSevenUrl : function () {
-                return  pre + url + sevenPost;
-            }
-        };
+
+        function _setUrl(newUrl) {
+            url = newUrl;
+            window.history.replaceState(null, null, "#" + btoa(url));
+        }
+        function _getMediaUrl() {
+            return pre + url + mediaPost;
+        }
+        function _getDataUrl() {
+            return  pre + url + sevenPost;
+        }
+
+        return { setUrl : _setUrl, getMediaUrl : _getMediaUrl, getDataUrl : _getDataUrl};
     }());
 
     // Warning to future nick, this is a strange data structure!
@@ -163,55 +170,57 @@ $(function() {
         var playlist = [];
         var index = -1;
         var end = -1;
-        return {
-            goBack : function () {
-                if (index === 0) {
-                    window.console.error("tried to go back too far in playlist");
-                    return playlist[end];
-                }
-                index -= 1;
-                if (index === 0) {
-                    buttons.back.prop('disabled', true);
-                }
-                stationsManager.setActiveGenre(playlist[index][1]);
-                changeStation(playlist[index][0], playlist[index][1]);
-            },
-            addNew : function (station) {
-                var genreInfo = stationsManager.getActiveGenre();
-                index += 1;
-                end = index;
-                playlist[index] = [station, genreInfo];
-                if (index > 0) {
-                    buttons.back.prop('disabled', false);
-                }
+
+        function _goBack() {
+            if (index === 0) {
+                window.console.error("tried to go back too far in playlist");
+                return playlist[end];
             }
-        };
+            index -= 1;
+            if (index === 0) {
+                buttons.back.prop('disabled', true);
+            }
+            stationsManager.setActiveGenre(playlist[index][1]);
+            changeStation(playlist[index][0], playlist[index][1]);
+        }
+        function _addNew(station) {
+            var genreInfo = stationsManager.getActiveGenre();
+            index += 1;
+            end = index;
+            playlist[index] = [station, genreInfo];
+            if (index > 0) {
+                buttons.back.prop('disabled', false);
+            }
+        }
+
+        return { goBack : _goBack, addNew : _addNew };
     }());
 
     var volumeManager = (function() {
         buttons.unmute.hide();
         var soundOnNow = false;
-        return {
-            soundOff : function() {
-                player[0].muted = true;
-                buttons.mute.hide();
-                buttons.unmute.show();
-                soundOnNow = false;
-            },
-            soundOn : function() {
-                player[0].muted = false;
-                buttons.mute.show();
-                buttons.unmute.hide();
-                soundOnNow = true;
-            },
-            soundToggle : function() {
-                if (soundOnNow) {
-                    volumeManager.soundOff();
-                } else {
-                    volumeManager.soundOn();
-                }
+
+        function _soundOff() {
+            player[0].muted = true;
+            buttons.mute.hide();
+            buttons.unmute.show();
+            soundOnNow = false;
+        }
+        function _soundOn() {
+            player[0].muted = false;
+            buttons.mute.show();
+            buttons.unmute.hide();
+            soundOnNow = true;
+        }
+        function _soundToggle() {
+            if (soundOnNow) {
+                _soundOff();
+            } else {
+                _soundOn();
             }
-        };
+        }
+
+        return { soundOff: _soundOff, soundOn : _soundOn, soundToggle: _soundToggle };
     }());
 
     var colorManager = (function() {
@@ -222,57 +231,60 @@ $(function() {
             'settingsPanel' : $("div#settingsPanel"),
             'stationInfo'   : $("div#stationInfo")
         };
-        return {
-            setColors : function(background) {
-                elems.body.animate({
-                   backgroundColor: background
-                }, 1000);
-            },
-            changeGenreColor : function(color) {
-                elems.body.animate({
-                   backgroundColor: "#ffffff"
-                }, 50);
-                genreColor = color;
-            },
-            setToGenreColor : function() {
-                colorManager.setColors(genreColor);
-            }
-        };
+
+        function _setColors(background) {
+            elems.body.animate({
+               backgroundColor: background
+            }, 1000);
+        }
+        function _changeGenreColor(color) {
+            elems.body.animate({
+               backgroundColor: "#ffffff"
+            }, 50);
+            genreColor = color;
+        }
+        function _setToGenreColor() {
+            _setColors(genreColor);
+        }
+
+        return { changeGenreColor : _changeGenreColor, setToGenreColor : _setToGenreColor};
     }());
 
     var keyUpManager = (function() {
         var singleRightPress = false;
         var timeOutInterval;
-        function clearRightPress() {
+
+        function _clearRightPress() {
             singleRightPress = false;
             stationsManager.getSameGenre();
         }
-        return {
-             handleKeyUp : function(event) {
-                if (event.keyCode === 32) {
-                    playerStateManager.toggle();
-                } else if (event.keyCode === 77) {
-                    volumeManager.soundToggle();
-                } else if (event.keyCode === 37) {
-                    buttons.back.click();
-                } else if (event.keyCode === 39) {
-                    if (singleRightPress) {
-                        stationsManager.getDiffGenre();
-                        singleRightPress = false;
-                        clearInterval(timeOutInterval);
-                    } else {
-                        singleRightPress = true;
-                        timeOutInterval = window.setTimeout(clearRightPress, 333);
-                    }
+        function _handleKeyUp(event) {
+            if (event.keyCode === 32) {
+                playerStateManager.toggle();
+            } else if (event.keyCode === 77) {
+                volumeManager.soundToggle();
+            } else if (event.keyCode === 37) {
+                buttons.back.click();
+            } else if (event.keyCode === 39) {
+                if (singleRightPress) {
+                    stationsManager.getDiffGenre();
+                    singleRightPress = false;
+                    clearInterval(timeOutInterval);
+                } else {
+                    singleRightPress = true;
+                    timeOutInterval = window.setTimeout(_clearRightPress, 333);
                 }
             }
-        };
+        }
+
+        return { handleKeyUp : _handleKeyUp};
     }());
 
     var songNameManager = (function () {
         var stationName = "";
         var duplicateSongCheck = false;
         var intervalId = -1;
+
         function _setName(data) {
             var re = /<[^<]*>/gi;
             data = data.replace(re, '');
@@ -293,16 +305,16 @@ $(function() {
             }
         }
         function _updateName(doDuplicateSongCheck) {
-            window.console.log("updating name");
             if (intervalId !== -1) {
                 clearInterval(intervalId);
             }
             if (doDuplicateSongCheck === true) {
                 duplicateSongCheck = doDuplicateSongCheck;
             }
-            var infoUrl = urlManager.getSevenUrl();
+            var infoUrl = urlManager.getDataUrl();
             $.get('/get-station-info/?stationUrl='+infoUrl,  _setName, 'html');
         }
+
         return { updateName : _updateName };
     }());
 
