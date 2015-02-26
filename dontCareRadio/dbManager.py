@@ -5,6 +5,9 @@ class Queries:
     def __init__(self):
         pass
 
+
+    # Our SQL queries
+
     insert_station = '''
         INSERT INTO station_info
         (url, active_listeners, max_listeners, peak_listeners, name, genre, ip_addr, is_up)

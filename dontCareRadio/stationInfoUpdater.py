@@ -19,6 +19,7 @@ def worker(id_url_list, connection):
             cur.execute(Queries.set_station_down, (id_url[0],))
         except requests.Timeout:
             print("timeout error   : " + url)
+            cur.execute(Queries.set_station_down, (id_url[0],))
         except Exception:
             print("unknown error   : " + url)
             cur.execute(Queries.set_station_down, (id_url[0],))

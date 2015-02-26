@@ -13,7 +13,6 @@ $(function() {
         "#bfd",
         "#dbb",
         "#dbf",
-        "#ddd",
         "#dfb",
         "#dff",
         "#fbd",
@@ -111,6 +110,9 @@ $(function() {
                 }
             }
         }
+        function _removeCurrent() {
+            genreManagers[genreNum].removeCurrentStation();
+        }
         function _getGenreManager(stationsList) {
             var stations = stationsList;
             var stationNum = 0;
@@ -132,14 +134,20 @@ $(function() {
                     }
                 }
             }
+            function _removeCurrentStation() {
+                stations.splice(stationNum, 1);
+            }
 
-            return { getSameGenre : _getSameGenre, removeStation : _removeStation};
+            return {
+                getSameGenre : _getSameGenre, removeStation : _removeStation,
+                removeCurrentStation : _removeCurrentStation
+            };
         }
 
         return {
             getDiffGenre : _getDiffGenre, getSameGenre : _getSameGenre,
             getActiveGenre: _getActiveGenre, setActiveGenre : _setActiveGenre,
-            removeStationFromGenre: _removeStationFromGenre
+            removeStationFromGenre: _removeStationFromGenre, removeCurrent : _removeCurrent
         };
     }());
 
@@ -160,8 +168,23 @@ $(function() {
         function _getDataUrl() {
             return  pre + url + sevenPost;
         }
+        function _restoreFromHash() {
+            // If the page is loaded with a #base64StringHere then play that station
+            buttons.bigPlay.click();
+            url = atob(window.location.hash.substring(1));
+            playlistManager.addNew(url);
+            $.get('/get-genre-by-ip/', {'ip': url}, function(data) {
+                var genreNum = data['genreNum'];
+                stationsManager.setActiveGenre(genreNum);
+                changeStation(url, genreNum);
+                stationsManager.removeStationFromGenre(url, genreNum);
+            });
+        }
 
-        return { setUrl : _setUrl, getMediaUrl : _getMediaUrl, getDataUrl : _getDataUrl};
+        return {
+            setUrl : _setUrl, getMediaUrl : _getMediaUrl,
+            getDataUrl : _getDataUrl, restoreFromHash : _restoreFromHash
+        };
     }());
 
     // Warning to future nick, this is a strange data structure!
@@ -192,8 +215,12 @@ $(function() {
                 buttons.back.prop('disabled', false);
             }
         }
+        function _popCurrent() {
+            playlist.pop();
+            index -= 1;
+        }
 
-        return { goBack : _goBack, addNew : _addNew };
+        return { goBack : _goBack, addNew : _addNew, popCurrent : _popCurrent};
     }());
 
     var volumeManager = (function() {
@@ -239,7 +266,7 @@ $(function() {
         }
         function _changeGenreColor(color) {
             elems.body.animate({
-               backgroundColor: "#ffffff"
+               backgroundColor: "#ddd"
             }, 50);
             genreColor = color;
         }
@@ -281,7 +308,7 @@ $(function() {
     }());
 
     var songNameManager = (function () {
-        var stationName = "";
+        var songName = "-1";
         var duplicateSongCheck = false;
         var intervalId = -1;
 
@@ -295,13 +322,15 @@ $(function() {
             data = data.slice(x + 1);
             // Check to see if this new station is playing the same song as the last one,
             //  if so, it's probably a duplicate station so go to the next one
-            if (data === stationName && duplicateSongCheck) {
+            if (data === songName && duplicateSongCheck) {
+                playlistManager.popCurrent();
+                stationsManager.removeCurrent();
                 stationsManager.getSameGenre();
             } else {
                 $('span#currentSong').text(data);
-                stationName = data;
+                songName = data;
                 duplicateSongCheck = false;
-                intervalId = setInterval(_updateName, 5000);
+                intervalId = setInterval(_updateName, 10000);
             }
         }
         function _updateName(doDuplicateSongCheck) {
@@ -341,17 +370,7 @@ $(function() {
      * Setup - Set everything in motion
      */
     if (window.location.hash.length !== 0) {
-        // If the page is loaded with a #base64StringHere then play that station
-        buttons.bigPlay.click();
-        var url = atob(window.location.hash.substring(1));
-        playlistManager.addNew(url);
-        $.get('/get-genre-by-ip/', {'ip': url}, function(data) {
-            var genreNum = data['genreNum'];
-            stationsManager.setActiveGenre(genreNum);
-            changeStation(url, genreNum);
-            stationsManager.removeStationFromGenre(url, genreNum);
-        });
-
+        urlManager.restoreFromHash();
     } else {
         setTimeout(stationsManager.getSameGenre, 1000);
         volumeManager.soundOff();
