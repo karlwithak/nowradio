@@ -10,7 +10,7 @@ def ip_from_url(url):
     """
     url = url[0:url.index("/", 8) + 1]
     url = url.replace("http://", "")[:-1]
-    port = ""
+    port = ":80"
     if ":" in url:
         port = url[url.index(":"):]
         url = url[:url.index(":")]

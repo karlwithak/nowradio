@@ -78,9 +78,9 @@ $(function() {
         var genreManagers = [];
         var genreNum = 0;
         $.get('/get-initial-stations/', function(data) {
-            for (var i = 0; i < data['stations'].length; i++) {
-                genreManagers.push(_getGenreManager(data['stations'][i]));
-            }
+            data['stations'].forEach(function (stationList) {
+                genreManagers.push(_getGenreManager(stationList));
+            });
         });
 
         function _getDiffGenre() {
@@ -160,7 +160,7 @@ $(function() {
 
         function _setUrl(newUrl) {
             url = newUrl;
-            window.history.replaceState(null, null, "#" + btoa(url));
+            window.history.replaceState(null, null, "#" + _ipToHashCode(url));
         }
         function _getMediaUrl() {
             return pre + url + mediaPost;
@@ -171,7 +171,7 @@ $(function() {
         function _restoreFromHash() {
             // If the page is loaded with a #base64StringHere then play that station
             buttons.bigPlay.click();
-            url = atob(window.location.hash.substring(1));
+            url = hashCodeToIp(window.location.hash.substring(1));
             playlistManager.addNew(url);
             $.get('/get-genre-by-ip/', {'ip': url}, function(data) {
                 var genreNum = data['genreNum'];
@@ -179,6 +179,31 @@ $(function() {
                 changeStation(url, genreNum);
                 stationsManager.removeStationFromGenre(url, genreNum);
             });
+        }
+        function _ipToHashCode(ip) {
+            window.console.log(ip);
+            var parts = ip.split(":");
+            var port = (parts.length === 1 ? "80" : parts[1]);
+            var hashcode = parts[0].split(".").reduce(function (accumulator, octetAsString) {
+                if (parseInt(octetAsString) < 16) {
+                    accumulator += "0";
+                }
+                return accumulator + parseInt(octetAsString).toString(16);
+            }, "");
+            hashcode += parseInt(port).toString(16);
+            window.console.log(hashcode);
+            return hashcode;
+        }
+        function hashCodeToIp(hashcode) {
+            window.console.log(hashcode);
+            var ip = "";
+            for (var i = 0; i < 8; i += 2) {
+                ip += parseInt(hashcode.substr(i, 2), 16).toString().trim() + ".";
+            }
+            ip = ip.slice(0, -1);
+            ip += ":" + parseInt(hashcode.substr(8, 12), 16).toString();
+            window.console.log(ip);
+            return ip;
         }
 
         return {
@@ -377,4 +402,3 @@ $(function() {
     }
     window.onkeyup = keyUpManager.handleKeyUp;
 });
-

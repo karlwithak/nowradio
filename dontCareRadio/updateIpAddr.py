@@ -12,7 +12,9 @@ def worker(id_url_list, conn):
         except socket.gaierror:
             print("socket error on " + id_url[1])
         else:
-            cur.execute(Queries.set_ip_for_id, [ip, id_url[0]])
+            cur.execute(Queries.check_for_station, (ip,))
+            if cur.rowcount != 1:
+                cur.execute(Queries.set_ip_for_id, [ip, id_url[0]])
     cur.close()
 
 
