@@ -35,10 +35,11 @@ body {
 
 .verticalCenter {
     min-height: 100%;
-    min-height: 90vh;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     width: 100%;
+    margin-top: -50px;
 }
 
 #stationInfo {
@@ -74,7 +75,6 @@ body {
 }
 
 .topRightPanel {
-    margin-top: -50px;
     padding: 0 10px;
     border-bottom: solid #000000 0.5em;
     border-left:  solid #000000 0.5em;
@@ -97,5 +97,4 @@ body {
 #playerContainer {
     display: inline-block;
     padding: 10px 15px 0;
-    margin-bottom: 10px;
 }

@@ -1,5 +1,6 @@
 /*global $:false */
 /*jshint -W069 */
+/*jshint -W116 */
 
 $(function() {
     "use strict";
@@ -20,6 +21,12 @@ $(function() {
         "#fdf",
         "#ffd"
     ];
+    var stationChangeType = {
+        'nextStation' : 0,
+        'nextGenre'   : 1,
+        'goBack'      : 2,
+        'restoreHash' : 3
+    };
     var buttons = {
         'bigPlay': $('a#bigPlayButton'),
         'play'   : $('button#playButton'),
@@ -35,12 +42,38 @@ $(function() {
     /**
      * Functions - Random functions that should probably be in one of the closures...
      */
-    function changeStation(src, genreNum) {
-        colorManager.changeGenreColor(colors[genreNum]);
+    function changeStation(changeType) {
+        var genreNum, src;
+        if (changeType === stationChangeType.nextStation) {
+            genreNum = stationsManager.getActiveGenre();
+            src = stationsManager.getNextStation();
+            playlistManager.addNew(src, genreNum);
+        } else if (changeType === stationChangeType.nextGenre) {
+            genreNum = stationsManager.getNextGenre();
+            src = stationsManager.getNextStation();
+            playlistManager.addNew(src, genreNum);
+        } else if (changeType === stationChangeType.goBack) {
+            var result = playlistManager.goBack();
+            if (result === null) return;
+            genreNum =  result[1];
+            src = result[0];
+            stationsManager.setActiveGenre(genreNum);
+        } else if (changeType === stationChangeType.restoreHash) {
+            src = urlManager.getBareUrl();
+            genreNum = urlManager.getGenreFromHash();
+            stationsManager.setActiveGenre(genreNum);
+            stationsManager.removeStationFromGenre(src, genreNum);
+            playlistManager.addNew(src, genreNum);
+        }
         urlManager.setUrl(src);
         player.attr('src', urlManager.getMediaUrl());
-        playerStateManager.play();
+        colorManager.setToNeutral();
         songNameManager.updateName(true);
+    }
+
+    function readyToPlay() {
+        colorManager.setToGenreColor();
+        playerStateManager.play();
     }
 
 
@@ -70,8 +103,11 @@ $(function() {
                 _play();
             }
         }
-
-        return { stop : _stop, play : _play, toggle : _toggle };
+        return {
+            stop   : _stop,
+            play   : _play,
+            toggle : _toggle
+        };
     }());
 
     var stationsManager = (function() {
@@ -81,18 +117,17 @@ $(function() {
             data['stations'].forEach(function (stationList) {
                 genreManagers.push(_getGenreManager(stationList));
             });
+            if (urlManager.noUrlSet()) {
+                changeStation(stationChangeType.nextStation);
+            }
         });
 
-        function _getDiffGenre() {
+        function _getNextGenre() {
             genreNum = (genreNum + 1) % genreManagers.length;
-            var station = genreManagers[genreNum].getSameGenre();
-            playlistManager.addNew(station);
-            changeStation(station, genreNum);
+            return genreNum;
         }
-        function _getSameGenre() {
-            var station = genreManagers[genreNum].getSameGenre();
-            playlistManager.addNew(station);
-            changeStation(station, genreNum);
+        function _getNextStation() {
+            return genreManagers[genreNum].getNextStation();
         }
         function _getActiveGenre() {
             return genreNum;
@@ -117,8 +152,8 @@ $(function() {
             var stations = stationsList;
             var stationNum = 0;
 
-            function _getSameGenre() {
-                stationNum = (stationNum + 1) % stations.length ;
+            function _getNextStation() {
+                stationNum = (stationNum + 1) % stations.length;
                 return stations[stationNum];
             }
             function _removeStation(station) {
@@ -137,23 +172,26 @@ $(function() {
             function _removeCurrentStation() {
                 stations.splice(stationNum, 1);
             }
-
             return {
-                getSameGenre : _getSameGenre, removeStation : _removeStation,
+                getNextStation       : _getNextStation,
+                removeStation        : _removeStation,
                 removeCurrentStation : _removeCurrentStation
             };
         }
-
         return {
-            getDiffGenre : _getDiffGenre, getSameGenre : _getSameGenre,
-            getActiveGenre: _getActiveGenre, setActiveGenre : _setActiveGenre,
-            removeStationFromGenre: _removeStationFromGenre, removeCurrent : _removeCurrent
+            getNextGenre           : _getNextGenre,
+            getNextStation         : _getNextStation,
+            getActiveGenre         : _getActiveGenre,
+            setActiveGenre         : _setActiveGenre,
+            removeStationFromGenre : _removeStationFromGenre,
+            removeCurrent          : _removeCurrent
         };
     }());
 
 
     var urlManager = (function() {
         var url = '';
+        var genreFromHash;
         var pre = "http://";
         var mediaPost = '/;?icy=http';
         var sevenPost = '/7.html';
@@ -168,16 +206,22 @@ $(function() {
         function _getDataUrl() {
             return  pre + url + sevenPost;
         }
+        function _getBareUrl() {
+            return url;
+        }
+        function _getGenreFromHash() {
+            return genreFromHash;
+        }
+        function _noUrlSet() {
+            return url === '';
+        }
         function _restoreFromHash() {
             // If the page is loaded with a #base64StringHere then play that station
             buttons.bigPlay.click();
             url = hashCodeToIp(window.location.hash.substring(1));
-            playlistManager.addNew(url);
             $.get('/get-genre-by-ip/', {'ip': url}, function(data) {
-                var genreNum = data['genreNum'];
-                stationsManager.setActiveGenre(genreNum);
-                changeStation(url, genreNum);
-                stationsManager.removeStationFromGenre(url, genreNum);
+                genreFromHash = data['genreNum'];
+                changeStation(stationChangeType.restoreHash);
             });
         }
         function _ipToHashCode(ip) {
@@ -205,10 +249,14 @@ $(function() {
             window.console.log(ip);
             return ip;
         }
-
         return {
-            setUrl : _setUrl, getMediaUrl : _getMediaUrl,
-            getDataUrl : _getDataUrl, restoreFromHash : _restoreFromHash
+            setUrl           : _setUrl,
+            getMediaUrl      : _getMediaUrl,
+            noUrlSet         : _noUrlSet,
+            getDataUrl       : _getDataUrl,
+            restoreFromHash  : _restoreFromHash,
+            getBareUrl       : _getBareUrl,
+            getGenreFromHash : _getGenreFromHash
         };
     }());
 
@@ -221,21 +269,18 @@ $(function() {
 
         function _goBack() {
             if (index === 0) {
-                window.console.error("tried to go back too far in playlist");
-                return playlist[end];
+                return null;
             }
             index -= 1;
             if (index === 0) {
                 buttons.back.prop('disabled', true);
             }
-            stationsManager.setActiveGenre(playlist[index][1]);
-            changeStation(playlist[index][0], playlist[index][1]);
+            return playlist[index];
         }
-        function _addNew(station) {
-            var genreInfo = stationsManager.getActiveGenre();
+        function _addNew(station, genreNum) {
             index += 1;
             end = index;
-            playlist[index] = [station, genreInfo];
+            playlist[index] = [station, genreNum];
             if (index > 0) {
                 buttons.back.prop('disabled', false);
             }
@@ -244,8 +289,11 @@ $(function() {
             playlist.pop();
             index -= 1;
         }
-
-        return { goBack : _goBack, addNew : _addNew, popCurrent : _popCurrent};
+        return {
+            goBack     : _goBack,
+            addNew     : _addNew,
+            popCurrent : _popCurrent
+        };
     }());
 
     var volumeManager = (function() {
@@ -272,43 +320,39 @@ $(function() {
             }
         }
 
-        return { soundOff: _soundOff, soundOn : _soundOn, soundToggle: _soundToggle };
+        return {
+            soundOff    : _soundOff,
+            soundOn     : _soundOn,
+            soundToggle : _soundToggle
+        };
     }());
 
     var colorManager = (function() {
-        var genreColor = "white";
-        var elems = {
-            'body'          : $("body"),
-            'infoPanel'     : $("div#infoPanel"),
-            'settingsPanel' : $("div#settingsPanel"),
-            'stationInfo'   : $("div#stationInfo")
-        };
-
-        function _setColors(background) {
-            elems.body.animate({
-               backgroundColor: background
-            }, 1000);
+        function _setToGenreColor() {
+            var genreColor = colors[stationsManager.getActiveGenre()];
+            $("body").animate({
+               backgroundColor: genreColor
+            }, 666);
         }
-        function _changeGenreColor(color) {
-            elems.body.animate({
+        function _setToNeutral() {
+           $("body").animate({
                backgroundColor: "#ddd"
             }, 50);
-            genreColor = color;
         }
-        function _setToGenreColor() {
-            _setColors(genreColor);
-        }
-
-        return { changeGenreColor : _changeGenreColor, setToGenreColor : _setToGenreColor};
+        return {
+            setToNeutral    : _setToNeutral,
+            setToGenreColor : _setToGenreColor
+        };
     }());
 
     var keyUpManager = (function() {
         var singleRightPress = false;
         var timeOutInterval;
+        window.onkeyup = _handleKeyUp;
 
         function _clearRightPress() {
             singleRightPress = false;
-            stationsManager.getSameGenre();
+            changeStation(stationChangeType.nextStation);
         }
         function _handleKeyUp(event) {
             if (event.keyCode === 32) {
@@ -316,10 +360,10 @@ $(function() {
             } else if (event.keyCode === 77) {
                 volumeManager.soundToggle();
             } else if (event.keyCode === 37) {
-                buttons.back.click();
+                changeStation(stationChangeType.goBack);
             } else if (event.keyCode === 39) {
                 if (singleRightPress) {
-                    stationsManager.getDiffGenre();
+                    changeStation(stationChangeType.nextGenre);
                     singleRightPress = false;
                     clearInterval(timeOutInterval);
                 } else {
@@ -328,8 +372,6 @@ $(function() {
                 }
             }
         }
-
-        return { handleKeyUp : _handleKeyUp};
     }());
 
     var songNameManager = (function () {
@@ -350,7 +392,7 @@ $(function() {
             if (data === songName && duplicateSongCheck) {
                 playlistManager.popCurrent();
                 stationsManager.removeCurrent();
-                stationsManager.getSameGenre();
+                changeStation(stationChangeType.nextStation);
             } else {
                 $('span#currentSong').text(data);
                 songName = data;
@@ -368,8 +410,9 @@ $(function() {
             var infoUrl = urlManager.getDataUrl();
             $.get('/get-station-info/?stationUrl='+infoUrl,  _setName, 'html');
         }
-
-        return { updateName : _updateName };
+        return {
+            updateName : _updateName
+        };
     }());
 
 
@@ -378,9 +421,15 @@ $(function() {
      */
     buttons.stop.click(playerStateManager.stop);
     buttons.play.click(playerStateManager.play);
-    buttons.next1.click(stationsManager.getSameGenre);
-    buttons.next3.click(stationsManager.getDiffGenre);
-    buttons.back.click(playlistManager.goBack);
+    buttons.next1.click(function () {
+        changeStation(stationChangeType.nextStation);
+    });
+    buttons.next3.click(function () {
+        changeStation(stationChangeType.nextGenre);
+    });
+    buttons.back.click(function () {
+        changeStation(stationChangeType.goBack);
+    });
     buttons.mute.click(volumeManager.soundOff);
     buttons.unmute.click(volumeManager.soundOn);
     buttons.bigPlay.click(function () {
@@ -388,7 +437,10 @@ $(function() {
         $('div#mainContainer').show();
         volumeManager.soundOn();
     });
-    player.bind("canplay", colorManager.setToGenreColor);
+    player.bind("canplay", readyToPlay);
+    player.bind("error", function (e) {
+        window.console.error(e);
+    });
 
 
     /**
@@ -397,8 +449,6 @@ $(function() {
     if (window.location.hash.length !== 0) {
         urlManager.restoreFromHash();
     } else {
-        setTimeout(stationsManager.getSameGenre, 1000);
         volumeManager.soundOff();
     }
-    window.onkeyup = keyUpManager.handleKeyUp;
 });
