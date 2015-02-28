@@ -23,47 +23,58 @@ $(function() {
         'prevStation' : $('button#prevStationButton'),
         'prevGenre'   : $('button#prevGenreButton'),
         'mute'        : $('span#muteButton'),
-        'unmute'      : $('span#unmuteButton')};
-    var player = $('audio#player');
+        'unmute'      : $('span#unmuteButton')
+    };
+    var elems = {
+        'body'             : $('body'),
+        'player'           : $('audio#player'),
+        'spectrum'         : $('img#spectrum'),
+        'mainContainer'    : $('div#mainContainer'),
+        'landingContainer' : $('div#landingContainer'),
+        'currentSongText'  : $('span#currentSong'),
+        'stationInfo'      : $('div#stationInfo')
+    };
+    var changeStationTimeout;
 
     /**
      * Functions - Random functions that should probably be in one of the closures...
      */
     function changeStation(changeType) {
         var genreNum, src;
-        if (changeType === stationChangeType.nextStation) {
-            genreNum = stationsManager.getActiveGenre();
+        if (changeType === stationChangeType.nextStation || changeType === undefined) {
             src = stationsManager.getNextStation();
         } else if (changeType === stationChangeType.nextGenre) {
-            genreNum = stationsManager.getNextGenre();
+            stationsManager.getNextGenre();
             src = stationsManager.getNextStation();
         } else if (changeType === stationChangeType.prevStation) {
-            genreNum = stationsManager.getActiveGenre();
             src = stationsManager.getPrevStation();
         } else if (changeType === stationChangeType.prevGenre) {
-            genreNum = stationsManager.getPrevGenre();
+            stationsManager.getPrevGenre();
             src = stationsManager.getNextStation();
         } else if (changeType === stationChangeType.restoreHash) {
             src = urlManager.getBareUrl();
             genreNum = urlManager.getGenreFromHash();
             stationsManager.setActiveGenre(genreNum);
-            stationsManager.removeStationFromGenre(src, genreNum);
+            stationsManager.removeStationFromGenre(src, genreNum, true);
         }
         urlManager.setUrl(src);
-        player.attr('src', urlManager.getMediaUrl());
+        elems.player.attr('src', urlManager.getMediaUrl());
         colorManager.setToNeutral();
         songNameManager.updateName(true);
         stationNameAnimation(false);
+        clearTimeout(changeStationTimeout);
+        changeStationTimeout = setTimeout(changeStation, 10000);
     }
 
     function readyToPlay() {
+        clearTimeout(changeStationTimeout);
         colorManager.setToGenreColor();
         playerStateManager.play();
         stationNameAnimation(true);
     }
 
     function stationNameAnimation(open) {
-        var stationInfoDiv = $('div#stationInfo');
+        var stationInfoDiv = elems.stationInfo;
         if (open) {
             stationInfoDiv.stop(true).animate({
                 'max-height': 200,
@@ -92,14 +103,14 @@ $(function() {
         function _stop() {
             buttons.stop.hide();
             buttons.play.show();
-            player[0].pause();
+            elems.player[0].pause();
             playingNow = false;
             stationNameAnimation(false);
         }
         function _play() {
             buttons.play.hide();
             buttons.stop.show();
-            player[0].play();
+            elems.player[0].play();
             playingNow = true;
             stationNameAnimation(true);
         }
@@ -120,7 +131,7 @@ $(function() {
 
     var stationsManager = (function() {
         var genreManagers = [];
-        var genreNum = -1;
+        var genreNum = 0;
         $.get('/get-initial-stations/', function(data) {
             data['stations'].forEach(function (stationList) {
                 genreManagers.push(_getGenreManager(stationList));
@@ -152,13 +163,16 @@ $(function() {
             genreNum = genreInfo;
             return true;
         }
-        function _removeStationFromGenre(station, genreNum) {
+        function _removeStationFromGenre(station, genreNum, addToEnd) {
             // The genreManagers list might not be populated yet, so keep trying until it is
             var removeStationFromGenreInterval = window.setInterval(doRemovalFromGenre, 200);
             function doRemovalFromGenre() {
                 if (genreManagers.length > 0) {
                     clearInterval(removeStationFromGenreInterval);
                     genreManagers[genreNum].removeStation(station);
+                    if (addToEnd) {
+                        genreManagers[genreNum].appendStation(station);
+                    }
                 }
             }
         }
@@ -170,7 +184,7 @@ $(function() {
         }
         function _getGenreManager(stationsList) {
             var stations = stationsList;
-            var stationNum = 0;
+            var stationNum = -1;
 
             function _getNextStation() {
                 stationNum = (stationNum + 1) % stations.length;
@@ -193,6 +207,9 @@ $(function() {
                     }
                 }
             }
+            function _appendStation(station) {
+                stations.push(station);
+            }
             function _removeCurrentStation() {
                 stations.splice(stationNum, 1);
             }
@@ -200,7 +217,8 @@ $(function() {
                 getNextStation       : _getNextStation,
                 removeStation        : _removeStation,
                 removeCurrentStation : _removeCurrentStation,
-                getPrevStation       : _getPrevStation
+                getPrevStation       : _getPrevStation,
+                appendStation        : _appendStation
             };
         }
         return {
@@ -289,13 +307,13 @@ $(function() {
         var soundOnNow = false;
 
         function _soundOff() {
-            player[0].muted = true;
+            elems.player[0].muted = true;
             buttons.mute.hide();
             buttons.unmute.show();
             soundOnNow = false;
         }
         function _soundOn() {
-            player[0].muted = false;
+            elems.player[0].muted = false;
             buttons.mute.show();
             buttons.unmute.hide();
             soundOnNow = true;
@@ -320,13 +338,13 @@ $(function() {
             var genreNum = stationsManager.getActiveGenre();
             var totalGenres = stationsManager.getGenreCount();
             genreNum = (genreNum * 360) / totalGenres;
-            var genreColor = window.tinycolor("hsv(" + genreNum + ", 26%, 99%)");
-            $('body').animate({
+            var genreColor = window.tinycolor('hsv(' + genreNum + ', 26%, 99%)');
+            elems.body.animate({
                backgroundColor: genreColor.toHexString()
             }, 666);
         }
         function _setToNeutral() {
-           $('body').animate({
+           elems.body.animate({
                backgroundColor: '#aaa'
             }, 50);
         }
@@ -339,13 +357,13 @@ $(function() {
     var keyUpManager = (function() {
         var singleRightPress = false;
         var singleLeftPress = false;
-        var leftInterval;
-        var rightInterval;
+        var leftTimeout;
+        var rightTimeout;
         window.onkeyup = _handleKeyUp;
 
-        function _clearIntervals() {
-            clearInterval(leftInterval);
-            clearInterval(rightInterval);
+        function _clearTimeouts() {
+            clearTimeout(leftTimeout);
+            clearTimeout(rightTimeout);
             if (singleLeftPress) {
                 changeStation(stationChangeType.prevStation);
             } else if (singleRightPress) {
@@ -363,23 +381,23 @@ $(function() {
                 if (singleLeftPress) {
                     changeStation(stationChangeType.prevGenre);
                     singleLeftPress = false;
-                    _clearIntervals();
+                    _clearTimeouts();
                 } else {
-                    leftInterval = true;
-                    singleLeftPress = window.setTimeout(_clearIntervals, 333);
+                    leftTimeout = true;
+                    singleLeftPress = window.setTimeout(_clearTimeouts, 333);
                 }
             } else if (event.keyCode === 39) {
                 if (singleRightPress) {
                     changeStation(stationChangeType.nextGenre);
                     singleRightPress = false;
-                    _clearIntervals();
+                    _clearTimeouts();
                 } else {
-                    rightInterval = true;
-                    singleRightPress = window.setTimeout(_clearIntervals, 333);
+                    rightTimeout = true;
+                    singleRightPress = window.setTimeout(_clearTimeouts, 333);
                 }
             } else {
-                clearInterval(leftInterval);
-                clearInterval(rightInterval);
+                clearTimeout(leftTimeout);
+                clearTimeout(rightTimeout);
             }
         }
     }());
@@ -406,7 +424,7 @@ $(function() {
                 stationsManager.removeCurrent();
                 changeStation(stationChangeType.nextStation);
             } else {
-                $('span#currentSong').text(newName);
+                elems.currentSongText.text(newName);
                 songName = newName;
                 duplicateSongCheck = false;
                 clearInterval(intervalId);
@@ -446,12 +464,12 @@ $(function() {
     buttons.mute.click(volumeManager.soundOff);
     buttons.unmute.click(volumeManager.soundOn);
     buttons.bigPlay.click(function () {
-        $('div#landingContainer').hide();
-        $('div#mainContainer').show();
+        elems.landingContainer.hide();
+        elems.mainContainer.show();
         volumeManager.soundOn();
     });
-    player.bind('canplay', readyToPlay);
-    player.bind('error', function (e) {
+    elems.player.bind('canplay', readyToPlay);
+    elems.player.bind('error', function (e) {
         window.console.error(e);
     });
 
@@ -465,8 +483,8 @@ $(function() {
         volumeManager.soundOff();
     }
 
-    $("img#spectrum").click(function (e) {
-        var width = $("img#spectrum").width();
+    elems.spectrum.click(function (e) {
+        var width = elems.spectrum.width();
         var genreCount = stationsManager.getGenreCount();
         var genreNum = Math.round((e.pageX/width) * genreCount);
         if (stationsManager.setActiveGenre(genreNum)) {
