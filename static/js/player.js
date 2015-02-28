@@ -80,24 +80,21 @@ $(function() {
 
     function stationNameAnimation(open) {
         var stationInfoDiv = $('div#stationInfo');
-        var currentSongSpan = $('span#infoWrapper');
         if (open) {
-            var height = currentSongSpan.height() + 50;
-            stationInfoDiv.animate({
-                height: height,
+            stationInfoDiv.stop(true).animate({
+                'max-height': 200,
                 'padding-top': "15px",
                 'padding-bottom': "15px"
-            }, 333, null, function () {
+            }, 333, 'swing', function () {
                 stationInfoDiv.children().css('visibility','visible');
-                stationInfoDiv.css('height','');
             });
         } else {
             stationInfoDiv.children().css('visibility','hidden');
-            stationInfoDiv.animate({
-                height: 0,
+            stationInfoDiv.stop(true).animate({
+                'max-height': 0,
                 'padding-top': 0,
                 'padding-bottom': 0
-            }, 333);
+            }, 333, 'swing');
         }
     }
 
