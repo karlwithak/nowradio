@@ -3,40 +3,27 @@
 /*jshint -W116 */
 
 $(function() {
-    "use strict";
+    'use strict';
     /**
      * Global Variables
      */
-    var colors = [
-        "#bbd",
-        "#bdb",
-        "#bdf",
-        "#bfd",
-        "#dbb",
-        "#dbf",
-        "#dfb",
-        "#dff",
-        "#fbd",
-        "#fdb",
-        "#fdf",
-        "#ffd"
-    ];
     var stationChangeType = {
         'nextStation' : 0,
         'nextGenre'   : 1,
-        'goBack'      : 2,
-        'restoreHash' : 3
+        'prevStation' : 2,
+        'prevGenre'   : 3,
+        'restoreHash' : 4
     };
     var buttons = {
-        'bigPlay': $('a#bigPlayButton'),
-        'play'   : $('button#playButton'),
-        'stop'   : $('button#stopButton'),
-        'next1'  : $('button#nextButton1'),
-        'next2'  : $('button#nextButton2'),
-        'next3'  : $('button#nextButton3'),
-        'back'   : $('button#backButton'),
-        'mute'   : $('span#muteButton'),
-        'unmute' : $('span#unmuteButton')};
+        'bigPlay'     : $('a#bigPlayButton'),
+        'play'        : $('button#playButton'),
+        'stop'        : $('button#stopButton'),
+        'nextStation' : $('button#nextStationButton'),
+        'nextGenre'   : $('button#nextGenreButton'),
+        'prevStation' : $('button#prevStationButton'),
+        'prevGenre'   : $('button#prevGenreButton'),
+        'mute'        : $('span#muteButton'),
+        'unmute'      : $('span#unmuteButton')};
     var player = $('audio#player');
 
     /**
@@ -47,23 +34,20 @@ $(function() {
         if (changeType === stationChangeType.nextStation) {
             genreNum = stationsManager.getActiveGenre();
             src = stationsManager.getNextStation();
-            playlistManager.addNew(src, genreNum);
         } else if (changeType === stationChangeType.nextGenre) {
             genreNum = stationsManager.getNextGenre();
             src = stationsManager.getNextStation();
-            playlistManager.addNew(src, genreNum);
-        } else if (changeType === stationChangeType.goBack) {
-            var result = playlistManager.goBack();
-            if (result === null) return;
-            genreNum =  result[1];
-            src = result[0];
-            stationsManager.setActiveGenre(genreNum);
+        } else if (changeType === stationChangeType.prevStation) {
+            genreNum = stationsManager.getActiveGenre();
+            src = stationsManager.getPrevStation();
+        } else if (changeType === stationChangeType.prevGenre) {
+            genreNum = stationsManager.getPrevGenre();
+            src = stationsManager.getNextStation();
         } else if (changeType === stationChangeType.restoreHash) {
             src = urlManager.getBareUrl();
             genreNum = urlManager.getGenreFromHash();
             stationsManager.setActiveGenre(genreNum);
             stationsManager.removeStationFromGenre(src, genreNum);
-            playlistManager.addNew(src, genreNum);
         }
         urlManager.setUrl(src);
         player.attr('src', urlManager.getMediaUrl());
@@ -83,8 +67,8 @@ $(function() {
         if (open) {
             stationInfoDiv.stop(true).animate({
                 'max-height': 200,
-                'padding-top': "15px",
-                'padding-bottom': "15px"
+                'padding-top': '15px',
+                'padding-bottom': '15px'
             }, 333, 'swing', function () {
                 stationInfoDiv.children().css('visibility','visible');
             });
@@ -136,7 +120,7 @@ $(function() {
 
     var stationsManager = (function() {
         var genreManagers = [];
-        var genreNum = 0;
+        var genreNum = -1;
         $.get('/get-initial-stations/', function(data) {
             data['stations'].forEach(function (stationList) {
                 genreManagers.push(_getGenreManager(stationList));
@@ -150,14 +134,23 @@ $(function() {
             genreNum = (genreNum + 1) % genreManagers.length;
             return genreNum;
         }
+        function _getPrevGenre() {
+            genreNum = (genreNum + genreManagers.length - 1) % genreManagers.length;
+            return genreNum;
+        }
         function _getNextStation() {
             return genreManagers[genreNum].getNextStation();
+        }
+        function _getPrevStation() {
+            return genreManagers[genreNum].getPrevStation();
         }
         function _getActiveGenre() {
             return genreNum;
         }
         function _setActiveGenre(genreInfo) {
+            if (genreNum === genreInfo) return false;
             genreNum = genreInfo;
+            return true;
         }
         function _removeStationFromGenre(station, genreNum) {
             // The genreManagers list might not be populated yet, so keep trying until it is
@@ -172,12 +165,19 @@ $(function() {
         function _removeCurrent() {
             genreManagers[genreNum].removeCurrentStation();
         }
+        function _getGenreCount() {
+            return genreManagers.length;
+        }
         function _getGenreManager(stationsList) {
             var stations = stationsList;
             var stationNum = 0;
 
             function _getNextStation() {
                 stationNum = (stationNum + 1) % stations.length;
+                return stations[stationNum];
+            }
+            function _getPrevStation() {
+                stationNum = (stationNum + stations.length - 1) % stations.length;
                 return stations[stationNum];
             }
             function _removeStation(station) {
@@ -199,7 +199,8 @@ $(function() {
             return {
                 getNextStation       : _getNextStation,
                 removeStation        : _removeStation,
-                removeCurrentStation : _removeCurrentStation
+                removeCurrentStation : _removeCurrentStation,
+                getPrevStation       : _getPrevStation
             };
         }
         return {
@@ -208,7 +209,10 @@ $(function() {
             getActiveGenre         : _getActiveGenre,
             setActiveGenre         : _setActiveGenre,
             removeStationFromGenre : _removeStationFromGenre,
-            removeCurrent          : _removeCurrent
+            removeCurrent          : _removeCurrent,
+            getPrevStation         : _getPrevStation,
+            getPrevGenre           : _getPrevGenre,
+            getGenreCount          : _getGenreCount
         };
     }());
 
@@ -216,13 +220,13 @@ $(function() {
     var urlManager = (function() {
         var url = '';
         var genreFromHash;
-        var pre = "http://";
+        var pre = 'http://';
         var mediaPost = '/;?icy=http';
         var sevenPost = '/7.html';
 
         function _setUrl(newUrl) {
             url = newUrl;
-            window.history.replaceState(null, null, "#" + _ipToHashCode(url));
+            window.history.replaceState(null, null, '#' + _ipToHashCode(url));
         }
         function _getMediaUrl() {
             return pre + url + mediaPost;
@@ -243,30 +247,30 @@ $(function() {
             // If the page is loaded with a #base64StringHere then play that station
             buttons.bigPlay.click();
             url = hashCodeToIp(window.location.hash.substring(1));
-            $.get('/get-genre-by-ip/', {'ip': url}, function(data) {
+            $.get('/get-genre-by-ip/', {"ip": url}, function(data) {
                 genreFromHash = data['genreNum'];
                 changeStation(stationChangeType.restoreHash);
             });
         }
         function _ipToHashCode(ip) {
-            var parts = ip.split(":");
-            var port = (parts.length === 1 ? "80" : parts[1]);
-            var hashcode = parts[0].split(".").reduce(function (accumulator, octetAsString) {
+            var parts = ip.split(':');
+            var port = (parts.length === 1 ? '80' : parts[1]);
+            var hashcode = parts[0].split('.').reduce(function (accumulator, octetAsString) {
                 if (parseInt(octetAsString) < 16) {
-                    accumulator += "0";
+                    accumulator += '0';
                 }
                 return accumulator + parseInt(octetAsString).toString(16);
-            }, "");
+            }, '');
             hashcode += parseInt(port).toString(16);
             return hashcode;
         }
         function hashCodeToIp(hashcode) {
-            var ip = "";
+            var ip = '';
             for (var i = 0; i < 8; i += 2) {
-                ip += parseInt(hashcode.substr(i, 2), 16).toString().trim() + ".";
+                ip += parseInt(hashcode.substr(i, 2), 16).toString().trim() + '.';
             }
             ip = ip.slice(0, -1);
-            ip += ":" + parseInt(hashcode.substr(8, 12), 16).toString();
+            ip += ':' + parseInt(hashcode.substr(8, 12), 16).toString();
             return ip;
         }
         return {
@@ -277,42 +281,6 @@ $(function() {
             restoreFromHash  : _restoreFromHash,
             getBareUrl       : _getBareUrl,
             getGenreFromHash : _getGenreFromHash
-        };
-    }());
-
-    // Warning to future nick, this is a strange data structure!
-    var playlistManager = (function() {
-        buttons.back.prop('disabled', true);
-        var playlist = [];
-        var index = -1;
-        var end = -1;
-
-        function _goBack() {
-            if (index === 0) {
-                return null;
-            }
-            index -= 1;
-            if (index === 0) {
-                buttons.back.prop('disabled', true);
-            }
-            return playlist[index];
-        }
-        function _addNew(station, genreNum) {
-            index += 1;
-            end = index;
-            playlist[index] = [station, genreNum];
-            if (index > 0) {
-                buttons.back.prop('disabled', false);
-            }
-        }
-        function _popCurrent() {
-            playlist.pop();
-            index -= 1;
-        }
-        return {
-            goBack     : _goBack,
-            addNew     : _addNew,
-            popCurrent : _popCurrent
         };
     }());
 
@@ -349,14 +317,17 @@ $(function() {
 
     var colorManager = (function() {
         function _setToGenreColor() {
-            var genreColor = colors[stationsManager.getActiveGenre()];
-            $("body").animate({
-               backgroundColor: genreColor
+            var genreNum = stationsManager.getActiveGenre();
+            var totalGenres = stationsManager.getGenreCount();
+            genreNum = (genreNum * 360) / totalGenres;
+            var genreColor = window.tinycolor("hsv(" + genreNum + ", 26%, 99%)");
+            $('body').animate({
+               backgroundColor: genreColor.toHexString()
             }, 666);
         }
         function _setToNeutral() {
-           $("body").animate({
-               backgroundColor: "#ccc"
+           $('body').animate({
+               backgroundColor: '#aaa'
             }, 50);
         }
         return {
@@ -367,12 +338,21 @@ $(function() {
 
     var keyUpManager = (function() {
         var singleRightPress = false;
-        var timeOutInterval;
+        var singleLeftPress = false;
+        var leftInterval;
+        var rightInterval;
         window.onkeyup = _handleKeyUp;
 
-        function _clearRightPress() {
+        function _clearIntervals() {
+            clearInterval(leftInterval);
+            clearInterval(rightInterval);
+            if (singleLeftPress) {
+                changeStation(stationChangeType.prevStation);
+            } else if (singleRightPress) {
+                changeStation(stationChangeType.nextStation);
+            }
             singleRightPress = false;
-            changeStation(stationChangeType.nextStation);
+            singleRightPress = false;
         }
         function _handleKeyUp(event) {
             if (event.keyCode === 32) {
@@ -380,32 +360,41 @@ $(function() {
             } else if (event.keyCode === 77) {
                 volumeManager.soundToggle();
             } else if (event.keyCode === 37) {
-                changeStation(stationChangeType.goBack);
+                if (singleLeftPress) {
+                    changeStation(stationChangeType.prevGenre);
+                    singleLeftPress = false;
+                    _clearIntervals();
+                } else {
+                    leftInterval = true;
+                    singleLeftPress = window.setTimeout(_clearIntervals, 333);
+                }
             } else if (event.keyCode === 39) {
                 if (singleRightPress) {
                     changeStation(stationChangeType.nextGenre);
                     singleRightPress = false;
-                    clearInterval(timeOutInterval);
+                    _clearIntervals();
                 } else {
-                    singleRightPress = true;
-                    timeOutInterval = window.setTimeout(_clearRightPress, 333);
+                    rightInterval = true;
+                    singleRightPress = window.setTimeout(_clearIntervals, 333);
                 }
+            } else {
+                clearInterval(leftInterval);
+                clearInterval(rightInterval);
             }
         }
     }());
 
     var songNameManager = (function () {
-        var songName = "-1";
+        var songName = '-1';
         var duplicateSongCheck = false;
         var intervalId = -1;
 
         function _setName(data) {
             var re = /<[^<]*>/gi;
             data = data.replace(re, '');
-            var dataList = data.split(",");
+            var dataList = data.split(',');
             var isUp = dataList[1];
-            if (isUp !== "1") {
-                playlistManager.popCurrent();
+            if (isUp !== '1') {
                 stationsManager.removeCurrent();
                 changeStation(stationChangeType.nextStation);
                 return;
@@ -414,7 +403,6 @@ $(function() {
             // Check to see if this new station is playing the same song as the last one,
             //  if so, it's probably a duplicate station so go to the next one
             if (newName === songName && duplicateSongCheck) {
-                playlistManager.popCurrent();
                 stationsManager.removeCurrent();
                 changeStation(stationChangeType.nextStation);
             } else {
@@ -443,14 +431,17 @@ $(function() {
      */
     buttons.stop.click(playerStateManager.stop);
     buttons.play.click(playerStateManager.play);
-    buttons.next1.click(function () {
+    buttons.nextStation.click(function () {
         changeStation(stationChangeType.nextStation);
     });
-    buttons.next3.click(function () {
+    buttons.nextGenre.click(function () {
         changeStation(stationChangeType.nextGenre);
     });
-    buttons.back.click(function () {
-        changeStation(stationChangeType.goBack);
+    buttons.prevStation.click(function () {
+        changeStation(stationChangeType.prevStation);
+    });
+    buttons.prevGenre.click(function () {
+        changeStation(stationChangeType.prevGenre);
     });
     buttons.mute.click(volumeManager.soundOff);
     buttons.unmute.click(volumeManager.soundOn);
@@ -459,8 +450,8 @@ $(function() {
         $('div#mainContainer').show();
         volumeManager.soundOn();
     });
-    player.bind("canplay", readyToPlay);
-    player.bind("error", function (e) {
+    player.bind('canplay', readyToPlay);
+    player.bind('error', function (e) {
         window.console.error(e);
     });
 
@@ -473,4 +464,13 @@ $(function() {
     } else {
         volumeManager.soundOff();
     }
+
+    $("img#spectrum").click(function (e) {
+        var width = $("img#spectrum").width();
+        var genreCount = stationsManager.getGenreCount();
+        var genreNum = Math.round((e.pageX/width) * genreCount);
+        if (stationsManager.setActiveGenre(genreNum)) {
+            changeStation(stationChangeType.nextStation);
+        }
+    });
 });

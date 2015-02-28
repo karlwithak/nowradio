@@ -51,7 +51,6 @@
 
     <div class="verticalCenter">
         <div id="stationInfo">
-            <!--<span id="refreshSongButton" class="glyphicon glyphicon-refresh clickableIcon"></span>-->
             <span>Currently Playing:</span> <span id="currentSong">Song</span>
         </div>
     </div>
@@ -61,7 +60,12 @@
         <div id="playerContainer">
             <div class="btn-group mainButtons">
                 <!-- <p class="changeStationText"> &nbsp;</p>  -->
-                <button id="backButton" type="button" class="btn btn-default">
+                <button id="prevGenreButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-arrow-left"></span>
+                </button>
+            </div>
+            <div class="btn-group mainButtons">
+                <button id="prevStationButton" type="button" class="btn btn-default">
                     <span class="glyphicon glyphicon-step-backward"></span>
                 </button>
                 <button id="playButton" type="button" class="btn btn-default">
@@ -70,22 +74,18 @@
                 <button id="stopButton" type="button" class="btn btn-default">
                     <span class="glyphicon glyphicon-pause"></span>
                 </button>
-            </div>
-            <div class="btn-group mainButtons">
                 <!-- <p class="changeStationText">Change station</p> -->
-                <button id="nextButton1" type="button" class="btn btn-default">
+                <button id="nextStationButton" type="button" class="btn btn-default">
                     <span class="glyphicon glyphicon-step-forward"></span>
                 </button>
-                <!--
-                <button id="nextButton2" type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-forward"></span>
-                </button>
-                -->
-                <button id="nextButton3" type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-fast-forward"></span>
+            </div>
+            <div class="btn-group mainButtons">
+                <button id="nextGenreButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-arrow-right"></span>
                 </button>
             </div>
         </div>
+        <img src="{{ url_for('static', filename='img/spectrum.png') }}" id="spectrum"/>
     </nav>
 
 

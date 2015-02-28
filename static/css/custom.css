@@ -1,6 +1,6 @@
 body {
     padding-top: 50px;
-    background-color: #ccc;
+    background-color: #aaa;
 }
 
 #mainLanding {
@@ -24,7 +24,6 @@ body {
 
 .mainButtons button {
     font-size: 2em;
-    margin-bottom: 25px;
 }
 
 .changeStationText {
@@ -63,14 +62,16 @@ body {
     position: fixed;
     left: 0;
     top: 0;
+    background-color: #000000;
+    color: white;
     width: 100%
 }
 
 .clickableIcon {
-    font-size: 1.5em;
+    font-size: 20px;
     cursor: pointer;
-    padding-right: 12px;
-    padding-top: 10px;
+    padding-right: 15px;
+    padding-top: 15px;
     z-index: 10;
 }
 
@@ -97,4 +98,10 @@ body {
 #playerContainer {
     display: inline-block;
     padding: 10px 15px 0;
+}
+
+#spectrum {
+    width: 100%;
+    height: 35px;
+    cursor: crosshair;
 }
