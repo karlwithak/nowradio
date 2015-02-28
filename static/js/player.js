@@ -402,20 +402,24 @@ $(function() {
         function _setName(data) {
             var re = /<[^<]*>/gi;
             data = data.replace(re, '');
-            var x = 0;
-            for (var i=0; i < 6; i++) {
-                x = data.indexOf(',', x + 1);
+            var dataList = data.split(",");
+            var isUp = dataList[1];
+            if (isUp !== "1") {
+                playlistManager.popCurrent();
+                stationsManager.removeCurrent();
+                changeStation(stationChangeType.nextStation);
+                return;
             }
-            data = data.slice(x + 1);
+            var newName = dataList.slice(6).join();
             // Check to see if this new station is playing the same song as the last one,
             //  if so, it's probably a duplicate station so go to the next one
-            if (data === songName && duplicateSongCheck) {
+            if (newName === songName && duplicateSongCheck) {
                 playlistManager.popCurrent();
                 stationsManager.removeCurrent();
                 changeStation(stationChangeType.nextStation);
             } else {
-                $('span#currentSong').text(data);
-                songName = data;
+                $('span#currentSong').text(newName);
+                songName = newName;
                 duplicateSongCheck = false;
                 clearInterval(intervalId);
                 intervalId = setInterval(_updateName, 10000);
