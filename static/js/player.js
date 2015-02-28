@@ -69,11 +69,36 @@ $(function() {
         player.attr('src', urlManager.getMediaUrl());
         colorManager.setToNeutral();
         songNameManager.updateName(true);
+        stationNameAnimation(false);
     }
 
     function readyToPlay() {
         colorManager.setToGenreColor();
         playerStateManager.play();
+        stationNameAnimation(true);
+    }
+
+    function stationNameAnimation(open) {
+        var stationInfoDiv = $('div#stationInfo');
+        var currentSongSpan = $('span#infoWrapper');
+        if (open) {
+            var height = currentSongSpan.height() + 50;
+            stationInfoDiv.animate({
+                height: height,
+                'padding-top': "15px",
+                'padding-bottom': "15px"
+            }, 333, null, function () {
+                stationInfoDiv.children().css('visibility','visible');
+                stationInfoDiv.css('height','');
+            });
+        } else {
+            stationInfoDiv.children().css('visibility','hidden');
+            stationInfoDiv.animate({
+                height: 0,
+                'padding-top': 0,
+                'padding-bottom': 0
+            }, 333);
+        }
     }
 
 
@@ -88,12 +113,14 @@ $(function() {
             buttons.play.show();
             player[0].pause();
             playingNow = false;
+            stationNameAnimation(false);
         }
         function _play() {
             buttons.play.hide();
             buttons.stop.show();
             player[0].play();
             playingNow = true;
+            stationNameAnimation(true);
         }
         function _toggle() {
             if (playingNow) {
