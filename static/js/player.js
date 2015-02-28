@@ -225,7 +225,6 @@ $(function() {
             });
         }
         function _ipToHashCode(ip) {
-            window.console.log(ip);
             var parts = ip.split(":");
             var port = (parts.length === 1 ? "80" : parts[1]);
             var hashcode = parts[0].split(".").reduce(function (accumulator, octetAsString) {
@@ -235,18 +234,15 @@ $(function() {
                 return accumulator + parseInt(octetAsString).toString(16);
             }, "");
             hashcode += parseInt(port).toString(16);
-            window.console.log(hashcode);
             return hashcode;
         }
         function hashCodeToIp(hashcode) {
-            window.console.log(hashcode);
             var ip = "";
             for (var i = 0; i < 8; i += 2) {
                 ip += parseInt(hashcode.substr(i, 2), 16).toString().trim() + ".";
             }
             ip = ip.slice(0, -1);
             ip += ":" + parseInt(hashcode.substr(8, 12), 16).toString();
-            window.console.log(ip);
             return ip;
         }
         return {
@@ -336,7 +332,7 @@ $(function() {
         }
         function _setToNeutral() {
            $("body").animate({
-               backgroundColor: "#ddd"
+               backgroundColor: "#ccc"
             }, 50);
         }
         return {
@@ -397,13 +393,11 @@ $(function() {
                 $('span#currentSong').text(data);
                 songName = data;
                 duplicateSongCheck = false;
+                clearInterval(intervalId);
                 intervalId = setInterval(_updateName, 10000);
             }
         }
         function _updateName(doDuplicateSongCheck) {
-            if (intervalId !== -1) {
-                clearInterval(intervalId);
-            }
             if (doDuplicateSongCheck === true) {
                 duplicateSongCheck = doDuplicateSongCheck;
             }
