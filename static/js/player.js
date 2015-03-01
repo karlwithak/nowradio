@@ -16,7 +16,7 @@ $(function() {
     };
     var buttons = {
         'bigPlay'     : $('a#bigPlayButton'),
-        'play'        : $('div#playButton'),
+        "play"        : $('div#playButton'),
         'stop'        : $('div#stopButton'),
         'nextStation' : $('div#nextStationButton'),
         'nextGenre'   : $('div#nextGenreButton'),
@@ -59,6 +59,7 @@ $(function() {
         }
         urlManager.setUrl(src);
         elems.player.attr('src', urlManager.getMediaUrl());
+        elems.player.load();
         colorManager.setToNeutral();
         songNameManager.updateName(true);
         stationNameAnimation(false);
@@ -69,8 +70,7 @@ $(function() {
     function readyToPlay() {
         clearTimeout(changeStationTimeout);
         colorManager.setToGenreColor();
-        playerStateManager.play();
-        stationNameAnimation(true);
+        playerStateManager.startPlaying();
     }
 
     function stationNameAnimation(open) {
@@ -107,11 +107,17 @@ $(function() {
             playingNow = false;
             stationNameAnimation(false);
         }
-        function _play() {
+        function _startPlaying() {
             buttons.play.hide();
             buttons.stop.show();
             elems.player[0].play();
             playingNow = true;
+            stationNameAnimation(true);
+        }
+        function _play() {
+            buttons.play.hide();
+            buttons.stop.show();
+            elems.player[0].load();
             stationNameAnimation(true);
         }
         function _toggle() {
@@ -123,9 +129,10 @@ $(function() {
             }
         }
         return {
-            stop   : _stop,
-            play   : _play,
-            toggle : _toggle
+            stop         : _stop,
+            startPlaying : _startPlaying,
+            toggle       : _toggle,
+            play         : _play
         };
     }());
 
@@ -482,6 +489,7 @@ $(function() {
     } else {
         volumeManager.soundOff();
     }
+    buttons.play.hide();
 
     elems.spectrum.click(function (e) {
         var width = elems.spectrum.width();
