@@ -58,31 +58,27 @@
 
     <nav id="controlBar" class="navbar-fixed-bottom">
         <div id="playerContainer">
-            <div class="btn-group mainButtons">
-                <!-- <p class="changeStationText"> &nbsp;</p>  -->
-                <button id="prevGenreButton" type="button" class="btn btn-default">
+            <div class="mainButtons">
+                <div id="prevGenreButton" class="customButton">
                     <span class="glyphicon glyphicon-arrow-left"></span>
-                </button>
-            </div>
-            <div class="btn-group mainButtons">
-                <button id="prevStationButton" type="button" class="btn btn-default">
+                </div>
+                <div id="prevStationButton" class="customButton">
                     <span class="glyphicon glyphicon-step-backward"></span>
-                </button>
-                <button id="playButton" type="button" class="btn btn-default">
+                </div>
+                <div id="playButton" class="customButton">
                     <span class="glyphicon glyphicon-play"></span>
-                </button>
-                <button id="stopButton" type="button" class="btn btn-default">
+                </div>
+                <div id="stopButton" class="customButton">
                     <span class="glyphicon glyphicon-pause"></span>
-                </button>
+                </div>
                 <!-- <p class="changeStationText">Change station</p> -->
-                <button id="nextStationButton" type="button" class="btn btn-default">
+                <div id="nextStationButton" class="customButton">
                     <span class="glyphicon glyphicon-step-forward"></span>
-                </button>
-            </div>
-            <div class="btn-group mainButtons">
-                <button id="nextGenreButton" type="button" class="btn btn-default">
+                </div>
+                <div id="nextGenreButton" class="customButton">
                     <span class="glyphicon glyphicon-arrow-right"></span>
-                </button>
+                </div>
+                <div class="clearfix"></div>
             </div>
         </div>
         <img src="{{ url_for('static', filename='img/spectrum.png') }}" id="spectrum"/>

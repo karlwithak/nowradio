@@ -11,5 +11,11 @@ $(function() {
         $('div#settingsPanel').toggle();
         $('div#infoPanel').hide();
     });
+
+    $("div.customButton").hover(function () {
+        $(this).css("color", "#505050");
+    }, function () {
+        $(this).css("color", "#000000");
+    });
 });
 

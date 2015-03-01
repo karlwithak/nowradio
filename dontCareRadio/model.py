@@ -1,8 +1,10 @@
+# Make sure to run ourGenreSetter on the server after changing this file
+
 genre_list = [
     ['electro%', 'techno%'],
     ['house%', 'trance%'],
     ['party%', 'club%', 'dance%', 'edm%'],
-    ['pop%', 'top40%', 'top 40%' 'hit%'],
+    ['pop%', 'top40%', 'top 40%'],
     ['hip%', 'rap%'],
     ['rnb%', 'r&b%'],
     ['country%'],

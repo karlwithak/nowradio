@@ -16,12 +16,12 @@ $(function() {
     };
     var buttons = {
         'bigPlay'     : $('a#bigPlayButton'),
-        'play'        : $('button#playButton'),
-        'stop'        : $('button#stopButton'),
-        'nextStation' : $('button#nextStationButton'),
-        'nextGenre'   : $('button#nextGenreButton'),
-        'prevStation' : $('button#prevStationButton'),
-        'prevGenre'   : $('button#prevGenreButton'),
+        'play'        : $('div#playButton'),
+        'stop'        : $('div#stopButton'),
+        'nextStation' : $('div#nextStationButton'),
+        'nextGenre'   : $('div#nextGenreButton'),
+        'prevStation' : $('div#prevStationButton'),
+        'prevGenre'   : $('div#prevGenreButton'),
         'mute'        : $('span#muteButton'),
         'unmute'      : $('span#unmuteButton')
     };
@@ -77,7 +77,7 @@ $(function() {
         var stationInfoDiv = elems.stationInfo;
         if (open) {
             stationInfoDiv.stop(true).animate({
-                'max-height': 200,
+                'max-height': 300,
                 'padding-top': '15px',
                 'padding-bottom': '15px'
             }, 333, 'swing', function () {
