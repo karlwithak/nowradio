@@ -40,7 +40,16 @@ body {
     align-items: center;
     width: 100%;
     margin-top: -50px;
+    position: fixed;
+    z-index: -50;
 }
+@media(max-height: 400px) {
+    .verticalCenter {
+        min-height: inherit;
+        bottom: 100px;
+    }
+}
+
 
 #stationInfo {
     text-align: center;
@@ -77,7 +86,7 @@ body {
 }
 
 .topRightPanel {
-    padding: 0 10px;
+    padding: 15px;
     border-bottom: solid #000000 0.5em;
     border-left:  solid #000000 0.5em;
     text-align: right;
@@ -101,6 +110,7 @@ body {
     text-align: center;
     border-top: solid 0.5em black;
     width: 100%;
+    padding-top: 10px;
     padding-top: 10px;
 }
 
