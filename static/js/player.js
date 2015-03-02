@@ -100,19 +100,16 @@ $(function() {
     }
 
     function stationPlayingChecker() {
-        window.console.log("running playing checker");
         if (!playerStateManager.isPlayingNow() ||
             elems.player[0].currentTime === null ||
             elems.player[0].currentTime < 1 ||
             elems.player[0].played.length < 1) return;
-        window.console.log("doing check");
         var timeCheckStart = elems.player[0].played.end(0);
         window.setTimeout(_playingChecker, 1000);
         function _playingChecker() {
             if (elems.player[0].played.end(0) === timeCheckStart) {
                 // There was no change in played time, so something is wrong, try to reload
                 elems.player[0].load();
-                window.console.log("trying to recover with reload");
             }
         }
     }
