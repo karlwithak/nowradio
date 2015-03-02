@@ -64,13 +64,19 @@ $(function() {
         songNameManager.updateName(true);
         stationNameAnimation(false);
         clearTimeout(changeStationTimeout);
-        changeStationTimeout = setTimeout(changeStation, 10000);
+        changeStationTimeout = setTimeout(changeTimeout, 10000);
+    }
+
+    function changeTimeout() {
+        stationsManager.removeCurrent();
+        clearTimeout(changeStationTimeout);
+        changeStation(stationChangeType.nextStation);
     }
 
     function readyToPlay() {
         clearTimeout(changeStationTimeout);
         colorManager.setToGenreColor();
-        playerStateManager.startPlaying();
+        playerStateManager.play();
     }
 
     function stationNameAnimation(open) {
@@ -93,6 +99,25 @@ $(function() {
         }
     }
 
+    function stationPlayingChecker() {
+        window.console.log("running playing checker");
+        if (!playerStateManager.isPlayingNow() ||
+            elems.player[0].currentTime === null ||
+            elems.player[0].currentTime < 1 ||
+            elems.player[0].played.length < 1) return;
+        window.console.log("doing check");
+        var timeCheckStart = elems.player[0].played.end(0);
+        window.setTimeout(_playingChecker, 1000);
+        function _playingChecker() {
+            if (elems.player[0].played.end(0) === timeCheckStart) {
+                // There was no change in played time, so something is wrong, try to reload
+                elems.player[0].load();
+                window.console.log("trying to recover with reload");
+            }
+        }
+    }
+    window.setInterval(stationPlayingChecker, 5000);
+
 
     /**
      * Closures - Each one is like an 'object' that controls a certain aspect of the app
@@ -107,32 +132,34 @@ $(function() {
             playingNow = false;
             stationNameAnimation(false);
         }
-        function _startPlaying() {
+        function _play() {
             buttons.play.hide();
             buttons.stop.show();
             elems.player[0].play();
             playingNow = true;
             stationNameAnimation(true);
         }
-        function _play() {
-            buttons.play.hide();
-            buttons.stop.show();
+        function _updateStream() {
             elems.player[0].load();
-            stationNameAnimation(true);
         }
         function _toggle() {
             if (playingNow) {
                 _stop();
             }
             else {
+                _updateStream();
                 _play();
             }
         }
+        function _isPlayingNow() {
+            return playingNow;
+        }
         return {
             stop         : _stop,
-            startPlaying : _startPlaying,
             toggle       : _toggle,
-            play         : _play
+            play         : _play,
+            isPlayingNow : _isPlayingNow,
+            updateStream : _updateStream
         };
     }());
 
@@ -376,7 +403,7 @@ $(function() {
             } else if (singleRightPress) {
                 changeStation(stationChangeType.nextStation);
             }
-            singleRightPress = false;
+            singleLeftPress = false;
             singleRightPress = false;
         }
         function _handleKeyUp(event) {
@@ -414,7 +441,11 @@ $(function() {
         var duplicateSongCheck = false;
         var intervalId = -1;
 
-        function _setName(data) {
+        function _setName(data, status) {
+            if (status !== "success") {
+                stationsManager.removeCurrent();
+                changeStation(stationChangeType.nextStation);
+            }
             var re = /<[^<]*>/gi;
             data = data.replace(re, '');
             var dataList = data.split(',');
@@ -430,7 +461,7 @@ $(function() {
             if (newName === songName && duplicateSongCheck) {
                 stationsManager.removeCurrent();
                 changeStation(stationChangeType.nextStation);
-            } else {
+            } else if (newName !== songName) {
                 elems.currentSongText.text(newName);
                 songName = newName;
                 duplicateSongCheck = false;
@@ -455,7 +486,10 @@ $(function() {
      * Listeners - Handle certain user actions
      */
     buttons.stop.click(playerStateManager.stop);
-    buttons.play.click(playerStateManager.play);
+    buttons.play.click(function () {
+        playerStateManager.updateStream();
+        playerStateManager.play();
+    });
     buttons.nextStation.click(function () {
         changeStation(stationChangeType.nextStation);
     });
