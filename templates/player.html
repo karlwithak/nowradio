@@ -18,11 +18,20 @@
 {% block content %}
     <nav class="navigationBar">
         <span class="navbar-brand">{{ config['APP_NAME'] }}</span>
+        <div class="pull-left" id="faveHolder">
+            <div class="faveBox" id="oldFaveBox">
+                <span class="glyphicon glyphicon-remove faveRemove clickable"></span>
+                <span class="glyphicon glyphicon-play favePlay clickable"></span>
+            </div>
+            <div class="faveBox" id="newFaveBox">
+                <span class="glyphicon glyphicon-plus faveAdd clickable"></span>
+            </div>
+        </div>
         <div class="pull-right">
-            <span id="infoButton" class="glyphicon glyphicon-info-sign clickableIcon"></span>
+            <span id="infoButton" class="glyphicon glyphicon-info-sign clickable topRightIcon"></span>
             <!--<span id="settingsButton" class="glyphicon glyphicon-cog clickableIcon"></span>-->
-            <span id="unmuteButton" class="glyphicon glyphicon-volume-off clickableIcon"></span>
-            <span id="muteButton" class="glyphicon glyphicon-volume-up clickableIcon"></span>
+            <span id="unmuteButton" class="glyphicon glyphicon-volume-off clickable topRightIcon"></span>
+            <span id="muteButton" class="glyphicon glyphicon-volume-up clickable topRightIcon"></span>
         </div>
     </nav>
     <!--

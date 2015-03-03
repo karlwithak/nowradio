@@ -12,10 +12,22 @@ $(function() {
         $('div#infoPanel').hide();
     });
 
-    $("div.customButton").hover(function () {
-        $(this).css("color", "#505050");
-    }, function () {
-        $(this).css("color", "#000000");
-    });
+    $("div.customButton").hover(turnGrey, turnBlack);
+    $("span.faveRemove").hover(turnLightGrey, turnWhite);
+    $("span.faveAdd").hover(turnGrey, turnBlack);
+    $("span.favePlay").hover(turnGrey, turnBlack);
+
+    function turnGrey(elem) {
+        $(elem.target).css("color", "#505050");
+    }
+    function turnLightGrey(elem) {
+        $(elem.target).css("color", "#EEEEEE");
+    }
+    function turnWhite(elem) {
+        $(elem.target).css("color", "#ffffff");
+    }
+    function turnBlack(elem) {
+        $(elem.target).css("color", "#000000");
+    }
 });
 

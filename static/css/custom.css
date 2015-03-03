@@ -77,9 +77,12 @@ body {
     width: 100%
 }
 
-.clickableIcon {
-    font-size: 20px;
+.clickable {
     cursor: pointer;
+}
+
+.topRightIcon {
+    font-size: 20px;
     padding-right: 15px;
     padding-top: 15px;
     z-index: 10;
@@ -124,4 +127,32 @@ body {
     padding: 0 15px;
     float: left;
     cursor: pointer;
+}
+
+.faveBox {
+    height: 40px;
+    width: 40px;
+    margin: 5px;
+    background-color: white;
+    float: left;
+    font-size: 1.5em;
+}
+
+.faveAdd {
+    top: 8px;
+    left: 10px;
+    color: black;
+}
+
+.faveRemove {
+    left: 32px;
+    top: -13px;
+    color: white;
+    font-size: 0.8em;
+}
+
+.favePlay {
+    top: -22px;
+    left: 10px;
+    color: black;
 }

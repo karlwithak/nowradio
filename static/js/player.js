@@ -32,7 +32,11 @@ $(function() {
         'mainContainer'    : $('div#mainContainer'),
         'landingContainer' : $('div#landingContainer'),
         'currentSongText'  : $('span#currentSong'),
-        'stationInfo'      : $('div#stationInfo')
+        'stationInfo'      : $('div#stationInfo'),
+        'oldFaveBox'       : $('div#oldFaveBox'),
+        'newFaveBox'       : $('div#newFaveBox'),
+        'faveAddIcon'      : $('span.faveAdd'),
+        'faveRemoveIcon'   : $('span.faveRemove')
     };
     var changeStationTimeout;
 
@@ -366,22 +370,28 @@ $(function() {
 
     var colorManager = (function() {
         function _setToGenreColor() {
-            var genreNum = stationsManager.getActiveGenre();
-            var totalGenres = stationsManager.getGenreCount();
-            genreNum = (genreNum * 360) / totalGenres;
-            var genreColor = window.tinycolor('hsv(' + genreNum + ', 26%, 99%)');
-            elems.body.animate({
-               backgroundColor: genreColor.toHexString()
-            }, 666);
+            _setElemToGenreColor(elems.body);
+            _setElemToGenreColor(elems.newFaveBox);
         }
         function _setToNeutral() {
            elems.body.animate({
                backgroundColor: '#aaa'
             }, 50);
+            elems.newFaveBox.css("background-color", "#aaa");
+        }
+        function _setElemToGenreColor(elem) {
+            var genreNum = stationsManager.getActiveGenre();
+            var totalGenres = stationsManager.getGenreCount();
+            genreNum = (genreNum * 360) / totalGenres;
+            var genreColor = window.tinycolor('hsv(' + genreNum + ', 26%, 99%)');
+            elem.animate({
+               backgroundColor: genreColor.toHexString()
+            }, 666);
         }
         return {
-            setToNeutral    : _setToNeutral,
-            setToGenreColor : _setToGenreColor
+            setToNeutral        : _setToNeutral,
+            setToGenreColor     : _setToGenreColor,
+            setElemToGenreColor : _setElemToGenreColor
         };
     }());
 
@@ -476,6 +486,23 @@ $(function() {
         return {
             updateName : _updateName
         };
+    }());
+
+    var faveManager = (function () {
+        elems.oldFaveBox.hide();
+        elems.faveAddIcon.click(function () {
+            var newBox = elems.oldFaveBox.clone(true).insertBefore(elems.oldFaveBox).show();
+            colorManager.setElemToGenreColor(newBox);
+            if ($('div#oldFaveBox').length > 5) {
+                elems.newFaveBox.hide();
+            }
+        });
+        elems.faveRemoveIcon.click(function () {
+            $(this).parent().remove();
+            if ($('div#oldFaveBox').length <= 5) {
+                elems.newFaveBox.show();
+            }
+        });
     }());
 
 
