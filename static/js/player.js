@@ -12,7 +12,7 @@ $(function() {
         'nextGenre'   : 1,
         'prevStation' : 2,
         'prevGenre'   : 3,
-        'restoreHash' : 4
+        'fromArgs'    : 4
     };
     var buttons = {
         'bigPlay'     : $('a#bigPlayButton'),
@@ -36,14 +36,15 @@ $(function() {
         'oldFaveBox'       : $('div#oldFaveBox'),
         'newFaveBox'       : $('div#newFaveBox'),
         'faveAddIcon'      : $('span.faveAdd'),
-        'faveRemoveIcon'   : $('span.faveRemove')
+        'faveRemoveIcon'   : $('span.faveRemove'),
+        'favePlayIcon'   : $('span.favePlay')
     };
     var changeStationTimeout;
 
     /**
      * Functions - Random functions that should probably be in one of the closures...
      */
-    function changeStation(changeType) {
+    function changeStation(changeType, _src, _genreNum) {
         var genreNum, src;
         if (changeType === stationChangeType.nextStation || changeType === undefined) {
             src = stationsManager.getNextStation();
@@ -55,9 +56,9 @@ $(function() {
         } else if (changeType === stationChangeType.prevGenre) {
             stationsManager.getPrevGenre();
             src = stationsManager.getNextStation();
-        } else if (changeType === stationChangeType.restoreHash) {
-            src = urlManager.getBareUrl();
-            genreNum = urlManager.getGenreFromHash();
+        } else if (changeType === stationChangeType.fromArgs) {
+            src = _src;
+            genreNum = _genreNum;
             stationsManager.setActiveGenre(genreNum);
             stationsManager.removeStationFromGenre(src, genreNum, true);
         }
@@ -104,17 +105,21 @@ $(function() {
     }
 
     function stationPlayingChecker() {
-        if (!playerStateManager.isPlayingNow() ||
-            elems.player[0].currentTime === null ||
-            elems.player[0].currentTime < 1 ||
-            elems.player[0].played.length < 1) return;
+        if (_skipThisCheck()) return;
         var timeCheckStart = elems.player[0].played.end(0);
         window.setTimeout(_playingChecker, 1000);
         function _playingChecker() {
+            if (_skipThisCheck()) return;
             if (elems.player[0].played.end(0) === timeCheckStart) {
                 // There was no change in played time, so something is wrong, try to reload
                 elems.player[0].load();
             }
+        }
+        function _skipThisCheck() {
+            return !playerStateManager.isPlayingNow() ||
+                    elems.player[0].currentTime === null ||
+                    elems.player[0].currentTime < 1 ||
+                    elems.player[0].played.length < 1;
         }
     }
     window.setInterval(stationPlayingChecker, 5000);
@@ -277,7 +282,6 @@ $(function() {
 
     var urlManager = (function() {
         var url = '';
-        var genreFromHash;
         var pre = 'http://';
         var mediaPost = '/;?icy=http';
         var sevenPost = '/7.html';
@@ -292,22 +296,15 @@ $(function() {
         function _getDataUrl() {
             return  pre + url + sevenPost;
         }
-        function _getBareUrl() {
-            return url;
-        }
-        function _getGenreFromHash() {
-            return genreFromHash;
-        }
         function _noUrlSet() {
             return url === '';
         }
         function _restoreFromHash() {
             // If the page is loaded with a #base64StringHere then play that station
             buttons.bigPlay.click();
-            url = hashCodeToIp(window.location.hash.substring(1));
+            url = _hashCodeToIp(window.location.hash.substring(1));
             $.get('/get-genre-by-ip/', {"ip": url}, function(data) {
-                genreFromHash = data['genreNum'];
-                changeStation(stationChangeType.restoreHash);
+                changeStation(stationChangeType.fromArgs, url, data['genreNum']);
             });
         }
         function _ipToHashCode(ip) {
@@ -322,7 +319,7 @@ $(function() {
             hashcode += parseInt(port).toString(16);
             return hashcode;
         }
-        function hashCodeToIp(hashcode) {
+        function _hashCodeToIp(hashcode) {
             var ip = '';
             for (var i = 0; i < 8; i += 2) {
                 ip += parseInt(hashcode.substr(i, 2), 16).toString().trim() + '.';
@@ -337,8 +334,7 @@ $(function() {
             noUrlSet         : _noUrlSet,
             getDataUrl       : _getDataUrl,
             restoreFromHash  : _restoreFromHash,
-            getBareUrl       : _getBareUrl,
-            getGenreFromHash : _getGenreFromHash
+            hashCodeToIp     : _hashCodeToIp
         };
     }());
 
@@ -508,6 +504,7 @@ $(function() {
         elems.oldFaveBox.hide();
         elems.faveAddIcon.click(_addFave);
         elems.faveRemoveIcon.click(_removeFave);
+        elems.favePlayIcon.click(_playFave);
 
         function _initOldFaves() {
             faves.forEach(function (fave) {
@@ -527,10 +524,16 @@ $(function() {
             window.localStorage.setItem("faves", JSON.stringify(faves));
             _showHideNewFaveBox();
         }
+        function _playFave(elem) {
+            var faveNum = $(elem.target).parent().index();
+            var faveData = faves[faveNum];
+            var ip = urlManager.hashCodeToIp(faveData['ipHash']);
+            changeStation(stationChangeType.fromArgs, ip, faveData['genreNum']);
+        }
         function _removeFave(elem) {
-            var elemNum = $(elem.target).parent().index();
+            var faveNum = $(elem.target).parent().index();
             $(elem.target).parent().remove();
-            faves.splice(elemNum, 1);
+            faves.splice(faveNum, 1);
             window.localStorage.setItem("faves", JSON.stringify(faves));
             _showHideNewFaveBox();
         }
