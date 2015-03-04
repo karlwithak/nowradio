@@ -119,6 +119,13 @@ $(function() {
     }
     window.setInterval(stationPlayingChecker, 5000);
 
+    function initialStationsLoaded() {
+        if (urlManager.noUrlSet()) {
+            changeStation(stationChangeType.nextStation);
+        }
+        faveManager.initOldFaves();
+    }
+
 
     /**
      * Closures - Each one is like an 'object' that controls a certain aspect of the app
@@ -171,9 +178,7 @@ $(function() {
             data['stations'].forEach(function (stationList) {
                 genreManagers.push(_getGenreManager(stationList));
             });
-            if (urlManager.noUrlSet()) {
-                changeStation(stationChangeType.nextStation);
-            }
+            initialStationsLoaded();
         });
 
         function _getNextGenre() {
@@ -380,18 +385,22 @@ $(function() {
             elems.newFaveBox.css("background-color", "#aaa");
         }
         function _setElemToGenreColor(elem) {
-            var genreNum = stationsManager.getActiveGenre();
+            var color = _genreNumToColor(stationsManager.getActiveGenre());
+            elem.animate({
+               backgroundColor: color
+            }, 666);
+        }
+        function _genreNumToColor(genreNum) {
             var totalGenres = stationsManager.getGenreCount();
             genreNum = (genreNum * 360) / totalGenres;
             var genreColor = window.tinycolor('hsv(' + genreNum + ', 26%, 99%)');
-            elem.animate({
-               backgroundColor: genreColor.toHexString()
-            }, 666);
+            return genreColor.toHexString();
         }
         return {
             setToNeutral        : _setToNeutral,
             setToGenreColor     : _setToGenreColor,
-            setElemToGenreColor : _setElemToGenreColor
+            setElemToGenreColor : _setElemToGenreColor,
+            genreNumToColor     : _genreNumToColor
         };
     }());
 
@@ -489,20 +498,52 @@ $(function() {
     }());
 
     var faveManager = (function () {
+        var maxFaves = 5;
+        var faves = window.localStorage.getItem("faves");
+        if (faves === null) {
+            faves = [];
+        } else {
+            faves = JSON.parse(faves);
+        }
         elems.oldFaveBox.hide();
-        elems.faveAddIcon.click(function () {
+        elems.faveAddIcon.click(_addFave);
+        elems.faveRemoveIcon.click(_removeFave);
+
+        function _initOldFaves() {
+            faves.forEach(function (fave) {
+                var newBox = elems.oldFaveBox.clone(true).insertBefore(elems.oldFaveBox).show();
+                var color = colorManager.genreNumToColor(fave['genreNum']);
+                newBox.css("background-color", color);
+            });
+            _showHideNewFaveBox();
+        }
+        function _addFave() {
+            var faveCount = $('div#oldFaveBox').length - 1;
             var newBox = elems.oldFaveBox.clone(true).insertBefore(elems.oldFaveBox).show();
             colorManager.setElemToGenreColor(newBox);
-            if ($('div#oldFaveBox').length > 5) {
+            var ipHash = window.location.hash.substring(1);
+            var genreNum = stationsManager.getActiveGenre();
+            faves[faveCount] = {"ipHash" : ipHash, "genreNum" : genreNum};
+            window.localStorage.setItem("faves", JSON.stringify(faves));
+            _showHideNewFaveBox();
+        }
+        function _removeFave(elem) {
+            var elemNum = $(elem.target).parent().index();
+            $(elem.target).parent().remove();
+            faves.splice(elemNum, 1);
+            window.localStorage.setItem("faves", JSON.stringify(faves));
+            _showHideNewFaveBox();
+        }
+        function _showHideNewFaveBox() {
+            if ($('div#oldFaveBox').length <= maxFaves) {
+                elems.newFaveBox.show();
+            } else {
                 elems.newFaveBox.hide();
             }
-        });
-        elems.faveRemoveIcon.click(function () {
-            $(this).parent().remove();
-            if ($('div#oldFaveBox').length <= 5) {
-                elems.newFaveBox.show();
-            }
-        });
+        }
+        return {
+            initOldFaves : _initOldFaves
+        };
     }());
 
 
