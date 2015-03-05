@@ -12,7 +12,7 @@ $(function() {
         $('div#infoPanel').hide();
     });
 
-    $("div.customButton").hover(turnGrey, turnBlack);
+    $("span.buttonIcon").hover(turnGrey, turnBlack);
     $("span.faveRemove").hover(turnLightGrey, turnWhite);
     $("span.faveAdd").hover(turnGrey, turnBlack);
     $("span.favePlay").hover(turnGrey, turnBlack);
