@@ -14,8 +14,6 @@ $(function() {
 
     $("span.buttonIcon").hover(turnGrey, turnBlack);
     $("span.faveRemove").hover(turnLightGrey, turnWhite);
-    $("span.faveAdd").hover(turnGrey, turnBlack);
-    $("span.favePlay").hover(turnGrey, turnBlack);
 
     function turnGrey(elem) {
         $(elem.target).css("color", "#505050");

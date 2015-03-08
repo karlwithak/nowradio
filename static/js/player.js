@@ -66,6 +66,7 @@ $(function() {
         elems.player.attr('src', urlManager.getMediaUrl());
         elems.player.load();
         colorManager.setToNeutral();
+        faveManager.showPlayingFave();
         songNameManager.updateName(true);
         stationNameAnimation(false);
         clearTimeout(changeStationTimeout);
@@ -129,6 +130,7 @@ $(function() {
             changeStation(stationChangeType.nextStation);
         }
         faveManager.initOldFaves();
+        faveManager.showPlayingFave();
     }
 
 
@@ -296,6 +298,9 @@ $(function() {
         function _getDataUrl() {
             return  pre + url + sevenPost;
         }
+        function _getUrl() {
+            return url;
+        }
         function _noUrlSet() {
             return url === '';
         }
@@ -334,7 +339,9 @@ $(function() {
             noUrlSet         : _noUrlSet,
             getDataUrl       : _getDataUrl,
             restoreFromHash  : _restoreFromHash,
-            hashCodeToIp     : _hashCodeToIp
+            hashCodeToIp     : _hashCodeToIp,
+            ipToHashCode     : _ipToHashCode,
+            getUrl           : _getUrl
         };
     }());
 
@@ -522,12 +529,18 @@ $(function() {
             var genreNum = stationsManager.getActiveGenre();
             faves[faveCount] = {"ipHash" : ipHash, "genreNum" : genreNum};
             window.localStorage.setItem("faves", JSON.stringify(faves));
+            _showPlayingFave();
             _showHideNewFaveBox();
         }
         function _playFave(elem) {
             var faveNum = $(elem.target).parent().index();
             var faveData = faves[faveNum];
-            var ip = urlManager.hashCodeToIp(faveData['ipHash']);
+            var faveIpHash = faveData['ipHash'];
+            if (window.location.hash.substring(1) == faveIpHash) {
+                // IF we are already playing the station selected, do nothing
+                return;
+            }
+            var ip = urlManager.hashCodeToIp(faveIpHash);
             changeStation(stationChangeType.fromArgs, ip, faveData['genreNum']);
         }
         function _removeFave(elem) {
@@ -544,8 +557,19 @@ $(function() {
                 elems.newFaveBox.hide();
             }
         }
+        function _showPlayingFave() {
+            var playingIpHash = window.location.hash.substring(1);
+            faves.forEach(function (fave, index) {
+                if (fave['ipHash'] === playingIpHash) {
+                    $("span.favePlay").eq(index).css('color', 'white');
+                } else {
+                    $("span.favePlay").eq(index).css('color', 'black');
+                }
+            });
+        }
         return {
-            initOldFaves : _initOldFaves
+            initOldFaves : _initOldFaves,
+            showPlayingFave : _showPlayingFave
         };
     }());
 
