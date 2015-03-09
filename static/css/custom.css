@@ -39,9 +39,9 @@ body {
     display: flex;
     align-items: center;
     width: 100%;
-    margin-top: -50px;
+    margin-top: -55px;
     position: fixed;
-    z-index: -50;
+    z-index: -55;
 }
 @media(max-height: 400px) {
     .verticalCenter {
@@ -105,7 +105,7 @@ body {
 }
 
 .navbarSpacer {
-    height: 50px;
+    height: 55px;
 }
 
 #playerContainer {
@@ -145,8 +145,8 @@ body {
 }
 
 .faveRemove {
-    left: 32px;
-    top: -13px;
+    left: 30px;
+    top: -12px;
     color: white;
     font-size: 0.8em;
 }
@@ -155,4 +155,13 @@ body {
     top: -22px;
     left: 10px;
     color: black;
+}
+
+nav.navigationBar {
+    height: 55px;
+}
+
+span.navbar-brand {
+    font-size: 19px;
+    padding: 16px;
 }
