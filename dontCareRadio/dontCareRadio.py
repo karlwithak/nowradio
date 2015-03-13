@@ -38,8 +38,8 @@ def get_initial_stations():
     data = {'page_size': page_size}
     for genre in model.genre_names:
         data['genre_name'] = genre
-        cur.execute(Queries.get_urls_by_genre, data)
-        result = [url for sublist in cur.fetchall() for url in sublist]
+        cur.execute(Queries.get_ips_by_genre, data)
+        result = ourUtils.flatten_list(cur.fetchall())
         stations.append(result)
     return jsonify(stations=stations)
 

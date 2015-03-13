@@ -56,3 +56,7 @@ def db_quick_query(db_conn, query, data=None):
     result = cursor.fetchall()
     cursor.close()
     return result
+
+
+def flatten_list(thick_list):
+    return [url for sublist in thick_list for url in sublist]

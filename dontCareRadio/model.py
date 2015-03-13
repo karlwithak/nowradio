@@ -12,7 +12,7 @@ genre_list = [
     ['rock%', 'classic rock%'],
     ['metal%', 'death metal%', 'hard rock%', 'heavy metal%'],
     ['jazz%', 'smooth jazz%'],
-    ['classical', 'clasical music'],
+    ['classical', 'classical music'],
     ['chill%', 'ambient%', 'downtempo%', 'lounge%'],
     ['vari%', 'misc%', 'alternative%', 'mixed%', 'assorted'],
     ['60s%', '70%', '80%', '90s%', 'classic hits%', 'oldies%', 'old time%'],

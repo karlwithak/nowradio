@@ -5,13 +5,12 @@ class Queries:
     def __init__(self):
         pass
 
-
     # Our SQL queries
 
     insert_station = '''
         INSERT INTO station_info
-        (url, active_listeners, max_listeners, peak_listeners, name, genre, ip_addr, is_up)
-        VALUES (%(url)s, %(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s, %(ip)s, TRUE);
+        (active_listeners, max_listeners, peak_listeners, name, genre, ip_addr, is_up)
+        VALUES (%(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s, %(ip)s, TRUE);
     '''
     check_for_station = '''
         SELECT 1
@@ -35,7 +34,7 @@ class Queries:
         SET is_up = FALSE
         WHERE id = %s
     '''
-    get_urls_by_genre = '''
+    get_ips_by_genre = '''
         SELECT ip_addr
         FROM station_info
         WHERE our_genre = %(genre_name)s AND is_up = TRUE
@@ -48,8 +47,8 @@ class Queries:
         SET our_genre = %(our_genre)s
         WHERE genre ILIKE ANY(%(genre_names)s)
     '''
-    get_all_urls = '''
-        SELECT id, url
+    get_all_ips = '''
+        SELECT id, ip_addr
         FROM station_info
     '''
     set_ip_for_id = '''
