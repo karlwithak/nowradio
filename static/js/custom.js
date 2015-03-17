@@ -27,5 +27,13 @@ $(function() {
     function turnBlack(elem) {
         $(elem.target).css("color", "#000000");
     }
+
+    var options = {
+        delay: {'show' : 800, 'hide' : 50 },
+        placement: 'bottom'
+    };
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip(options);
+    });
 });
 

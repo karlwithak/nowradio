@@ -165,3 +165,8 @@ span.navbar-brand {
     font-size: 19px;
     padding: 16px;
 }
+
+.tooltip-inner {
+    font-size: 1.2em;
+    font-weight: bold;
+}

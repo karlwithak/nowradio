@@ -87,6 +87,7 @@ def insert_new_station(ip_list, connection):
                         'ip':     ip
                     }
                     cur.execute(Queries.insert_station, data)
+                    print("added new station: " + str(ip))
         except Exception:
             pass
     cur.close()
