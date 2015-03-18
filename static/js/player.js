@@ -1,4 +1,5 @@
 /*global $:false */
+/*global Share:false */
 /*jshint -W069 */
 /*jshint -W116 */
 
@@ -291,6 +292,7 @@ $(function() {
         function _setUrl(newUrl) {
             url = newUrl;
             window.history.replaceState(null, null, '#' + _ipToHashCode(url));
+            shareManager.updateShareUrl();
         }
         function _getMediaUrl() {
             return pre + url + mediaPost;
@@ -570,6 +572,25 @@ $(function() {
         return {
             initOldFaves : _initOldFaves,
             showPlayingFave : _showPlayingFave
+        };
+    }());
+
+    var shareManager =  (function() {
+        var config = {
+            url: window.location.origin + encodeURIComponent(window.location.hash),
+            ui: {
+                flyout: 'bottom left',
+                button_text: ''
+            }
+        };
+        var share = new Share(".share-button", config);
+
+        function _updateShareUrl() {
+            config.url = window.location.origin + encodeURIComponent(window.location.hash);
+            share = new Share(".share-button", config);
+        }
+        return {
+            updateShareUrl : _updateShareUrl
         };
     }());
 

@@ -1,5 +1,6 @@
 /*global $:false */
 
+share = 1
 $(function() {
     "use strict";
     $('span#infoButton').click(function() {

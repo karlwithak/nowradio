@@ -170,3 +170,21 @@ span.navbar-brand {
     font-size: 1.2em;
     font-weight: bold;
 }
+
+.share-button {
+    display: inline-block !important;
+    width: 35px !important;
+}
+
+label.entypo-export {
+    border: none !important
+    border-radius: 0 !important;
+    color: white !important;
+    background: none !important;
+    font-size: 1.5em !important;
+    padding: 0 !important;
+}
+
+li.entypo-paper-plane {
+    display: none !important;
+}
