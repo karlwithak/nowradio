@@ -13,8 +13,6 @@ from lxml import html
 #   will not update things like active listeners
 # This is good because we do don't not have to make unnecessary requests to station servers
 
-request_header = {'User-Agent': 'Mozilla/5.0'}
-
 
 def yandex_query(genre_list, url_set):
     for genre in genre_list:
@@ -50,7 +48,7 @@ def station_checker(ip_list, checked_ip_set):
     thread_ip_set = set()
     for ip in ip_list:
         try:
-            r = requests.get("http://" + ip + "/7.html", headers=request_header, timeout=2)
+            r = requests.get("http://" + ip + "/7.html", headers=ourUtils.request_header, timeout=2)
             if r.status_code in (200, 304) and len(r.text) < 250:
                 content = r.text[r.text.index("<body>") + 6:r.text.index("</body>")]
                 server_status = content[content.index(",") + 1]
@@ -68,7 +66,7 @@ def insert_new_station(ip_list, connection):
             cur.execute(Queries.check_for_station, (ip,))
             if cur.rowcount == 1:
                 continue
-            page = requests.get("http://" + ip, headers=request_header, timeout=2)
+            page = requests.get("http://" + ip, headers=ourUtils.request_header, timeout=2)
             info = html.fromstring(page.text).xpath("//b")
             if info[0].text == "Server is currently up and public." and info[6].text == "audio/mpeg":
                 listeners = info[2].text

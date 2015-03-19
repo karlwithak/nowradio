@@ -13,7 +13,7 @@ def worker(id_url_list, connection):
     for id_ip in id_url_list:
         url = "http://" + id_ip[1] + '/7.html'
         try:
-            response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=2)
+            response = requests.get(url, headers=ourUtils.request_header, timeout=2)
         except requests.ConnectionError:
             print("connection error: " + url)
             cur.execute(Queries.set_station_down, (id_ip[0],))

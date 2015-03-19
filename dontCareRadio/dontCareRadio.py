@@ -1,5 +1,6 @@
 from logging import FileHandler
 import logging
+import requests
 from flask import Flask, render_template, request, jsonify
 import psycopg2
 from dbManager import Queries, dbpass
@@ -50,6 +51,12 @@ def get_genre_by_ip():
     results = ourUtils.db_quick_query(db_conn, Queries.get_our_genre_by_ip, (ip,))[0]
     genre_num = model.genre_names.index(results[0])
     return jsonify(genreNum=genre_num)
+
+
+@app.route('/get-station-info/')
+def get_station_info():
+    result = requests.get(request.args.get('stationUrl'), headers=ourUtils.request_header)
+    return result.text
 
 if __name__ == '__main__':
     app.run()

@@ -1,6 +1,8 @@
 import socket
 import threading
 
+request_header = {'User-Agent': 'Mozilla/5.0'}
+
 
 def ip_from_url(url):
     """
