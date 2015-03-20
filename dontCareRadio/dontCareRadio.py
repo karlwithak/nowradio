@@ -11,7 +11,7 @@ import serverInfo
 # It looks at the url that they entered and decides what computation to do and what
 #   template to show them.
 
-app = Flask(__name__, template_folder="../templates")
+app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
 app.config['APP_NAME'] = "Don't Care Radio"
 app.config['DEBUG'] = serverInfo.is_development
