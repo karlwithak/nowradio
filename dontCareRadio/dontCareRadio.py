@@ -15,7 +15,6 @@ app = Flask(__name__, template_folder="../templates")
 
 app.config['APP_NAME'] = "Don't Care Radio"
 app.config['DEBUG'] = serverInfo.is_development
-app.config.from_pyfile('../conf/flask.conf.py')
 file_handler = FileHandler(serverInfo.flask_log_file)
 file_handler.setLevel(logging.INFO)
 app.logger.addHandler(file_handler)
@@ -59,4 +58,7 @@ def get_station_info():
     return result.text
 
 if __name__ == '__main__':
-    app.run()
+    if serverInfo.is_development:
+        app.run(host='0.0.0.0', port=serverInfo.public_port, debug=True)
+    else:
+        app.run()
