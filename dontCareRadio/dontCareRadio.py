@@ -2,8 +2,7 @@ from logging import FileHandler
 import logging
 import requests
 from flask import Flask, render_template, request, jsonify
-import psycopg2
-from dbManager import Queries, dbpass
+from dbManager import Queries, get_connection
 import model
 import ourUtils
 
@@ -21,10 +20,9 @@ app.logger.addHandler(file_handler)
 page_size = 100
 
 
-try:
-    db_conn = psycopg2.connect("dbname=radiodb user=radiodb host=localhost password=%s" % dbpass)
-except psycopg2.DatabaseError:
-    app.logger.error("could not connect to db!")
+db_conn = get_connection()
+if db_conn is None:
+    exit("could not make connection to db")
 
 
 @app.route('/')

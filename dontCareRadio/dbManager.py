@@ -1,4 +1,18 @@
-dbpass = "VG9kYXkgaXMgYSBsb3ZlbHkgZGF5LCBpc24ndCBpdD8K"  # TODO hide?
+import psycopg2
+
+db_pass = "VG9kYXkgaXMgYSBsb3ZlbHkgZGF5LCBpc24ndCBpdD8K"  # TODO hide?
+db_name = "radiodb"
+db_user = "radiodb"
+db_host = "locahost"
+
+
+def get_connection():
+    try:
+        return psycopg2.connect("dbname=%s user=%s host=%s password=%s" %
+                                (db_name, db_user, db_host, db_pass))
+    except psycopg2.DatabaseError as e:
+        print("could not connect to db: " + e)
+        return None
 
 
 class Queries:

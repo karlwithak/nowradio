@@ -1,7 +1,6 @@
 import requests
 import ourUtils
-import psycopg2
-from dbManager import Queries, dbpass
+from dbManager import Queries, get_connection
 
 
 # This program goes through the list of stations in the db and updates information such as
@@ -40,11 +39,8 @@ def worker(id_url_list, connection):
 
 
 def main():
-    conn = None
-    try:
-        conn = psycopg2.connect("dbname=radiodb user=radiodb host=localhost password=%s" % dbpass)
-    except psycopg2.DatabaseError:
-        print("could not connect to db")
+    conn = get_connection()
+    if conn is None:
         exit("could not connect to db")
     id_url_list = ourUtils.db_quick_query(conn, Queries.get_all_ips)
     ourUtils.multi_thread_runner(id_url_list, worker, conn)

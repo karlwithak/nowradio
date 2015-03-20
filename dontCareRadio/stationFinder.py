@@ -4,7 +4,7 @@ import model
 import requests
 import socket
 import psycopg2
-from dbManager import Queries, dbpass
+from dbManager import Queries, get_connection
 from lxml import html
 
 # This program queries Yandex to get potential stations and puts the station information into the
@@ -112,7 +112,9 @@ def main():
     checked_ip_set = set()
     ourUtils.multi_thread_runner(list(ip_set), station_checker, checked_ip_set)
     print("done station_checker")
-    conn = psycopg2.connect("dbname=radiodb user=radiodb host=localhost password=%s" % dbpass)
+    conn = get_connection()
+    if conn is None:
+        exit("could not make database connection")
     ourUtils.multi_thread_runner(list(checked_ip_set), insert_new_station, conn)
     conn.commit()
     print("done station_checker")
