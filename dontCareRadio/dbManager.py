@@ -8,7 +8,7 @@ def get_connection():
                                 (serverInfo.db_name, serverInfo.db_user,
                                  serverInfo.db_host, serverInfo.db_pass))
     except psycopg2.DatabaseError as e:
-        print("could not connect to db: " + e)
+        print("could not connect to db: " + str(e))
         return None
 
 
