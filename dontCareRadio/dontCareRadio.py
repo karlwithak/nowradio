@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, jsonify
 from dbManager import Queries, get_connection
 import model
 import ourUtils
+import serverInfo
 
 # This file is the first that is called when someone goes to a page on our website.
 # It looks at the url that they entered and decides what computation to do and what
@@ -13,8 +14,9 @@ import ourUtils
 app = Flask(__name__, template_folder="../templates")
 
 app.config['APP_NAME'] = "Don't Care Radio"
+app.config['DEBUG'] = serverInfo.is_development
 app.config.from_pyfile('../conf/flask.conf.py')
-file_handler = FileHandler('/var/log/flask/info.log')
+file_handler = FileHandler(serverInfo.flask_log_file)
 file_handler.setLevel(logging.INFO)
 app.logger.addHandler(file_handler)
 page_size = 100

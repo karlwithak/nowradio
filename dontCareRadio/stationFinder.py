@@ -3,9 +3,9 @@ import ourUtils
 import model
 import requests
 import socket
-import psycopg2
 from dbManager import Queries, get_connection
 from lxml import html
+import serverInfo
 
 # This program queries Yandex to get potential stations and puts the station information into the
 #   database if they are up and serving mp3 and don't cause any other problems.
@@ -20,10 +20,16 @@ def yandex_query(genre_list, url_set):
         genre = genre.replace("%", "")
         for page_num in range(10):
             r = requests.get(
-                "https://xmlsearch.yandex.com/xmlsearch?user=karlwithak&key=03.304384900:f9010bc4fa"
-                "6edb0e00c4d309532ba3e8&query=%22SHOUTcast+Administrator%22+%2B+%22" + genre + "%22"
-                "&l10n=en&sortby=rlv&filter=none&maxpassages=1&groupby=attr%3D%22%22.mode%3Dflat.gr"
-                "oups-on-page%3D100.docs-in-group%3D1&page=" + str(page_num))
+                "https://xmlsearch.yandex.com/xmlsearch?"
+                "user=" + serverInfo.yandex_user +
+                "&key=" + serverInfo.yandex_key +
+                "&query=%22SHOUTcast+Administrator%22+%2B+%22" + genre + "%22"
+                "&l10n=en"
+                "&sortby=rlv"
+                "&filter=none"
+                "&maxpassages=1"
+                "&groupby=attr%3D%22%22.mode%3Dflat.groups-on-page%3D100.docs-in-group%3D1"
+                "&page=" + str(page_num))
             root = fromstring(r.text.encode("utf-8"))
             urls = root.findall(".//url")
             urls = set(url.text for url in urls)
