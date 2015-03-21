@@ -1,21 +1,5 @@
 {% extends "base.html" %}
-{% block landing %}
-    <div class="container">
-        <div id="mainLanding">
-            <h1>
-                {{ config['APP_NAME'] }}
-            </h1>
-            <p class="lead">
-                Play whatever
-            </p>
-            <a id="bigPlayButton" class="large-play" href="javascript:void(0)">
-                <i class="glyphicon glyphicon-play-circle"></i>
-            </a>
-        </div>
-    </div>
-{% endblock %}
-
-{% block content %}
+{% block header %}
     <nav class="navigationBar">
         <span class="navbar-brand">{{ config['APP_NAME'] }}</span>
         <div class="pull-left" id="faveHolder">
@@ -58,13 +42,32 @@
         <p>{{ config['APP_NAME'] }} is a place to hear music without having to choose it</p>
         <p>It was made by Nicholas Gibson and Nicholas Hrynuik</p>
     </div>
+{% endblock %}
 
+
+{% block landing %}
+    <div class="container">
+        <div id="mainLanding">
+            <h1>
+                {{ config['APP_NAME'] }}
+            </h1>
+            <p class="lead">
+                Play whatever
+            </p>
+            <a id="bigPlayButton" class="large-play" href="javascript:void(0)">
+                <i class="glyphicon glyphicon-play-circle"></i>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block content %}
     <div class="verticalCenter">
         <div id="stationInfo">
             <span>Currently Playing:</span> <span id="currentSong">Song</span>
         </div>
     </div>
-
 
     <nav id="controlBar" class="navbar-fixed-bottom">
         <div id="playerContainer">
@@ -100,7 +103,5 @@
         <img src="{{ url_for('static', filename='img/spectrum.png') }}" id="spectrum"/>
     </nav>
 
-
     <audio id="player" preload="auto"></audio>
-
 {% endblock %}
