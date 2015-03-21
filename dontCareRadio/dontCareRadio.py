@@ -1,7 +1,7 @@
 from logging import FileHandler
 import logging
 import requests
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, abort
 from dbManager import Queries, get_connection
 import model
 import ourUtils
@@ -13,7 +13,7 @@ import serverInfo
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
-app.config['APP_NAME'] = "Don't Care Radios"
+app.config['APP_NAME'] = "Don't Care Radio"
 app.config['DEBUG'] = serverInfo.is_development
 file_handler = FileHandler(serverInfo.flask_log_file)
 file_handler.setLevel(logging.INFO)
@@ -47,8 +47,10 @@ def get_initial_stations():
 @app.route('/get-genre-by-ip/')
 def get_genre_by_ip():
     ip = request.args.get('ip', '')
-    results = ourUtils.db_quick_query(db_conn, Queries.get_our_genre_by_ip, (ip,))[0]
-    genre_num = model.genre_names.index(results[0])
+    results = ourUtils.db_quick_query(db_conn, Queries.get_our_genre_by_ip, (ip,))
+    if len(results) == 0:
+        abort(400)
+    genre_num = model.genre_names.index(results[0][0])
     return jsonify(genreNum=genre_num)
 
 
