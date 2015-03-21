@@ -1,6 +1,5 @@
 /*global $:false */
 
-share = 1
 $(function() {
     "use strict";
     $('span#infoButton').click(function() {
@@ -34,7 +33,10 @@ $(function() {
         placement: 'bottom'
     };
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip(options);
+        // enable tooltips if this is not a mobile device
+        if(!('ontouchstart' in window)) {
+            $('[data-toggle="tooltip"]').tooltip(options);
+        }
     });
 });
 
