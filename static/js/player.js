@@ -28,11 +28,12 @@ $(function() {
         'currentSongText'  : $('span#currentSong'),
         'stationInfo'      : $('div#stationInfo'),
         'oldFaveBox'       : $('div#oldFaveBox'),
-        'newFaveBox'       : $('div#newFaveBox'),
+        'newFaveBox'       : $('div#newFaveBox').hide(),
         'faveAddIcon'      : $('span.faveAdd'),
         'faveRemoveIcon'   : $('span.faveRemove'),
         'favePlayIcon'     : $('span.favePlay'),
-        'loader'           : $('img#loader')
+        'loader'           : $('img#loader'),
+        'spectrumMarker'   : $('span.spectrumMarker')
     };
     var changeStationTimeout;
     var initialStationsHaveLoaded = false;
@@ -64,6 +65,7 @@ $(function() {
     function hideLandingPage() {
         elems.landingContainer.hide();
         elems.mainContainer.show();
+        FaveManager.showHideNewFaveBox();
     }
 
     /**
@@ -72,8 +74,8 @@ $(function() {
     var Utils = {
         genreNumToColor: function (genreNum) {
             var totalGenres = StationsManager.getGenreCount();
-            genreNum = (genreNum * 360) / totalGenres;
-            var genreColor = window.tinycolor('hsv(' + genreNum + ', 26%, 99%)');
+            var colorNum = (genreNum * 360) / totalGenres;
+            var genreColor = window.tinycolor('hsv(' + colorNum + ', 26%, 99%)');
             return genreColor.toHexString();
         },
         ipToHashCode: function(ip) {
@@ -115,6 +117,8 @@ $(function() {
             SongNameManager.updateName(true);
             SongNameManager.animateClosed();
             hideLandingPage();
+            SpectrumManager.updateMarker();
+
             clearTimeout(changeStationTimeout);
             changeStationTimeout = setTimeout(changeTimeout, 10000);
         },
@@ -547,7 +551,7 @@ $(function() {
             _showHideNewFaveBox();
         }
         function _showHideNewFaveBox() {
-            if ($('div#oldFaveBox').length <= maxFaves) {
+            if ($('div#oldFaveBox').length <= maxFaves && UrlManager.getHash().length > 1) {
                 elems.newFaveBox.show();
             } else {
                 elems.newFaveBox.hide();
@@ -564,7 +568,8 @@ $(function() {
         }
         return {
             initOldFaves : _initOldFaves,
-            showPlayingFave : _showPlayingFave
+            showPlayingFave : _showPlayingFave,
+            showHideNewFaveBox : _showHideNewFaveBox
         };
     }());
 
@@ -591,6 +596,24 @@ $(function() {
         };
     }());
 
+    var SpectrumManager = {
+        handleClick : function(e) {
+            var genreCount = StationsManager.getGenreCount();
+            var clickX = e.pageX - 45;
+            var genreNum = Math.round((clickX/elems.spectrum.width()) * genreCount);
+            if (StationsManager.setActiveGenre(genreNum)) {
+                MainController.changeStationToNextStation();
+            }
+        },
+        updateMarker : function() {
+            var genreNum = StationsManager.getActiveGenre();
+            var genreCount = StationsManager.getGenreCount();
+            var xCoord = Math.round((elems.spectrum.width() * genreNum)/ genreCount) + 45;
+            window.console.log(xCoord);
+            elems.spectrumMarker.css("left", xCoord);
+        }
+    };
+
 
     /**
      * Listeners - Handle certain user actions
@@ -608,14 +631,7 @@ $(function() {
     elems.player.bind('error', function (e) {
         window.console.error(e);
     });
-    elems.spectrum.click(function (e) {
-        var width = elems.spectrum.width();
-        var genreCount = StationsManager.getGenreCount();
-        var genreNum = Math.round((e.pageX/width) * genreCount);
-        if (StationsManager.setActiveGenre(genreNum)) {
-            MainController.changeStationToNextStation();
-        }
-    });
+    elems.spectrum.click(SpectrumManager.handleClick);
 
 
     /**
