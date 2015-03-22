@@ -31,9 +31,11 @@ $(function() {
         'newFaveBox'       : $('div#newFaveBox'),
         'faveAddIcon'      : $('span.faveAdd'),
         'faveRemoveIcon'   : $('span.faveRemove'),
-        'favePlayIcon'   : $('span.favePlay')
+        'favePlayIcon'     : $('span.favePlay'),
+        'loader'           : $('img#loader')
     };
     var changeStationTimeout;
+    var initialStationsHaveLoaded = false;
 
     /**
      * Functions - Random functions that should probably be in one of the closures...
@@ -72,8 +74,11 @@ $(function() {
     }
 
     function initialStationsLoaded() {
+        elems.loader.hide();
+        buttons.bigPlay.show();
         faveManager.initOldFaves();
         faveManager.showPlayingFave();
+        initialStationsHaveLoaded = true;
     }
 
     function hideLandingPage() {
@@ -197,6 +202,9 @@ $(function() {
             data['stations'].forEach(function (stationList) {
                 genreManagers.push(_getGenreManager(stationList));
             });
+            if (window.location.hash.length == 0) {
+                genreNum = Math.floor(Math.random() * genreManagers.length);
+            }
             initialStationsLoaded();
         });
 
@@ -495,6 +503,7 @@ $(function() {
             _showHideNewFaveBox();
         }
         function _addFave() {
+            if (!initialStationsHaveLoaded) return;
             var faveCount = $('div#oldFaveBox').length - 1;
             var newBox = elems.oldFaveBox.clone(true).insertBefore(elems.oldFaveBox).show();
             colorManager.setElemToGenreColor(newBox);
