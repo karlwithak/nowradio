@@ -12,8 +12,6 @@ $(function() {
         $('div#infoPanel').hide();
     });
 
-    $("span.buttonIcon").hover(turnGrey, turnBlack);
-    $("span.faveRemove").hover(turnLightGrey, turnWhite);
 
     function turnGrey(elem) {
         $(elem.target).css("color", "#505050");
@@ -28,15 +26,16 @@ $(function() {
         $(elem.target).css("color", "#000000");
     }
 
-    var options = {
-        delay: {'show' : 800, 'hide' : 50 },
-        placement: 'bottom'
-    };
-    $(function () {
-        // enable tooltips if this is not a mobile device
-        if(!('ontouchstart' in window)) {
-            $('[data-toggle="tooltip"]').tooltip(options);
-        }
-    });
+    // enable tooltips and hover listeners if this is not a mobile device
+    if(!('ontouchstart' in window)) {
+        $("span.buttonIcon").hover(turnGrey, turnBlack);
+        $("span.faveRemove").hover(turnLightGrey, turnWhite);
+
+        var options = {
+            delay: {'show' : 800, 'hide' : 50 },
+            placement: 'bottom'
+        };
+        $('[data-toggle="tooltip"]').tooltip(options);
+    }
 });
 
