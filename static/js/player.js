@@ -9,15 +9,15 @@ $(function() {
      * Global Variables
      */
     var buttons = {
-        'bigPlay'     : $('a#bigPlayButton'),
-        "play"        : $('div#playButton'),
+        'bigPlay'     : $('a#bigPlayButton').hide(),
+        "play"        : $('div#playButton').hide(),
         'stop'        : $('div#stopButton'),
         'nextStation' : $('div#nextStationButton'),
         'nextGenre'   : $('div#nextGenreButton'),
         'prevStation' : $('div#prevStationButton'),
         'prevGenre'   : $('div#prevGenreButton'),
         'mute'        : $('span#muteButton'),
-        'unmute'      : $('span#unmuteButton')
+        'unmute'      : $('span#unmuteButton').hide()
     };
     var elems = {
         'body'             : $('body'),
@@ -42,42 +42,22 @@ $(function() {
      */
 
     function changeTimeout() {
-        stationsManager.removeCurrent();
+        StationsManager.removeCurrent();
         clearTimeout(changeStationTimeout);
-        mainController.changeStationToNextStation();
+        MainController.changeStationToNextStation();
     }
 
     function readyToPlay() {
         clearTimeout(changeStationTimeout);
-        colorManager.setToGenreColor();
-        mainController.playingStatePlay();
-    }
-
-    function stationNameAnimation(open) {
-        var stationInfoDiv = elems.stationInfo;
-        if (open) {
-            stationInfoDiv.stop(true).animate({
-                'max-height': 300,
-                'padding-top': '15px',
-                'padding-bottom': '15px'
-            }, 333, 'swing', function () {
-                stationInfoDiv.children().css('visibility','visible');
-            });
-        } else {
-            stationInfoDiv.children().css('visibility','hidden');
-            stationInfoDiv.stop(true).animate({
-                'max-height': 0,
-                'padding-top': 0,
-                'padding-bottom': 0
-            }, 333, 'swing');
-        }
+        ColorManager.setToGenreColor();
+        MainController.playingStatePlay();
     }
 
     function initialStationsLoaded() {
         elems.loader.hide();
         buttons.bigPlay.show();
-        faveManager.initOldFaves();
-        faveManager.showPlayingFave();
+        FaveManager.initOldFaves();
+        FaveManager.showPlayingFave();
         initialStationsHaveLoaded = true;
     }
 
@@ -86,89 +66,101 @@ $(function() {
         elems.mainContainer.show();
     }
 
-    function ipToHashCode(ip) {
-        var parts = ip.split(':');
-        var port = (parts.length === 1 ? '80' : parts[1]);
-        var hashcode = parts[0].split('.').reduce(function (accumulator, octetAsString) {
-            if (parseInt(octetAsString) < 16) {
-                accumulator += '0';
+    /**
+     * Utility functions used throughout.
+     */
+    var Utils = {
+        genreNumToColor: function (genreNum) {
+            var totalGenres = StationsManager.getGenreCount();
+            genreNum = (genreNum * 360) / totalGenres;
+            var genreColor = window.tinycolor('hsv(' + genreNum + ', 26%, 99%)');
+            return genreColor.toHexString();
+        },
+        ipToHashCode: function(ip) {
+            var parts = ip.split(':');
+            var port = (parts.length === 1 ? '80' : parts[1]);
+            var hashcode = parts[0].split('.').reduce(function (accumulator, octetAsString) {
+                if (parseInt(octetAsString) < 16) {
+                    accumulator += '0';
+                }
+                return accumulator + parseInt(octetAsString).toString(16);
+            }, '');
+            hashcode += parseInt(port).toString(16);
+            return hashcode;
+        },
+        hashCodeToIp: function(hashcode) {
+            var ip = '';
+            for (var i = 0; i < 8; i += 2) {
+                ip += parseInt(hashcode.substr(i, 2), 16).toString().trim() + '.';
             }
-            return accumulator + parseInt(octetAsString).toString(16);
-        }, '');
-        hashcode += parseInt(port).toString(16);
-        return hashcode;
-    }
-
-    function hashCodeToIp(hashcode) {
-        var ip = '';
-        for (var i = 0; i < 8; i += 2) {
-            ip += parseInt(hashcode.substr(i, 2), 16).toString().trim() + '.';
+            ip = ip.slice(0, -1);
+            ip += ':' + parseInt(hashcode.substr(8, 12), 16).toString();
+            return ip;
         }
-        ip = ip.slice(0, -1);
-        ip += ':' + parseInt(hashcode.substr(8, 12), 16).toString();
-        return ip;
-    }
+    };
 
 
     /**
-     * Closures - Each one is like an 'object' that controls a certain aspect of the app
+     * Handles all player controller buttons and actions. Responsible for station changes and play
+     * state changes.
      */
-    var mainController = {
+    var MainController = {
         updateViewForNewSource : function(src) {
-            sourceManager.setSource(src);
-            elems.player.attr('src', sourceManager.getMediaSource());
-            mainController.playingStateReload();
-            colorManager.setToNeutral();
-            faveManager.showPlayingFave();
-            songNameManager.updateName(true);
-            stationNameAnimation(false);
+            UrlManager.setUrlHash(src);
+            elems.player.attr('src', UrlManager.getMediaUrl());
+            ShareManager.updateShareUrl();
+            MainController.playingStateReload();
+            ColorManager.setToNeutral();
+            FaveManager.showPlayingFave();
+            SongNameManager.updateName(true);
+            SongNameManager.animateClosed();
             hideLandingPage();
             clearTimeout(changeStationTimeout);
             changeStationTimeout = setTimeout(changeTimeout, 10000);
         },
         changeStationToNextStation : function() {
-            var src = stationsManager.getNextStation();
-            mainController.updateViewForNewSource(src);
+            var src = StationsManager.getNextStation();
+            MainController.updateViewForNewSource(src);
         },
         changeStationToPrevStation : function() {
-            var src = stationsManager.getPrevStation();
-            mainController.updateViewForNewSource(src);
+            var src = StationsManager.getPrevStation();
+            MainController.updateViewForNewSource(src);
         },
         changeStationToNextGenre : function() {
-            stationsManager.getNextGenre();
-            var src = stationsManager.getNextStation();
-            mainController.updateViewForNewSource(src);
+            StationsManager.getNextGenre();
+            var src = StationsManager.getNextStation();
+            MainController.updateViewForNewSource(src);
         },
         changeStationToPrevGenre : function() {
-            stationsManager.getPrevGenre();
-            var src = stationsManager.getNextStation();
-            mainController.updateViewForNewSource(src);
+            StationsManager.getPrevGenre();
+            var src = StationsManager.getNextStation();
+            MainController.updateViewForNewSource(src);
         },
         changeStationFromArgs: function(src, genreNum) {
-            stationsManager.setActiveGenre(genreNum);
-            mainController.updateViewForNewSource(src);
+            StationsManager.setActiveGenre(genreNum);
+            MainController.updateViewForNewSource(src);
         },
 
         playingStateStop : function() {
             buttons.stop.hide();
             buttons.play.show();
             elems.player[0].pause();
-            stationNameAnimation(false);
+            SongNameManager.animateClosed();
         },
         playingStatePlay : function() {
-            buttons.play.hide();
-            buttons.stop.show();
-            stationNameAnimation(true);
+            SongNameManager.animateOpen();
             elems.player[0].play();
         },
         playingStateToggle : function() {
-            if (mainController.playingStateIsPlaying()) {
-                mainController.playingStateStop();
+            if (MainController.playingStateIsPlaying()) {
+                MainController.playingStateStop();
             } else {
-                mainController.playingStatePlay();
+                MainController.playingStateReload();
             }
         },
         playingStateReload : function() {
+            buttons.play.hide();
+            buttons.stop.show();
             elems.player[0].load();
         },
         playingStateIsPlaying : function() {
@@ -182,20 +174,24 @@ $(function() {
                 if (_skipThisCheck()) return;
                 if (elems.player[0].played.end(0) === timeCheckStart) {
                     // There was no change in played time, so something is wrong, try to reload
-                    mainController.playingStateReload();
+                    MainController.playingStateReload();
                 }
             }
             function _skipThisCheck() {
-                return !mainController.playingStateIsPlaying() ||
+                return !MainController.playingStateIsPlaying() ||
                         elems.player[0].currentTime === null ||
                         elems.player[0].currentTime < 1 ||
                         elems.player[0].played.length < 1;
             }
         }
     };
-    window.setInterval(mainController.stationPlayingChecker, 5000);
+    window.setInterval(MainController.stationPlayingChecker, 5000);
 
-    var stationsManager = (function() {
+    /**
+     * Manages the genres and their stations. Keeps track of what genres and stations have been
+     * played and what will be played in the future.
+     */
+    var StationsManager = (function() {
         var genreManagers = [];
         var genreNum = 0;
         $.get('/get-initial-stations/', function(data) {
@@ -301,72 +297,67 @@ $(function() {
         };
     }());
 
-
-    var sourceManager = {
+    /**
+     * Manages the browser's url.
+     */
+    var UrlManager = {
         pre : 'http://',
         mediaPost : '/;?icy=http',
         sevenPost : '/7.html',
 
-        setSource : function(newSource) {
-            window.history.replaceState(null, null, '#' + ipToHashCode(newSource));
-            elems.player.attr('src', sourceManager.getMediaSource());
-            shareManager.updateShareUrl();
+        setUrlHash : function(newSource) {
+            window.history.replaceState(null, null, '#' + Utils.ipToHashCode(newSource));
         },
-        getMediaSource: function() {
-            return sourceManager.pre + sourceManager.getSource() + sourceManager.mediaPost;
+        getMediaUrl: function() {
+            return UrlManager.pre + UrlManager.getUrl() + UrlManager.mediaPost;
         },
-        getMetaDataSource : function() {
-            return  sourceManager.pre + sourceManager.getSource() + sourceManager.sevenPost;
+        getMetaDataUrl : function() {
+            return  UrlManager.pre + UrlManager.getUrl() + UrlManager.sevenPost;
         },
-        getSource : function() {
-            return hashCodeToIp(window.location.hash.substring(1));
+        getUrl : function() {
+            return Utils.hashCodeToIp(UrlManager.getHash());
         },
-        noUrlSet : function() {
-            return sourceManager.getSource() === '';
+        getHash : function() {
+            return window.location.hash.substring(1);
         },
         restoreFromHash : function() {
             // If the page is loaded with a #base64StringHere then play that station
-            $.get('/get-genre-by-ip/', {"ip": sourceManager.getSource()}, function(data) {
-                mainController.changeStationFromArgs(sourceManager.getSource(), data['genreNum']);
+            $.get('/get-genre-by-ip/', {"ip": UrlManager.getUrl()}, function(data) {
+                MainController.changeStationFromArgs(UrlManager.getUrl(), data['genreNum']);
             });
         }
     };
 
-    var volumeManager = (function() {
-        buttons.unmute.hide();
-        var soundOnNow = false;
-
-        function _soundOff() {
+    /**
+     * Controls the volume of the player
+     */
+    var VolumeManager = {
+        soundOff: function() {
             elems.player[0].muted = true;
             buttons.mute.hide();
             buttons.unmute.show();
-            soundOnNow = false;
-        }
-        function _soundOn() {
+        },
+        soundOn: function() {
             elems.player[0].muted = false;
             buttons.mute.show();
             buttons.unmute.hide();
-            soundOnNow = true;
-        }
-        function _soundToggle() {
-            if (soundOnNow) {
-                _soundOff();
+        },
+        soundToggle: function() {
+            if (elems.player[0].muted) {
+                VolumeManager.soundOn();
             } else {
-                _soundOn();
+                VolumeManager.soundOff();
             }
         }
+    };
 
-        return {
-            soundOff    : _soundOff,
-            soundOn     : _soundOn,
-            soundToggle : _soundToggle
-        };
-    }());
-
-    var colorManager = {
+    /**
+     * Manages the background color and it's animations.
+     */
+    var ColorManager = {
         setToGenreColor: function() {
-            colorManager.setElemToGenreColor(elems.body);
-            colorManager.setElemToGenreColor(elems.newFaveBox);
+            ColorManager.setElemToGenreColor(elems.body);
+            ColorManager.setElemToGenreColor(elems.newFaveBox);
         },
         setToNeutral: function() {
            elems.body.animate({
@@ -375,20 +366,17 @@ $(function() {
             elems.newFaveBox.css("background-color", "#aaa");
         },
         setElemToGenreColor: function(elem) {
-            var color = colorManager.genreNumToColor(stationsManager.getActiveGenre());
+            var color = Utils.genreNumToColor(StationsManager.getActiveGenre());
             elem.animate({
                backgroundColor: color
             }, 666);
-        },
-        genreNumToColor: function(genreNum) {
-            var totalGenres = stationsManager.getGenreCount();
-            genreNum = (genreNum * 360) / totalGenres;
-            var genreColor = window.tinycolor('hsv(' + genreNum + ', 26%, 99%)');
-            return genreColor.toHexString();
         }
     };
 
-    var keyUpManager = (function() {
+    /**
+     * Handles all keyboard controls for player.
+     */
+    var KeyUpManager = (function() {
         var singleRightPress = false;
         var singleLeftPress = false;
         var leftTimeout;
@@ -399,21 +387,21 @@ $(function() {
             clearTimeout(leftTimeout);
             clearTimeout(rightTimeout);
             if (singleLeftPress) {
-                mainController.changeStationToPrevStation();
+                MainController.changeStationToPrevStation();
             } else if (singleRightPress) {
-                mainController.changeStationToNextStation();
+                MainController.changeStationToNextStation();
             }
             singleLeftPress = false;
             singleRightPress = false;
         }
         function _handleKeyUp(event) {
             if (event.keyCode === 32) {
-                mainController.playingStateToggle();
+                MainController.playingStateToggle();
             } else if (event.keyCode === 77) {
-                volumeManager.soundToggle();
+                VolumeManager.soundToggle();
             } else if (event.keyCode === 37) {
                 if (singleLeftPress) {
-                    mainController.changeStationToPrevGenre();
+                    MainController.changeStationToPrevGenre();
                     singleLeftPress = false;
                     _clearTimeouts();
                 } else {
@@ -422,7 +410,7 @@ $(function() {
                 }
             } else if (event.keyCode === 39) {
                 if (singleRightPress) {
-                    mainController.changeStationToNextGenre();
+                    MainController.changeStationToNextGenre();
                     singleRightPress = false;
                     _clearTimeouts();
                 } else {
@@ -436,31 +424,34 @@ $(function() {
         }
     }());
 
-    var songNameManager = (function () {
+    /**
+     * Controls all aspects of the currently playing song name.
+     */
+    var SongNameManager = (function () {
         var songName = '-1';
         var duplicateSongCheck = false;
         var intervalId = -1;
 
         function _setName(data, status) {
             if (status !== "success") {
-                stationsManager.removeCurrent();
-                mainController.changeStationToNextStation();
+                StationsManager.removeCurrent();
+                MainController.changeStationToNextStation();
             }
             var re = /<[^<]*>/gi;
             data = data.replace(re, '');
             var dataList = data.split(',');
             var isUp = dataList[1];
             if (isUp !== '1') {
-                stationsManager.removeCurrent();
-                mainController.changeStationToNextStation();
+                StationsManager.removeCurrent();
+                MainController.changeStationToNextStation();
                 return;
             }
             var newName = dataList.slice(6).join();
             // Check to see if this new station is playing the same song as the last one,
             //  if so, it's probably a duplicate station so go to the next one
             if (newName === songName && duplicateSongCheck) {
-                stationsManager.removeCurrent();
-                mainController.changeStationToNextStation();
+                StationsManager.removeCurrent();
+                MainController.changeStationToNextStation();
             } else if (newName !== songName) {
                 elems.currentSongText.text(newName);
                 songName = newName;
@@ -473,15 +464,38 @@ $(function() {
             if (doDuplicateSongCheck === true) {
                 duplicateSongCheck = doDuplicateSongCheck;
             }
-            var infoUrl = sourceManager.getMetaDataSource();
+            var infoUrl = UrlManager.getMetaDataUrl();
             $.get('/get-station-info/?stationUrl='+infoUrl,  _setName, 'html');
         }
+        function _animateOpen() {
+            elems.stationInfo.stop(true).animate({
+                'max-height': 300,
+                'padding-top': '15px',
+                'padding-bottom': '15px'
+            }, 333, 'swing', function () {
+                elems.stationInfo.children().css('visibility', 'visible');
+            });
+        }
+        function _animateClosed() {
+            elems.stationInfo.children().css('visibility','hidden');
+            elems.stationInfo.stop(true).animate({
+                'max-height': 0,
+                'padding-top': 0,
+                'padding-bottom': 0
+            }, 333, 'swing');
+        }
+
         return {
-            updateName : _updateName
+            updateName   : _updateName,
+            animateOpen  : _animateOpen,
+            animateClosed: _animateClosed
         };
     }());
 
-    var faveManager = (function () {
+    /**
+     * Manages the adding and removal of favourites in the header bar.
+     */
+    var FaveManager = (function () {
         var maxFaves = 5;
         var faves = window.localStorage.getItem("faves");
         if (faves === null) {
@@ -497,7 +511,7 @@ $(function() {
         function _initOldFaves() {
             faves.forEach(function (fave) {
                 var newBox = elems.oldFaveBox.clone(true).insertBefore(elems.oldFaveBox).show();
-                var color = colorManager.genreNumToColor(fave['genreNum']);
+                var color = Utils.genreNumToColor(fave['genreNum']);
                 newBox.css("background-color", color);
             });
             _showHideNewFaveBox();
@@ -506,9 +520,9 @@ $(function() {
             if (!initialStationsHaveLoaded) return;
             var faveCount = $('div#oldFaveBox').length - 1;
             var newBox = elems.oldFaveBox.clone(true).insertBefore(elems.oldFaveBox).show();
-            colorManager.setElemToGenreColor(newBox);
-            var ipHash = window.location.hash.substring(1);
-            var genreNum = stationsManager.getActiveGenre();
+            ColorManager.setElemToGenreColor(newBox);
+            var ipHash = UrlManager.getHash();
+            var genreNum = StationsManager.getActiveGenre();
             faves[faveCount] = {"ipHash" : ipHash, "genreNum" : genreNum};
             window.localStorage.setItem("faves", JSON.stringify(faves));
             _showPlayingFave();
@@ -518,12 +532,12 @@ $(function() {
             var faveNum = $(elem.target).parent().index();
             var faveData = faves[faveNum];
             var faveIpHash = faveData['ipHash'];
-            if (window.location.hash.substring(1) == faveIpHash) {
+            if (UrlManager.getHash() == faveIpHash) {
                 // IF we are already playing the station selected, do nothing
                 return;
             }
-            var ip = hashCodeToIp(faveIpHash);
-            mainController.changeStationFromArgs(ip, faveData['genreNum']);
+            var ip = Utils.hashCodeToIp(faveIpHash);
+            MainController.changeStationFromArgs(ip, faveData['genreNum']);
         }
         function _removeFave(elem) {
             var faveNum = $(elem.target).parent().index();
@@ -540,9 +554,8 @@ $(function() {
             }
         }
         function _showPlayingFave() {
-            var playingIpHash = window.location.hash.substring(1);
             faves.forEach(function (fave, index) {
-                if (fave['ipHash'] === playingIpHash) {
+                if (fave['ipHash'] === UrlManager.getHash()) {
                     $("span.favePlay").eq(index).css('color', 'white');
                 } else {
                     $("span.favePlay").eq(index).css('color', 'black');
@@ -555,7 +568,11 @@ $(function() {
         };
     }());
 
-    var shareManager =  (function() {
+    /**
+     * Manages the favourite button in the header bar. Also responsible for updating the url that
+     * will be shared whenever the page url changes.
+     */
+    var ShareManager =  (function() {
         var config = {
             url: window.location.origin + encodeURIComponent(window.location.hash),
             ui: {
@@ -578,25 +595,25 @@ $(function() {
     /**
      * Listeners - Handle certain user actions
      */
-    buttons.stop.click(mainController.playingStateStop);
-    buttons.play.click(mainController.playingStatePlay);
-    buttons.nextStation.click(mainController.changeStationToNextStation);
-    buttons.nextGenre.click(mainController.changeStationToNextGenre);
-    buttons.prevStation.click(mainController.changeStationToPrevStation);
-    buttons.prevGenre.click(mainController.changeStationToPrevGenre);
-    buttons.mute.click(volumeManager.soundOff);
-    buttons.unmute.click(volumeManager.soundOn);
-    buttons.bigPlay.click(mainController.changeStationToNextStation);
+    buttons.stop.click(MainController.playingStateStop);
+    buttons.play.click(MainController.playingStateReload);
+    buttons.nextStation.click(MainController.changeStationToNextStation);
+    buttons.nextGenre.click(MainController.changeStationToNextGenre);
+    buttons.prevStation.click(MainController.changeStationToPrevStation);
+    buttons.prevGenre.click(MainController.changeStationToPrevGenre);
+    buttons.mute.click(VolumeManager.soundOff);
+    buttons.unmute.click(VolumeManager.soundOn);
+    buttons.bigPlay.click(MainController.changeStationToNextStation);
     elems.player.bind('canplay', readyToPlay);
     elems.player.bind('error', function (e) {
         window.console.error(e);
     });
     elems.spectrum.click(function (e) {
         var width = elems.spectrum.width();
-        var genreCount = stationsManager.getGenreCount();
+        var genreCount = StationsManager.getGenreCount();
         var genreNum = Math.round((e.pageX/width) * genreCount);
-        if (stationsManager.setActiveGenre(genreNum)) {
-            mainController.changeStationToNextStation();
+        if (StationsManager.setActiveGenre(genreNum)) {
+            MainController.changeStationToNextStation();
         }
     });
 
@@ -605,7 +622,6 @@ $(function() {
      * Setup - Set everything in motion
      */
     if (window.location.hash.length !== 0) {
-        sourceManager.restoreFromHash();
+        UrlManager.restoreFromHash();
     }
-    buttons.play.hide();
 });
