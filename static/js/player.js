@@ -10,11 +10,11 @@ $(function() {
      */
     var buttons = {
         'bigPlay'     : $('a#bigPlayButton').hide(),
-        "play"        : $('div#playButton').hide(),
-        'stop'        : $('div#stopButton'),
-        'nextStation' : $('div#nextStationButton'),
+        "play"        : $('span#playButton').hide(),
+        'stop'        : $('span#stopButton'),
+        'nextStation' : $('span#nextStationButton'),
         'nextGenre'   : $('span#nextGenreButton'),
-        'prevStation' : $('div#prevStationButton'),
+        'prevStation' : $('span#prevStationButton'),
         'prevGenre'   : $('span#prevGenreButton'),
         'mute'        : $('span#muteButton'),
         'unmute'      : $('span#unmuteButton').hide()
@@ -74,8 +74,7 @@ $(function() {
      */
     var Utils = {
         genreNumToColor: function (genreNum) {
-            var totalGenres = StationsManager.getGenreCount() + 2;
-            genreNum += 1;
+            var totalGenres = StationsManager.getGenreCount();
             var colorNum = (genreNum * 360) / totalGenres;
             var genreColor = window.tinycolor('hsv(' + colorNum + ', 26%, 99%)');
             return genreColor.toHexString();
@@ -111,6 +110,7 @@ $(function() {
     var MainController = {
         updateViewForNewSource : function(src) {
             UrlManager.setUrlHash(src);
+            SpectrumManager.updateMarker();
             elems.player.attr('src', UrlManager.getMediaUrl());
             ShareManager.updateShareUrl();
             MainController.playingStateReload();
@@ -119,7 +119,6 @@ $(function() {
             SongNameManager.updateName(true);
             SongNameManager.animateClosed();
             hideLandingPage();
-            SpectrumManager.updateMarker();
 
             clearTimeout(changeStationTimeout);
             changeStationTimeout = setTimeout(changeTimeout, 10000);
@@ -607,8 +606,8 @@ $(function() {
             }
         },
         updateMarker : function() {
-            var genreNum = StationsManager.getActiveGenre() + 1;
-            var genreCount = StationsManager.getGenreCount() + 2;
+            var genreNum = StationsManager.getActiveGenre();
+            var genreCount = StationsManager.getGenreCount();
             var totalWidth = elems.spectrum.width();
             var xCoord = Math.round((totalWidth * genreNum)/ genreCount);
             elems.spectrumMarker.css("left", xCoord);
@@ -632,7 +631,6 @@ $(function() {
     elems.player.bind('error', function (e) {
         window.console.error(e);
     });
-    elems.spectrum.click(SpectrumManager.handleClick);
 
 
     /**

@@ -28,12 +28,12 @@ $(function() {
 
     // enable tooltips and hover listeners if this is not a mobile device
     if(!('ontouchstart' in window)) {
-        $("span.buttonIcon").hover(turnGrey, turnBlack);
+        $("span.playerButtonIcon").hover(turnGrey, turnBlack);
         $("span.faveRemove").hover(turnLightGrey, turnWhite);
 
         var options = {
             delay: {'show' : 800, 'hide' : 50 },
-            placement: 'bottom'
+            placement: 'top'
         };
         $('[data-toggle="tooltip"]').tooltip(options);
     }

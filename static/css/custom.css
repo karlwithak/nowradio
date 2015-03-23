@@ -22,10 +22,6 @@ body {
     text-align: center;
 }
 
-.mainButtons {
-    display: inline-block;
-}
-
 .changeStationText {
     font-weight: bold;
     font-size: 1.25em;
@@ -42,13 +38,6 @@ body {
     position: fixed;
     z-index: -55;
 }
-@media(max-height: 400px) {
-    .verticalCenter {
-        min-height: inherit;
-        bottom: 100px;
-    }
-}
-
 
 #stationInfo {
     text-align: center;
@@ -60,10 +49,6 @@ body {
 }
 
 #currentSong {
-    font-weight: bold;
-}
-
-#currentStation {
     font-weight: bold;
 }
 
@@ -110,7 +95,6 @@ body {
 #playerContainer {
     display: inline-block;
     text-align: center;
-    border-top: solid 0.5em black;
     width: 100%;
     padding-top: 10px;
     padding-top: 10px;
@@ -118,24 +102,23 @@ body {
 
 #spectrum {
     width: 100%;
-    height: 45px;
-    cursor: crosshair;
-}
-
-.customButton {
-    padding: 0 15px;
-    float: left;
-    cursor: pointer;
-}
-
-.changeGenreButton {
+    height: 63px;
+    bottom: 0;
+    left : 0;
     position: absolute;
+    z-index: -1;
+    border-top: solid 0.5em black;
+}
+
+.playerButtonIcon {
+    position: fixed;
     cursor: pointer;
-    padding: 5px;
+    padding: 10px;
     color: black;
     line-height: 1;
     top: auto;
     bottom: 0;
+    font-size: 2.5em;
 }
 
 #prevGenreButton {
@@ -146,8 +129,16 @@ body {
     right: 0;
 }
 
-.buttonIcon {
-    font-size: 2.5em;
+#playButton, #stopButton {
+    left: calc(50% - 23px);
+}
+
+#nextStationButton {
+    left: calc(75% - 45px);
+}
+
+#prevStationButton {
+    left: calc(25% - 10px);
 }
 
 .faveBox {
@@ -216,9 +207,17 @@ li.entypo-paper-plane {
 
 .spectrumMarker {
     position: fixed;
-    bottom: 0;
-    font-size: 1.25em;
+    font-size: 1.2em;
     z-index: 1030;
     top: auto;
     display: block;
+    color: #000000;
+}
+
+#markerTop {
+    bottom: 45px;
+}
+
+#markerBottom {
+   bottom: -6px;
 }

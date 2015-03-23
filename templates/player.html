@@ -72,34 +72,23 @@
 
     <nav id="controlBar" class="navbar-fixed-bottom">
         <div id="playerContainer">
-            <div class="mainButtons">
-                <div id="prevStationButton" class="customButton">
-                    <span class="glyphicon glyphicon-step-backward buttonIcon" data-toggle="tooltip"
-                        title="last station"></span>
-                </div>
-                <div id="playButton" class="customButton">
-                    <span class="glyphicon glyphicon-play buttonIcon" data-toggle="tooltip"
-                        title="play"></span>
-                </div>
-                <div id="stopButton" class="customButton">
-                    <span class="glyphicon glyphicon-pause buttonIcon" data-toggle="tooltip"
-                        title="pause"></span>
-                </div>
-                <!-- <p class="changeStationText">Change station</p> -->
-                <div id="nextStationButton" class="customButton">
-                    <span class="glyphicon glyphicon-step-forward buttonIcon" data-toggle="tooltip"
-                        title="next station"></span>
-                </div>
-                <div class="clearfix"></div>
-            </div>
+            <span class="glyphicon glyphicon-step-backward playerButtonIcon" data-toggle="tooltip"
+                title="last station" id="prevStationButton"></span>
+            <span class="glyphicon glyphicon-play playerButtonIcon" data-toggle="tooltip"
+                title="play" id="playButton"></span>
+            <span class="glyphicon glyphicon-pause playerButtonIcon" data-toggle="tooltip"
+                title="pause" id="stopButton"></span>
+            <span class="glyphicon glyphicon-step-forward playerButtonIcon" data-toggle="tooltip"
+                title="next station" id="nextStationButton"></span>
+            <span class="glyphicon glyphicon-arrow-left playerButtonIcon" data-toggle="tooltip"
+                   title="last genre" id="prevGenreButton"></span>
+            <span class="glyphicon glyphicon-arrow-right playerButtonIcon" data-toggle="tooltip"
+                   title="next genre" id="nextGenreButton"></span>
+            <img src="{{ url_for('static', filename='img/spectrum.png') }}" id="spectrum"/>
         </div>
-        <span class="glyphicon glyphicon-arrow-left changeGenreButton buttonIcon"
-                id="prevGenreButton"></span>
-        <img src="{{ url_for('static', filename='img/spectrum.png') }}" id="spectrum"/>
-        <span class="glyphicon glyphicon-arrow-right changeGenreButton buttonIcon"
-                id="nextGenreButton"></span>
     </nav>
-    <span class="glyphicon glyphicon-chevron-up spectrumMarker"></span>
+    <span class="glyphicon glyphicon-triangle-bottom spectrumMarker" id="markerTop"></span>
+    <span class="glyphicon glyphicon-triangle-top spectrumMarker" id="markerBottom"></span>
 
     <audio id="player" preload="auto"></audio>
 {% endblock %}
