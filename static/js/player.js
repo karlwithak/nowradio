@@ -13,9 +13,9 @@ $(function() {
         "play"        : $('div#playButton').hide(),
         'stop'        : $('div#stopButton'),
         'nextStation' : $('div#nextStationButton'),
-        'nextGenre'   : $('div#nextGenreButton'),
+        'nextGenre'   : $('span#nextGenreButton'),
         'prevStation' : $('div#prevStationButton'),
-        'prevGenre'   : $('div#prevGenreButton'),
+        'prevGenre'   : $('span#prevGenreButton'),
         'mute'        : $('span#muteButton'),
         'unmute'      : $('span#unmuteButton').hide()
     };
@@ -59,6 +59,7 @@ $(function() {
         buttons.bigPlay.show();
         FaveManager.initOldFaves();
         FaveManager.showPlayingFave();
+        SpectrumManager.updateMarker();
         initialStationsHaveLoaded = true;
     }
 
@@ -73,7 +74,8 @@ $(function() {
      */
     var Utils = {
         genreNumToColor: function (genreNum) {
-            var totalGenres = StationsManager.getGenreCount();
+            var totalGenres = StationsManager.getGenreCount() + 2;
+            genreNum += 1;
             var colorNum = (genreNum * 360) / totalGenres;
             var genreColor = window.tinycolor('hsv(' + colorNum + ', 26%, 99%)');
             return genreColor.toHexString();
@@ -598,18 +600,17 @@ $(function() {
 
     var SpectrumManager = {
         handleClick : function(e) {
-            var genreCount = StationsManager.getGenreCount();
-            var clickX = e.pageX - 45;
-            var genreNum = Math.round((clickX/elems.spectrum.width()) * genreCount);
-            if (StationsManager.setActiveGenre(genreNum)) {
+            var genreCount = StationsManager.getGenreCount() + 2;
+            var genreNum = Math.round((e.pageX/elems.spectrum.width()) * genreCount);
+            if (StationsManager.setActiveGenre(genreNum - 1)) {
                 MainController.changeStationToNextStation();
             }
         },
         updateMarker : function() {
-            var genreNum = StationsManager.getActiveGenre();
-            var genreCount = StationsManager.getGenreCount();
-            var xCoord = Math.round((elems.spectrum.width() * genreNum)/ genreCount) + 45;
-            window.console.log(xCoord);
+            var genreNum = StationsManager.getActiveGenre() + 1;
+            var genreCount = StationsManager.getGenreCount() + 2;
+            var totalWidth = elems.spectrum.width();
+            var xCoord = Math.round((totalWidth * genreNum)/ genreCount);
             elems.spectrumMarker.css("left", xCoord);
         }
     };

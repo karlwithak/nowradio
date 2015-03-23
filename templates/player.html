@@ -93,15 +93,11 @@
                 <div class="clearfix"></div>
             </div>
         </div>
-        <div id="prevGenreButton" class="leftGenreButton">
-            <span class="glyphicon glyphicon-arrow-left" data-toggle="tooltip"
-                title="last genre"></span>
-        </div>
+        <span class="glyphicon glyphicon-arrow-left changeGenreButton buttonIcon"
+                id="prevGenreButton"></span>
         <img src="{{ url_for('static', filename='img/spectrum.png') }}" id="spectrum"/>
-        <div id="nextGenreButton" class="rightGenreButton">
-            <span class="glyphicon glyphicon-arrow-right" data-toggle="tooltip"
-                title="next genre"></span>
-        </div>
+        <span class="glyphicon glyphicon-arrow-right changeGenreButton buttonIcon"
+                id="nextGenreButton"></span>
     </nav>
     <span class="glyphicon glyphicon-chevron-up spectrumMarker"></span>
 
