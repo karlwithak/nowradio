@@ -17,10 +17,12 @@ $(function() {
         'prevStation' : $('span#prevStationButton'),
         'prevGenre'   : $('span#prevGenreButton'),
         'mute'        : $('span#muteButton'),
-        'unmute'      : $('span#unmuteButton').hide()
+        'unmute'      : $('span#unmuteButton').hide(),
+        'brightness'  : $('span#brightnessButton')
     };
     var elems = {
         'body'             : $('body'),
+        'navBar'           : $('nav.navigationBar'),
         'player'           : $('audio#player'),
         'spectrum'         : $('img#spectrum'),
         'mainContainer'    : $('div#mainContainer'),
@@ -33,7 +35,7 @@ $(function() {
         'faveRemoveIcon'   : $('span.faveRemove'),
         'favePlayIcon'     : $('span.favePlay'),
         'loader'           : $('img#loader'),
-        'spectrumMarker'   : $('span.spectrumMarker')
+        'spectrumMarker'   : $('span.spectrumMarker').hide()
     };
     var changeStationTimeout;
     var initialStationsHaveLoaded = false;
@@ -360,21 +362,61 @@ $(function() {
      * Manages the background color and it's animations.
      */
     var ColorManager = {
+        isBright: true,
         setToGenreColor: function() {
-            ColorManager.setElemToGenreColor(elems.body);
-            ColorManager.setElemToGenreColor(elems.newFaveBox);
+            if (ColorManager.isBright) {
+                ColorManager.setElemBgToGenreColor(elems.body);
+                ColorManager.setElemBgToGenreColor(elems.newFaveBox);
+            } else {
+                ColorManager.setElemBgToGenreColor(elems.navBar);
+                ColorManager.setElemFgToGenreColor(elems.stationInfo);
+                ColorManager.setElemBgToGenreColor(elems.newFaveBox);
+            }
         },
         setToNeutral: function() {
-           elems.body.animate({
-               backgroundColor: '#aaa'
-            }, 50);
+            if (ColorManager.isBright) {
+                elems.body.animate({
+                    backgroundColor: '#aaa'
+                }, 50);
+            } else {
+                elems.navBar.animate({
+                    backgroundColor: '#aaa',
+                    text: '#aaa'
+                }, 50);
+            }
             elems.newFaveBox.css("background-color", "#aaa");
         },
-        setElemToGenreColor: function(elem) {
+        setElemBgToGenreColor: function(elem) {
             var color = Utils.genreNumToColor(StationsManager.getActiveGenre());
-            elem.animate({
-               backgroundColor: color
+            elem.stop(true).animate({
+               'backgroundColor': color
             }, 666);
+        },
+        setElemFgToGenreColor: function(elem) {
+            var color = Utils.genreNumToColor(StationsManager.getActiveGenre());
+            elem.css({
+                'color': color,
+                'border-color': color
+            });
+        },
+        switchBrightness: function() {
+            if (ColorManager.isBright) {
+                ColorManager.isBright = false;
+                elems.body.stop(true, true);
+                elems.body.css("background-color" , "black");
+                elems.navBar.css("color", "black");
+                elems.landingContainer.css("color", "white");
+                ColorManager.setToGenreColor();
+            } else {
+                ColorManager.isBright = true;
+                elems.navBar.stop(true, true);
+                elems.navBar.css("backgroundColor", "black");
+                elems.navBar.css("color", "white");
+                elems.stationInfo.css("color", "black")
+                                 .css("border-color", "black");
+                elems.landingContainer.css("color", "black");
+                ColorManager.setToGenreColor();
+            }
         }
     };
 
@@ -525,7 +567,7 @@ $(function() {
             if (!initialStationsHaveLoaded) return;
             var faveCount = $('div#oldFaveBox').length - 1;
             var newBox = elems.oldFaveBox.clone(true).insertBefore(elems.oldFaveBox).show();
-            ColorManager.setElemToGenreColor(newBox);
+            ColorManager.setElemBgToGenreColor(newBox);
             var ipHash = UrlManager.getHash();
             var genreNum = StationsManager.getActiveGenre();
             faves[faveCount] = {"ipHash" : ipHash, "genreNum" : genreNum};
@@ -610,6 +652,7 @@ $(function() {
             var genreCount = StationsManager.getGenreCount();
             var totalWidth = elems.spectrum.width();
             var xCoord = Math.round((totalWidth * genreNum)/ genreCount);
+            elems.spectrumMarker.show();
             elems.spectrumMarker.css("left", xCoord);
         }
     };
@@ -627,6 +670,7 @@ $(function() {
     buttons.mute.click(VolumeManager.soundOff);
     buttons.unmute.click(VolumeManager.soundOn);
     buttons.bigPlay.click(MainController.changeStationToNextStation);
+    buttons.brightness.click(ColorManager.switchBrightness);
     elems.player.bind('canplay', readyToPlay);
     elems.player.bind('error', function (e) {
         window.console.error(e);

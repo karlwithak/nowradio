@@ -3,9 +3,10 @@ body {
     background-color: #aaa;
 }
 
-#mainLanding {
+#landingContainer {
     padding: 40px 15px;
     text-align: center;
+    color: #000000;
 }
 
 #mainPlay {
@@ -13,9 +14,9 @@ body {
     text-align: center;
 }
 
-.large-play {
-    color: #000000;
+#bigPlayButton {
     font-size: 15em;
+    color: inherit;
 }
 
 #controlBar {
@@ -70,26 +71,6 @@ body {
     padding-right: 15px;
     padding-top: 15px;
     z-index: 10;
-}
-
-.topRightPanel {
-    padding: 15px;
-    border-bottom: solid #000000 0.5em;
-    border-left:  solid #000000 0.5em;
-    text-align: right;
-    display: none;
-    min-width: 475px;
-}
-@media (max-width: 700px) {
-    .topRightPanel {
-        border-left: none;
-        width: 100%;
-        min-width: 0;
-    }
-}
-
-.navbarSpacer {
-    height: 55px;
 }
 
 #playerContainer {
@@ -148,6 +129,9 @@ body {
     background-color: white;
     float: left;
     font-size: 1.5em;
+    -webkit-box-shadow: 0 0 15px black;
+    -moz-box-shadow: 0 0 15px black;
+    box-shadow: 0 0 15px black;
 }
 
 .faveAdd {
@@ -191,7 +175,7 @@ span.navbar-brand {
 label.entypo-export {
     border: none !important
     border-radius: 0 !important;
-    color: white !important;
+    color: inherit !important;
     background: none !important;
     font-size: 1.5em !important;
     padding: 0 !important;

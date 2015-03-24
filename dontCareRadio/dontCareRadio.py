@@ -14,6 +14,7 @@ import serverInfo
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
 app.config['APP_NAME'] = "Don't Care Radio"
+app.config['APP_SLOGAN'] = "Find new music"
 app.config['DEBUG'] = serverInfo.is_development
 file_handler = FileHandler(serverInfo.flask_log_file)
 file_handler.setLevel(logging.INFO)
@@ -29,6 +30,11 @@ if db_conn is None:
 @app.route('/')
 def render_landing():
     return render_template("player.html")
+
+
+@app.route('/info/')
+def render_info():
+    return render_template("info.html")
 
 
 @app.route('/get-initial-stations/')

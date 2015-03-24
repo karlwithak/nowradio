@@ -2,16 +2,9 @@
 
 $(function() {
     "use strict";
-    $('span#infoButton').click(function() {
-        $('div#infoPanel').toggle();
-        $('div#settingsPanel').hide();
+    $("#infoButton").click(function () {
+       window.open('/info/', '_blank');
     });
-
-    $('span#settingsButton').click(function() {
-        $('div#settingsPanel').toggle();
-        $('div#infoPanel').hide();
-    });
-
 
     function turnGrey(elem) {
         $(elem.target).css("color", "#505050");

@@ -15,51 +15,25 @@
         <div class="pull-right smallButtonsHolder">
             <span class="share-button"></span>
             <span id="infoButton" class="glyphicon glyphicon-info-sign clickable topRightIcon"></span>
-            <!--<span id="settingsButton" class="glyphicon glyphicon-cog clickableIcon"></span>-->
+            <span id="brightnessButton" class="glyphicon glyphicon-adjust clickable topRightIcon"></span>
             <span id="unmuteButton" class="glyphicon glyphicon-volume-off clickable topRightIcon"></span>
             <span id="muteButton" class="glyphicon glyphicon-volume-up clickable topRightIcon"></span>
         </div>
     </nav>
-    <!--
-    <div id="settingsPanel" class="topRightPanel pull-right">
-        <div class="navbarSpacer"></div>
-        <p>
-            <span>Turn down the lights</span>
-            <button class="btn btn-default">Dark Mode</button>
-        </p>
-        <p>
-            <span>Show me something very different</span>
-            <button class="btn btn-default">Obscure Mode</button>
-        </p>
-        <p>
-            <span>Turn off the colors</span>
-            <button class="btn btn-default">Colorless</button>
-        </p>
-    </div>
-    -->
-
-    <div id="infoPanel" class="topRightPanel pull-right">
-        <p>{{ config['APP_NAME'] }} is a place to hear music without having to choose it</p>
-        <p>It was made by Nicholas Gibson and Nicholas Hrynuik</p>
-    </div>
 {% endblock %}
 
 
 {% block landing %}
-    <div class="container">
-        <div id="mainLanding">
-            <h1>
-                {{ config['APP_NAME'] }}
-            </h1>
-            <p class="lead">
-                Play whatever
-            </p>
-            <a id="bigPlayButton" class="large-play" href="javascript:void(0)">
-                <i class="glyphicon glyphicon-play-circle"></i>
-            </a>
-            <img src="{{ url_for('static', filename='img/loader.gif') }}" id="loader"/>
-        </div>
-    </div>
+    <h1>
+        {{ config['APP_NAME'] }}
+    </h1>
+    <p class="lead">
+        {{ config['APP_SLOGAN'] }}
+    </p>
+    <a id="bigPlayButton" href="javascript:void(0)">
+        <i class="glyphicon glyphicon-play-circle"></i>
+    </a>
+    <img src="{{ url_for('static', filename='img/loader.gif') }}" id="loader"/>
 {% endblock %}
 
 
