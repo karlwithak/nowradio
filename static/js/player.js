@@ -25,7 +25,7 @@ $(function() {
         'navBar'           : $('nav.navigationBar'),
         'player'           : $('audio#player'),
         'spectrum'         : $('img#spectrum'),
-        'mainContainer'    : $('div#mainContainer'),
+        'mainContainer'    : $('div#mainContainer').hide(),
         'landingContainer' : $('div#landingContainer'),
         'currentSongText'  : $('span#currentSong'),
         'stationInfo'      : $('div#stationInfo'),

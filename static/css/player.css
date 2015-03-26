@@ -3,6 +3,11 @@ body {
     background-color: #aaa;
 }
 
+a:link, a:visited, a:hover, a:active {
+    color: inherit;
+    text-decoration: none;
+}
+
 #landingContainer {
     padding: 40px 15px;
     text-align: center;
@@ -204,4 +209,10 @@ li.entypo-paper-plane {
 
 #markerBottom {
    bottom: -6px;
+}
+
+.infoText {
+    font-size: 1.15em;
+    padding : 1.5em;
+    max-width: 50em;
 }

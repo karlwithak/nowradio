@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-info page
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block styles %}
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/player.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="infoText">
+    <h3> About {{ config['APP_NAME'] }} </h3>
+    <p>
+        {{ config['APP_NAME'] }} is a place where you can find new and old music. It was made by
+        Nicholas Gibson and <a href="//github.com/karlwithak">Nicholas Hrynuik</a>. <br>
+        If you have any questions or comments please send them to nhrynuik@gmail.com. <!-- TODO -->
+    </p>
+
+    <h3>Keyboard controls</h3>
+    <ul>
+        <li>Space bar: play/pause</li>
+        <li>m: mute/unmute</li>
+        <li>left arrow key: previous station in current genre</li>
+        <li>right arrow key: next station in current genre</li>
+        <li>double-tap left arrow key: previous genre</li>
+        <li>double-tap right arrow key: next genre</li>
+    </ul>
+</div>
+{% endblock %}
