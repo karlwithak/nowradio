@@ -3,6 +3,14 @@
 {% block styles %}
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/player.css') }}" rel="stylesheet">
+
+    <noscript>
+        <style type="text/css">
+            #mainContainer, #landingContainer, #faveHolder, .smallButtonsHolder {
+                display: none;
+            }
+        </style>
+    </noscript>
 {% endblock %}
 
 {% block header %}
@@ -69,6 +77,9 @@
 
         <audio id="player" preload="auto"></audio>
     </div>
+    <noscript>
+        <p class="infoText"> Javascript must be enabled to view this site!</p>
+    </noscript>
 {% endblock %}
 
 {% block scripts %}
