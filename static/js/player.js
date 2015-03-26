@@ -602,6 +602,7 @@ $(function() {
             window.localStorage.setItem("faves", JSON.stringify(faves));
             _showPlayingFave();
             _showHideNewFaveBox();
+            _reportFaveChange(Utils.hashCodeToIp(ipHash), true);
         }
         function _playFave(elem) {
             var faveNum = $(elem.target).parent().index();
@@ -617,7 +618,8 @@ $(function() {
         function _removeFave(elem) {
             var faveNum = $(elem.target).parent().index();
             $(elem.target).parent().remove();
-            faves.splice(faveNum, 1);
+            var faveRemoved = faves.splice(faveNum, 1)[0];
+            _reportFaveChange(Utils.hashCodeToIp(faveRemoved['ipHash']), false);
             window.localStorage.setItem("faves", JSON.stringify(faves));
             _showHideNewFaveBox();
         }
@@ -636,6 +638,9 @@ $(function() {
                     $("span.favePlay").eq(index).css('color', 'black');
                 }
             });
+        }
+        function _reportFaveChange(ip, faveWasAdded) {
+            $.post("/report-fave-changed/",  {ip : ip, faveWasAdded : faveWasAdded});
         }
         return {
             initOldFaves : _initOldFaves,

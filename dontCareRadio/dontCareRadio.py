@@ -60,6 +60,18 @@ def get_genre_by_ip():
     return jsonify(genreNum=genre_num)
 
 
+@app.route('/report-fave-changed/', methods=['POST'])
+def report_fave_changed():
+    ip = request.form['ip']
+    fave_was_added = request.form['faveWasAdded']
+    if fave_was_added == "true":
+        ourUtils.db_quick_query(db_conn, Queries.update_fave_increase, (ip,))
+    else:
+        ourUtils.db_quick_query(db_conn, Queries.update_fave_decrease, (ip,))
+    db_conn.commit()
+    return 'OK'
+
+
 @app.route('/get-station-info/')
 def get_station_info():
     result = requests.get(request.args.get('stationUrl'), headers=ourUtils.request_header)

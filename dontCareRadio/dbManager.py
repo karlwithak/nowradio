@@ -72,3 +72,13 @@ class Queries:
         FROM station_info
         WHERE ip_addr = %s
     '''
+    update_fave_increase = '''
+        UPDATE station_info
+        SET faves = faves + 1
+        WHERE ip_addr = %s
+    '''
+    update_fave_decrease = '''
+        UPDATE station_info
+        SET faves = faves - 1
+        WHERE ip_addr = %s
+    '''

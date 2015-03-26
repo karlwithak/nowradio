@@ -1,5 +1,6 @@
 import socket
 import threading
+from psycopg2 import ProgrammingError
 
 request_header = {'User-Agent': 'Mozilla/5.0'}
 
@@ -55,9 +56,14 @@ def db_quick_query(db_conn, query, data=None):
     """
     cursor = db_conn.cursor()
     cursor.execute(query, data)
-    result = cursor.fetchall()
-    cursor.close()
-    return result
+    result = None
+    try:
+        result = cursor.fetchall()
+    except ProgrammingError:
+        pass
+    finally:
+        cursor.close()
+        return result
 
 
 def flatten_list(thick_list):
