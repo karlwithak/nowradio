@@ -78,8 +78,7 @@ $(function() {
         genreNumToColor: function (genreNum) {
             var totalGenres = StationsManager.getGenreCount();
             var colorNum = (genreNum * 360) / totalGenres;
-            var genreColor = window.tinycolor('hsv(' + colorNum + ', 26%, 99%)');
-            return genreColor.toHexString();
+            return Utils.hsvToRgb(colorNum, 26, 99);
         },
         ipToHashCode: function(ip) {
             var parts = ip.split(':');
@@ -101,6 +100,35 @@ $(function() {
             ip = ip.slice(0, -1);
             ip += ':' + parseInt(hashcode.substr(8, 12), 16).toString();
             return ip;
+        },
+        hsvToRgb: function(h, s, v) {
+            var r, g, b, i, f, p, q, t;
+            h = Math.max(0, Math.min(360, h));
+            s = Math.max(0, Math.min(100, s));
+            v = Math.max(0, Math.min(100, v));
+            s /= 100;
+            v /= 100;
+            if(s == 0) {
+                r = g = b = v;
+                return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+            }
+            h /= 60;
+            i = Math.floor(h);
+            f = h - i;
+            p = v * (1 - s);
+            q = v * (1 - s * f);
+            t = v * (1 - s * (1 - f));
+            switch(i) {
+                case 0: r = v; g = t; b = p; break;
+                case 1: r = q; g = v; b = p; break;
+                case 2: r = p; g = v; b = t; break;
+                case 3: r = p; g = q; b = v; break;
+                case 4: r = t; g = p; b = v; break;
+                default: r = v; g = p; b = q;
+            }
+            return "#" + Math.round(r * 255).toString(16) +
+                         Math.round(g * 255).toString(16) +
+                         Math.round(b * 255).toString(16);
         }
     };
 
@@ -114,7 +142,7 @@ $(function() {
             UrlManager.setUrlHash(src);
             SpectrumManager.updateMarker();
             elems.player.attr('src', UrlManager.getMediaUrl());
-            ShareManager.updateShareUrl();
+            //ShareManager.updateShareUrl();
             MainController.playingStateReload();
             ColorManager.setToNeutral();
             FaveManager.showPlayingFave();
@@ -617,9 +645,9 @@ $(function() {
     }());
 
     /**
-     * Manages the favourite button in the header bar. Also responsible for updating the url that
+     * Manages the share button in the header bar. Also responsible for updating the url that
      * will be shared whenever the page url changes.
-     */
+
     var ShareManager =  (function() {
         var config = {
             url: window.location.origin + encodeURIComponent(window.location.hash),
@@ -638,6 +666,7 @@ $(function() {
             updateShareUrl : _updateShareUrl
         };
     }());
+     */
 
     var SpectrumManager = {
         handleClick : function(e) {
