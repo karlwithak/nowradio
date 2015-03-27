@@ -688,11 +688,16 @@ $(function() {
      */
 
     var SpectrumManager = {
-        handleClick : function(e) {
-            var genreCount = StationsManager.getGenreCount() + 2;
-            var genreNum = Math.round((e.pageX/elems.spectrum.width()) * genreCount);
-            if (StationsManager.setActiveGenre(genreNum - 1)) {
+        isDragging : false,
+        handleStopDrag : function(xVal) {
+            var totalWidth = elems.spectrum.width();
+            xVal = Math.max(1, Math.min(totalWidth, xVal));
+            var genreCount = StationsManager.getGenreCount();
+            var genreNum = Math.min(Math.round((xVal/totalWidth) * genreCount), genreCount - 1);
+            if (StationsManager.setActiveGenre(genreNum)) {
                 MainController.changeStationToNextStation();
+            } else {
+                SpectrumManager.updateMarker();
             }
         },
         updateMarker : function() {
@@ -702,7 +707,22 @@ $(function() {
             var xCoord = Math.round((totalWidth * genreNum)/ genreCount);
             elems.spectrumMarker.show();
             elems.spectrumMarker.css("left", xCoord);
-        }
+        },
+        dragHandler : function() {
+            elems.spectrumMarker.bind('mousedown touchstart', function() {
+                $(window).bind('mousemove touchmove', function(event) {
+                    SpectrumManager.isDragging = true;
+                    elems.spectrumMarker.css("left", event.pageX - 13);
+                });
+            });
+            $(window).bind('mouseup touchend', function(event) {
+                if (SpectrumManager.isDragging) {
+                    SpectrumManager.isDragging = false;
+                    $(window).unbind('mousemove');
+                    SpectrumManager.handleStopDrag(event.pageX - 13);
+                }
+            });
+        }()
     };
 
 

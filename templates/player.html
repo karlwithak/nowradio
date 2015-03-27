@@ -51,7 +51,7 @@
         </div>
     </div>
 
-    <div id="mainContainer">
+    <div id="mainContainer" style="display: none;">
         <div class="verticalCenter">
             <div id="stationInfo">
                 <span>Currently Playing:</span> <span id="currentSong">Song</span>
@@ -75,7 +75,7 @@
                 <img src="{{ url_for('static', filename='img/spectrum.png') }}" id="spectrum"/>
             </div>
         </nav>
-        <span class="fa fa-2x fa-sort-desc spectrumMarker" id="markerTop"></span>
+        <span class="fa fa-3x fa-sort-desc spectrumMarker clickable" id="markerTop"></span>
 
         <audio id="player" preload="auto"></audio>
     </div>
