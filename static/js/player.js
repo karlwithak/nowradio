@@ -54,13 +54,13 @@ $(function() {
         clearTimeout(changeStationTimeout);
         ColorManager.setToGenreColor();
         MainController.playingStatePlay();
+        SpectrumManager.updateMarker();
     }
 
     function initialStationsLoaded() {
         elems.loader.hide();
         buttons.bigPlay.show();
         FaveManager.initOldFaves();
-        FaveManager.showPlayingFave();
         SpectrumManager.updateMarker();
         initialStationsHaveLoaded = true;
     }
@@ -582,6 +582,7 @@ $(function() {
         elems.faveAddIcon.click(_addFave);
         elems.faveRemoveIcon.click(_removeFave);
         elems.favePlayIcon.click(_playFave);
+        window.addEventListener('storage', _storageChanged);
 
         function _initOldFaves() {
             faves.forEach(function (fave) {
@@ -590,6 +591,7 @@ $(function() {
                 newBox.css("background-color", color);
             });
             _showHideNewFaveBox();
+            _showPlayingFave();
         }
         function _addFave() {
             if (!initialStationsHaveLoaded) return;
@@ -641,6 +643,18 @@ $(function() {
         }
         function _reportFaveChange(ip, faveWasAdded) {
             $.post("/report-fave-changed/",  {ip : ip, faveWasAdded : faveWasAdded});
+        }
+        function _storageChanged(event) {
+            if (event.key === "faves") {
+                faves = window.localStorage.getItem("faves");
+                if (faves === null) {
+                    faves = [];
+                } else {
+                    faves = JSON.parse(faves);
+                }
+                $('div#oldFaveBox').not(elems.oldFaveBox).remove();
+                _initOldFaves();
+            }
         }
         return {
             initOldFaves : _initOldFaves,
