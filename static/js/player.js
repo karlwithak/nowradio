@@ -34,7 +34,7 @@ $(function() {
         'faveAddIcon'      : $('span.faveAdd'),
         'faveRemoveIcon'   : $('span.faveRemove'),
         'favePlayIcon'     : $('span.favePlay'),
-        'loader'           : $('img#loader'),
+        'loader'           : $('div.stillLoading'),
         'spectrumMarker'   : $('span.spectrumMarker').hide()
     };
     var changeStationTimeout;

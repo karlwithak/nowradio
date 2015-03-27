@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/player.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
 
     <noscript>
         <style type="text/css">
@@ -16,20 +16,20 @@
 {% block header %}
     <div class="pull-left" id="faveHolder">
         <div class="faveBox" id="oldFaveBox">
-            <span class="glyphicon glyphicon-remove faveRemove clickable"></span>
-            <span class="glyphicon glyphicon-play favePlay clickable"></span>
+            <span class="fa fa-times faveRemove clickable"></span>
+            <span class="fa fa-lg fa-play favePlay clickable"></span>
         </div>
         <div class="faveBox" id="newFaveBox">
-            <span class="glyphicon glyphicon-plus faveAdd clickable" data-toggle="tooltip"
+            <span class="fa fa-lg fa-plus faveAdd clickable" data-toggle="tooltip"
                     data-placement="bottom" title="save station"></span>
         </div>
     </div>
     <div class="pull-right smallButtonsHolder">
         <!-- <span class="share-button"></span> -->
-        <span id="infoButton" class="glyphicon glyphicon-info-sign clickable topRightIcon"></span>
-        <span id="brightnessButton" class="glyphicon glyphicon-adjust clickable topRightIcon"></span>
-        <span id="unmuteButton" class="glyphicon glyphicon-volume-off clickable topRightIcon"></span>
-        <span id="muteButton" class="glyphicon glyphicon-volume-up clickable topRightIcon"></span>
+        <span id="infoButton" class="fa fa-lg fa-info-circle clickable topRightIcon"></span>
+        <span id="brightnessButton" class="fa fa-lg fa-adjust clickable topRightIcon"></span>
+        <span id="unmuteButton" class="fa fa-lg fa-volume-off clickable topRightIcon"></span>
+        <span id="muteButton" class="fa fa-lg fa-volume-up clickable topRightIcon"></span>
     </div>
 {% endblock %}
 
@@ -43,9 +43,12 @@
             {{ config['APP_SLOGAN'] }}
         </p>
         <a id="bigPlayButton" href="javascript:void(0)">
-            <i class="glyphicon glyphicon-play-circle"></i>
+            <span class="fa fa-5x fa-play-circle-o"></span>
         </a>
-        <img src="{{ url_for('static', filename='img/loader.gif') }}" id="loader"/>
+        <div class="stillLoading">
+            <span id="bigCog" class="fa fa-5x fa-cog fa-spin"></span>
+            <p>Loading...</p>
+        </div>
     </div>
 
     <div id="mainContainer">
@@ -57,23 +60,22 @@
 
         <nav id="controlBar" class="navbar-fixed-bottom">
             <div id="playerContainer">
-                <span class="glyphicon glyphicon-step-backward playerButtonIcon" data-toggle="tooltip"
+                <span class="fa fa-2x fa-step-backward playerButtonIcon" data-toggle="tooltip"
                     title="last station" id="prevStationButton"></span>
-                <span class="glyphicon glyphicon-play playerButtonIcon" data-toggle="tooltip"
+                <span class="fa fa-2x fa-play playerButtonIcon" data-toggle="tooltip"
                     title="play" id="playButton"></span>
-                <span class="glyphicon glyphicon-pause playerButtonIcon" data-toggle="tooltip"
+                <span class="fa fa-2x fa-pause playerButtonIcon" data-toggle="tooltip"
                     title="pause" id="stopButton"></span>
-                <span class="glyphicon glyphicon-step-forward playerButtonIcon" data-toggle="tooltip"
+                <span class="fa fa-2x fa-step-forward playerButtonIcon" data-toggle="tooltip"
                     title="next station" id="nextStationButton"></span>
-                <span class="glyphicon glyphicon-arrow-left playerButtonIcon" data-toggle="tooltip"
+                <span class="fa fa-2x fa-arrow-left playerButtonIcon" data-toggle="tooltip"
                        title="last genre" id="prevGenreButton"></span>
-                <span class="glyphicon glyphicon-arrow-right playerButtonIcon" data-toggle="tooltip"
+                <span class="fa fa-2x fa-arrow-right playerButtonIcon" data-toggle="tooltip"
                        title="next genre" id="nextGenreButton"></span>
                 <img src="{{ url_for('static', filename='img/spectrum.png') }}" id="spectrum"/>
             </div>
         </nav>
-        <span class="glyphicon glyphicon-triangle-bottom spectrumMarker" id="markerTop"></span>
-        <span class="glyphicon glyphicon-triangle-top spectrumMarker" id="markerBottom"></span>
+        <span class="fa fa-2x fa-sort-desc spectrumMarker" id="markerTop"></span>
 
         <audio id="player" preload="auto"></audio>
     </div>
@@ -84,7 +86,6 @@
 
 {% block scripts %}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
     <script src="{{ url_for('static', filename='js/player.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.color-2.1.2.min.js') }}"></script>

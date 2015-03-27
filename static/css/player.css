@@ -1,6 +1,8 @@
 body {
     padding-top: 50px;
     background-color: #aaa;
+    font-family: 'Ubuntu', Arial, sans-serif;
+    margin: 0;
 }
 
 a:link, a:visited, a:hover, a:active {
@@ -9,9 +11,10 @@ a:link, a:visited, a:hover, a:active {
 }
 
 #landingContainer {
-    padding: 40px 15px;
+    padding: 20px 15px;
     text-align: center;
     color: #000000;
+    font-size: 1.33em;
 }
 
 #mainPlay {
@@ -20,7 +23,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 #bigPlayButton {
-    font-size: 15em;
+    font-size: 2.5em;
     color: inherit;
 }
 
@@ -72,10 +75,9 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .topRightIcon {
-    font-size: 20px;
-    padding-right: 15px;
-    padding-top: 15px;
+    padding: 18px 7px 10px;
     z-index: 10;
+    width: 1em;
 }
 
 #playerContainer {
@@ -100,11 +102,8 @@ a:link, a:visited, a:hover, a:active {
     position: fixed;
     cursor: pointer;
     padding: 10px;
-    color: black;
-    line-height: 1;
     top: auto;
     bottom: 0;
-    font-size: 2.5em;
 }
 
 #prevGenreButton {
@@ -120,7 +119,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 #nextStationButton {
-    left: calc(75% - 45px);
+    left: calc(75% - 25px);
 }
 
 #prevStationButton {
@@ -133,29 +132,31 @@ a:link, a:visited, a:hover, a:active {
     margin: 5px;
     background-color: white;
     float: left;
-    font-size: 1.5em;
     -webkit-box-shadow: 0 0 15px black;
     -moz-box-shadow: 0 0 15px black;
     box-shadow: 0 0 15px black;
 }
 
 .faveAdd {
-    top: 8px;
-    left: 10px;
+    top: 11px;
+    left: 12px;
     color: black;
+    position: relative;
 }
 
 .faveRemove {
-    left: 30px;
-    top: -12px;
+    left: 33px;
+    top: -10px;
     color: white;
     font-size: 0.8em;
+    position: relative;
 }
 
 .favePlay {
-    top: -22px;
-    left: 10px;
+    top: 10px;
+    left: -3px;
     color: black;
+    position: relative;
 }
 
 nav.navigationBar {
@@ -165,6 +166,8 @@ nav.navigationBar {
 span.navbar-brand {
     font-size: 19px;
     padding: 16px;
+    float: left;
+    line-height: 20px;
 }
 
 .tooltip-inner {
@@ -196,19 +199,13 @@ li.entypo-paper-plane {
 
 .spectrumMarker {
     position: fixed;
-    font-size: 1.2em;
     z-index: 1030;
     top: auto;
-    display: block;
     color: #000000;
 }
 
 #markerTop {
-    bottom: 45px;
-}
-
-#markerBottom {
-   bottom: -6px;
+    bottom: 51px;
 }
 
 .infoText {
@@ -216,15 +213,3 @@ li.entypo-paper-plane {
     padding : 1.5em;
     max-width: 50em;
 }
-
-@font-face {
-  font-family: 'entypo';
-  font-style: normal;
-  font-weight: normal;
-  src: url('entypo.eot');
-  src: url('entypo.eot?#iefix') format('eot'),
-  url('entypo.woff') format('woff'),
-  url('entypo.ttf') format('truetype'),
-  url('entypo.svg#entypo') format('svg');
-}
-.entypo-export:before{content:"\e715"}.entypo-facebook:before{content:"\f30c"}.entypo-twitter:before{content:"\f309"}.entypo-gplus:before{content:"\f30f"}.entypo-pinterest:before{content:"\f312"}.entypo-tumblr:before{content:"\f315"}.entypo-linkedin:before{content:"\f318"}.entypo-paper-plane:before{content:"\e79b"}
