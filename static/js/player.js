@@ -45,9 +45,8 @@ $(function() {
      */
 
     function changeTimeout() {
-        StationsManager.removeCurrent();
+        StationsManager.removeCurrentThenNext();
         clearTimeout(changeStationTimeout);
-        MainController.changeStationToNextStation();
     }
 
     function readyToPlay() {
@@ -175,6 +174,11 @@ $(function() {
             StationsManager.setActiveGenre(genreNum);
             MainController.updateViewForNewSource(src);
         },
+        changeStationFromArgsAndSetFirst: function(src, genreNum) {
+            StationsManager.setActiveGenre(genreNum);
+            MainController.updateViewForNewSource(src);
+            StationsManager.setStationFirstUnique(src);
+        },
 
         playingStateStop : function() {
             buttons.stop.hide();
@@ -227,31 +231,36 @@ $(function() {
      * played and what will be played in the future.
      */
     var StationsManager = (function() {
-        var genreManagers = [];
+        var genreLists = [];
+        var genreMarkers = [];
         var genreNum = 0;
         $.get('/get-initial-stations/', function(data) {
             data['stations'].forEach(function (stationList) {
-                genreManagers.push(_getGenreManager(stationList));
+                genreLists.push(stationList);
+                genreMarkers.push(-1);
             });
-            if (window.location.hash.length == 0) {
-                genreNum = Math.floor(Math.random() * genreManagers.length);
+            if (UrlManager.getHash().length == 0) {
+                genreNum = Math.floor(Math.random() * genreLists.length);
             }
             initialStationsLoaded();
         });
 
         function _getNextGenre() {
-            genreNum = (genreNum + 1) % genreManagers.length;
+            genreNum = (genreNum + 1) % genreLists.length;
             return genreNum;
         }
         function _getPrevGenre() {
-            genreNum = (genreNum + genreManagers.length - 1) % genreManagers.length;
+            genreNum = (genreNum + genreLists.length - 1) % genreLists.length;
             return genreNum;
         }
         function _getNextStation() {
-            return genreManagers[genreNum].getNextStation();
+            genreMarkers[genreNum] = (genreMarkers[genreNum] + 1) % genreLists[genreNum].length;
+            return genreLists[genreNum][genreMarkers[genreNum]];
         }
         function _getPrevStation() {
-            return genreManagers[genreNum].getPrevStation();
+            genreMarkers[genreNum] = (genreMarkers[genreNum] + (genreLists[genreNum].length - 1)) %
+                                                                genreLists[genreNum].length;
+            return genreLists[genreNum][genreMarkers[genreNum]];
         }
         function _getActiveGenre() {
             return genreNum;
@@ -261,74 +270,39 @@ $(function() {
             genreNum = genreInfo;
             return true;
         }
-        function _removeStationFromGenre(station, genreNum, addToEnd) {
-            // The genreManagers list might not be populated yet, so keep trying until it is
-            var removeStationFromGenreInterval = window.setInterval(doRemovalFromGenre, 200);
-            function doRemovalFromGenre() {
-                if (genreManagers.length > 0) {
-                    clearInterval(removeStationFromGenreInterval);
-                    genreManagers[genreNum].removeStation(station);
-                    if (addToEnd) {
-                        genreManagers[genreNum].appendStation(station);
-                    }
-                }
-            }
-        }
-        function _removeCurrent() {
-            genreManagers[genreNum].removeCurrentStation();
+        function _removeCurrentThenNext() {
+            genreLists[genreNum].splice(genreMarkers[genreNum], 1);
+            genreMarkers[genreNum] -= 1;
+            MainController.changeStationToNextStation();
         }
         function _getGenreCount() {
-            return genreManagers.length;
+            return genreLists.length;
         }
-        function _getGenreManager(stationsList) {
-            var stations = stationsList;
-            var stationNum = -1;
-
-            function _getNextStation() {
-                stationNum = (stationNum + 1) % stations.length;
-                return stations[stationNum];
-            }
-            function _getPrevStation() {
-                stationNum = (stationNum + stations.length - 1) % stations.length;
-                return stations[stationNum];
-            }
-            function _removeStation(station) {
-                // The stations might not have been loaded yet, so keep trying until they are
-                var removeStationInterval = window.setInterval(doRemoval, 200);
-                function doRemoval() {
-                    if (stations.length > 0) {
-                        window.clearInterval(removeStationInterval);
-                        var stationIndex = stations.indexOf(station);
-                        if (stationIndex > -1) {
-                            stations.splice(stationIndex, 1);
-                        }
-                    }
+        function _setStationFirstUnique(src) {
+            callback();
+            function callback() {
+                if (genreMarkers.length < 1) return window.setTimeout(callback, 200);
+                var currentLocation = genreLists[genreNum].indexOf(src);
+                if (currentLocation != -1) {
+                    genreLists[genreNum][currentLocation] = genreLists[genreNum][0];
+                    genreLists[genreNum][0] = src;
+                    genreMarkers[genreNum] = 0;
+                } else {
+                    genreLists[genreNum].push(src);
+                    genreMarkers[genreNum] = genreLists[genreNum].length - 1;
                 }
             }
-            function _appendStation(station) {
-                stations.push(station);
-            }
-            function _removeCurrentStation() {
-                stations.splice(stationNum, 1);
-            }
-            return {
-                getNextStation       : _getNextStation,
-                removeStation        : _removeStation,
-                removeCurrentStation : _removeCurrentStation,
-                getPrevStation       : _getPrevStation,
-                appendStation        : _appendStation
-            };
         }
         return {
             getNextGenre           : _getNextGenre,
             getNextStation         : _getNextStation,
             getActiveGenre         : _getActiveGenre,
             setActiveGenre         : _setActiveGenre,
-            removeStationFromGenre : _removeStationFromGenre,
-            removeCurrent          : _removeCurrent,
+            removeCurrentThenNext  : _removeCurrentThenNext,
             getPrevStation         : _getPrevStation,
             getPrevGenre           : _getPrevGenre,
-            getGenreCount          : _getGenreCount
+            getGenreCount          : _getGenreCount,
+            setStationFirstUnique  : _setStationFirstUnique
         };
     }());
 
@@ -358,7 +332,7 @@ $(function() {
         restoreFromHash : function() {
             // If the page is loaded with a #base64StringHere then play that station
             $.get('/get-genre-by-ip/', {"ip": UrlManager.getUrl()}, function(data) {
-                MainController.changeStationFromArgs(UrlManager.getUrl(), data['genreNum']);
+                MainController.changeStationFromArgsAndSetFirst(UrlManager.getUrl(), data['genreNum']);
             });
         }
     };
@@ -509,24 +483,21 @@ $(function() {
 
         function _setName(data, status) {
             if (status !== "success") {
-                StationsManager.removeCurrent();
-                MainController.changeStationToNextStation();
+                StationsManager.removeCurrentThenNext();
             }
             var re = /<[^<]*>/gi;
             data = data.replace(re, '');
             var dataList = data.split(',');
             var isUp = dataList[1];
             if (isUp !== '1') {
-                StationsManager.removeCurrent();
-                MainController.changeStationToNextStation();
+                StationsManager.removeCurrentThenNext();
                 return;
             }
             var newName = dataList.slice(6).join();
             // Check to see if this new station is playing the same song as the last one,
             //  if so, it's probably a duplicate station so go to the next one
             if (newName === songName && duplicateSongCheck) {
-                StationsManager.removeCurrent();
-                MainController.changeStationToNextStation();
+                StationsManager.removeCurrentThenNext();
             } else if (newName !== songName) {
                 elems.currentSongText.text(newName);
                 songName = newName;
@@ -741,6 +712,7 @@ $(function() {
     buttons.brightness.click(ColorManager.switchBrightness);
     elems.player.bind('canplay', readyToPlay);
     elems.player.bind('error', function (e) {
+        MainController.changeStationToNextStation();
         window.console.error(e);
     });
 
