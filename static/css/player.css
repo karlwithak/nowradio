@@ -29,6 +29,12 @@ a:link, a:visited, a:hover, a:active {
 
 #controlBar {
     text-align: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    border-top: solid 0.5em black;
+    height: 75px;
 }
 
 .changeStationText {
@@ -80,22 +86,10 @@ a:link, a:visited, a:hover, a:active {
     width: 1em;
 }
 
-#playerContainer {
-    display: inline-block;
-    text-align: center;
-    width: 100%;
-    padding-top: 10px;
-    padding-top: 10px;
-}
-
 #spectrum {
     width: 100%;
-    height: 63px;
-    bottom: 0;
-    left : 0;
-    position: absolute;
+    height: 100%;
     z-index: -1;
-    border-top: solid 0.5em black;
 }
 
 .playerButtonIcon {
@@ -170,42 +164,22 @@ span.navbar-brand {
     line-height: 20px;
 }
 
-.tooltip-inner {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.share-button {
-    display: inline-block !important;
-    width: 35px !important;
-}
-
-label.entypo-export {
-    border: none !important
-    border-radius: 0 !important;
-    color: inherit !important;
-    background: none !important;
-    font-size: 1.5em !important;
-    padding: 0 !important;
-}
-
-li.entypo-paper-plane {
-    display: none !important;
-}
-
 .smallButtonsHolder {
     padding-bottom: 10px;
 }
 
 .spectrumMarker {
-    position: fixed;
+    position: absolute;
     z-index: 1030;
-    top: auto;
+    top: -40px;
     color: #000000;
+    pointer-events: none;
 }
 
-#markerTop {
-    bottom: 46px;
+.spectrumClickBar {
+    position: absolute;
+    width: 100%;
+    height: 20px;
 }
 
 .infoText {

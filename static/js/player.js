@@ -35,7 +35,8 @@ $(function() {
         'faveRemoveIcon'   : $('span.faveRemove'),
         'favePlayIcon'     : $('span.favePlay'),
         'loader'           : $('div.stillLoading'),
-        'spectrumMarker'   : $('span.spectrumMarker').hide()
+        'spectrumMarker'   : $('span.spectrumMarker').hide(),
+        'spectrumClickBar' : $('span.spectrumClickBar')
     };
     var changeStationTimeout;
     var initialStationsHaveLoaded = false;
@@ -61,6 +62,7 @@ $(function() {
         buttons.bigPlay.show();
         FaveManager.initOldFaves();
         SpectrumManager.updateMarker();
+        SpectrumManager.hoverHandler();
         initialStationsHaveLoaded = true;
     }
 
@@ -659,12 +661,12 @@ $(function() {
      */
 
     var SpectrumManager = {
-        isDragging : false,
-        handleStopDrag : function(xVal) {
+        markerWidth : 18,
+        handleClick : function(event) {
             var totalWidth = elems.spectrum.width();
-            xVal = Math.max(1, Math.min(totalWidth, xVal));
+            var xVal = Math.max(1, Math.min(totalWidth, event.pageX - SpectrumManager.markerWidth));
             var genreCount = StationsManager.getGenreCount();
-            var genreNum = Math.min(Math.round((xVal/totalWidth) * genreCount), genreCount - 1);
+            var genreNum = Math.min(Math.round((xVal / totalWidth) * genreCount), genreCount - 1);
             if (StationsManager.setActiveGenre(genreNum)) {
                 MainController.changeStationToNextStation();
             } else {
@@ -675,25 +677,19 @@ $(function() {
             var genreNum = StationsManager.getActiveGenre();
             var genreCount = StationsManager.getGenreCount();
             var totalWidth = elems.spectrum.width();
-            var xCoord = Math.round((totalWidth * genreNum)/ genreCount);
+            var xCoord = Math.round((totalWidth * genreNum) / genreCount);
             elems.spectrumMarker.show();
             elems.spectrumMarker.css("left", xCoord);
         },
-        dragHandler : function() {
-            elems.spectrumMarker.bind('mousedown touchstart', function() {
-                $(window).bind('mousemove touchmove', function(event) {
-                    SpectrumManager.isDragging = true;
-                    elems.spectrumMarker.css("left", event.pageX - 13);
-                });
-            });
-            $(window).bind('mouseup touchend', function(event) {
-                if (SpectrumManager.isDragging) {
-                    SpectrumManager.isDragging = false;
-                    $(window).unbind('mousemove');
-                    SpectrumManager.handleStopDrag(event.pageX - 13);
-                }
-            });
-        }()
+        hoverHandler : function() {
+            var totalWidth = elems.spectrum.width();
+            var genreCount = StationsManager.getGenreCount();
+            elems.spectrumClickBar.bind('mousemove', function(event) {
+                var xVal = Math.max(1, Math.min(totalWidth, event.pageX - SpectrumManager.markerWidth));
+                xVal = Math.round((xVal / totalWidth) * genreCount) * (totalWidth / genreCount);
+                elems.spectrumMarker.css("left", xVal);
+            }).bind('mouseout', SpectrumManager.updateMarker);
+        }
     };
 
 
@@ -715,6 +711,7 @@ $(function() {
         MainController.changeStationToNextStation();
         window.console.error(e);
     });
+    elems.spectrumClickBar.click(SpectrumManager.handleClick);
 
 
     /**
