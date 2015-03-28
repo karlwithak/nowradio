@@ -392,7 +392,7 @@ window.onload = function() {
         },
         setElemBgToGenreColor: function(elem) {
             var color = Utils.genreNumToColor(StationsManager.getActiveGenre());
-            elem.stop(true).velocity({
+            elem.velocity('finish').velocity({
                'backgroundColor': color
             }, 666);
         },
@@ -406,14 +406,14 @@ window.onload = function() {
         switchBrightness: function() {
             if (ColorManager.isBright) {
                 ColorManager.isBright = false;
-                elems.body.stop(true, true);
+                elems.body.velocity('finish');
                 elems.body.css("background-color" , "black");
                 elems.navBar.css("color", "black");
                 elems.landingContainer.css("color", "white");
                 ColorManager.setToGenreColor();
             } else {
                 ColorManager.isBright = true;
-                elems.navBar.stop(true, true);
+                elems.navBar.velocity('finish');
                 elems.navBar.css("backgroundColor", "black");
                 elems.navBar.css("color", "white");
                 elems.stationInfo.css("color", "black")
@@ -516,21 +516,30 @@ window.onload = function() {
             $.get('/get-station-info/?stationUrl='+infoUrl,  _setName, 'html');
         }
         function _animateOpen() {
-            elems.stationInfo.stop(true).velocity({
+            elems.stationInfo.velocity('finish').velocity({
                 'max-height': 300,
                 'padding-top': '15px',
                 'padding-bottom': '15px'
-            }, 333, 'swing', function () {
-                elems.stationInfo.children().css('visibility', 'visible');
+            }, {
+                duration: 333,
+                easing: 'swing',
+                complete: function () {
+                    elems.stationInfo.children().css('visibility', 'visible');
+                }
             });
         }
         function _animateClosed() {
-            elems.stationInfo.children().css('visibility','hidden');
-            elems.stationInfo.stop(true).velocity({
+            elems.stationInfo.velocity('finish').velocity({
                 'max-height': 0,
                 'padding-top': 0,
                 'padding-bottom': 0
-            }, 333, 'swing');
+            }, {
+                duration:  333,
+                easing: 'swing',
+                begin : function () {
+                    elems.stationInfo.children().css('visibility','hidden');
+                }
+            });
         }
 
         return {
@@ -637,31 +646,11 @@ window.onload = function() {
     }());
 
     /**
-     * Manages the share button in the header bar. Also responsible for updating the url that
-     * will be shared whenever the page url changes.
-
-    var ShareManager =  (function() {
-        var config = {
-            url: window.location.origin + encodeURIComponent(window.location.hash),
-            ui: {
-                flyout: 'bottom left',
-                button_text: ''
-            }
-        };
-        var share = new Share(".share-button", config);
-
-        function _updateShareUrl() {
-            config.url = window.location.origin + encodeURIComponent(window.location.hash);
-            share = new Share(".share-button", config);
-        }
-        return {
-            updateShareUrl : _updateShareUrl
-        };
-    }());
+     * Manages everything relating to the bottom spectrum bar
      */
-
     var SpectrumManager = {
         markerWidth : 18,
+        currentXval : -1,
         handleClick : function(event) {
             var totalWidth = elems.spectrum.width();
             var xVal = Math.max(1, Math.min(totalWidth, event.pageX - SpectrumManager.markerWidth));
@@ -679,7 +668,8 @@ window.onload = function() {
             var totalWidth = elems.spectrum.width();
             var xCoord = Math.round((totalWidth * genreNum) / genreCount);
             elems.spectrumMarker.show();
-            elems.spectrumMarker.css("left", xCoord);
+            elems.spectrumMarker.velocity('stop', true).velocity({translateX: xCoord + "px"});
+            SpectrumManager.currentXval = xCoord;
         },
         hoverHandler : function() {
             var totalWidth = $(window).width();
@@ -687,7 +677,9 @@ window.onload = function() {
             elems.spectrumClickBar.bind('mousemove', function(event) {
                 var xVal = Math.max(1, Math.min(totalWidth, event.pageX - SpectrumManager.markerWidth));
                 xVal = Math.round((xVal / totalWidth) * genreCount) * (totalWidth / genreCount);
-                elems.spectrumMarker.css("left", xVal);
+                if (xVal === SpectrumManager.currentXval) return;
+                SpectrumManager.currentXval = xVal;
+                elems.spectrumMarker.velocity('stop', true).velocity({translateX: xVal + "px"});
             }).bind('mouseout', SpectrumManager.updateMarker);
         }
     };
