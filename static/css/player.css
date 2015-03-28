@@ -133,7 +133,7 @@ a:link, a:visited, a:hover, a:active {
 
 .faveAdd {
     top: 11px;
-    left: 12px;
+    left: 9px;
     color: black;
     position: relative;
 }
@@ -179,7 +179,8 @@ span.navbar-brand {
 .spectrumClickBar {
     position: absolute;
     width: 100%;
-    height: 20px;
+    height: 25px;
+    top: -7px;
 }
 
 .infoText {

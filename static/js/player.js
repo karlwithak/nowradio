@@ -3,13 +3,13 @@
 /*jshint -W069 */
 /*jshint -W116 */
 
-$(function() {
+window.onload = function() {
     'use strict';
     /**
      * Global Variables
      */
     var buttons = {
-        'bigPlay'     : $('a#bigPlayButton').hide(),
+        'bigPlay'     : $('span#bigPlayButton'),
         "play"        : $('span#playButton').hide(),
         'stop'        : $('span#stopButton'),
         'nextStation' : $('span#nextStationButton'),
@@ -682,7 +682,7 @@ $(function() {
             elems.spectrumMarker.css("left", xCoord);
         },
         hoverHandler : function() {
-            var totalWidth = elems.spectrum.width();
+            var totalWidth = $(window).width();
             var genreCount = StationsManager.getGenreCount();
             elems.spectrumClickBar.bind('mousemove', function(event) {
                 var xVal = Math.max(1, Math.min(totalWidth, event.pageX - SpectrumManager.markerWidth));
@@ -708,7 +708,6 @@ $(function() {
     buttons.brightness.click(ColorManager.switchBrightness);
     elems.player.bind('canplay', readyToPlay);
     elems.player.bind('error', function (e) {
-        MainController.changeStationToNextStation();
         window.console.error(e);
     });
     elems.spectrumClickBar.click(SpectrumManager.handleClick);
@@ -720,4 +719,4 @@ $(function() {
     if (window.location.hash.length !== 0) {
         UrlManager.restoreFromHash();
     }
-});
+};

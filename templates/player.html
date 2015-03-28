@@ -15,17 +15,16 @@
 
 {% block header %}
     <div class="pull-left" id="faveHolder">
-        <div class="faveBox" id="oldFaveBox">
+        <div class="faveBox" id="oldFaveBox" title="play saved station">
             <span class="fa fa-times faveRemove clickable"></span>
             <span class="fa fa-lg fa-play favePlay clickable"></span>
         </div>
-        <div class="faveBox" id="newFaveBox">
-            <span class="fa fa-lg fa-plus faveAdd clickable" data-toggle="tooltip"
-                    data-placement="bottom" title="save station"></span>
+        <div class="faveBox" id="newFaveBox" title="save station">
+            <span class="fa fa-lg fa-heart faveAdd clickable"></span>
         </div>
     </div>
     <div class="pull-right smallButtonsHolder">
-        <!-- <span class="share-button"></span> -->
+       <!--  <span id="shareButton" class="fa fa-lg fa-share-square-o clickable topRightIcon"></span> -->
         <span id="infoButton" class="fa fa-lg fa-info-circle clickable topRightIcon"></span>
         <span id="brightnessButton" class="fa fa-lg fa-adjust clickable topRightIcon"></span>
         <span id="unmuteButton" class="fa fa-lg fa-volume-off clickable topRightIcon"></span>
@@ -42,9 +41,9 @@
         <p class="lead">
             {{ config['APP_SLOGAN'] }}
         </p>
-        <a id="bigPlayButton" href="javascript:void(0)">
+        <span id="bigPlayButton" style="display: none">
             <span class="fa fa-5x fa-play-circle-o"></span>
-        </a>
+        </span>
         <div class="stillLoading">
             <span id="bigCog" class="fa fa-5x fa-cog fa-spin"></span>
             <p>Loading...</p>
@@ -60,18 +59,12 @@
 
         <nav id="controlBar" class="navbar-fixed-bottom">
             <span class="spectrumClickBar clickable"></span>
-            <span class="fa fa-2x fa-step-backward playerButtonIcon" data-toggle="tooltip"
-                title="last station" id="prevStationButton"></span>
-            <span class="fa fa-2x fa-play playerButtonIcon" data-toggle="tooltip"
-                title="play" id="playButton"></span>
-            <span class="fa fa-2x fa-pause playerButtonIcon" data-toggle="tooltip"
-                title="pause" id="stopButton"></span>
-            <span class="fa fa-2x fa-step-forward playerButtonIcon" data-toggle="tooltip"
-                title="next station" id="nextStationButton"></span>
-            <span class="fa fa-2x fa-arrow-left playerButtonIcon" data-toggle="tooltip"
-                   title="last genre" id="prevGenreButton"></span>
-            <span class="fa fa-2x fa-arrow-right playerButtonIcon" data-toggle="tooltip"
-                   title="next genre" id="nextGenreButton"></span>
+            <span class="fa fa-2x fa-step-backward playerButtonIcon" title="last station" id="prevStationButton"></span>
+            <span class="fa fa-2x fa-play playerButtonIcon" title="play" id="playButton"></span>
+            <span class="fa fa-2x fa-pause playerButtonIcon" title="pause" id="stopButton"></span>
+            <span class="fa fa-2x fa-step-forward playerButtonIcon" title="next station" id="nextStationButton"></span>
+            <span class="fa fa-2x fa-arrow-left playerButtonIcon" title="last genre" id="prevGenreButton"></span>
+            <span class="fa fa-2x fa-arrow-right playerButtonIcon" title="next genre" id="nextGenreButton"></span>
             <img src="{{ url_for('static', filename='img/spectrum.png') }}" id="spectrum"/>
             <span class="fa fa-4x fa-sort-desc spectrumMarker clickable"></span>
         </nav>
