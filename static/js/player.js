@@ -379,11 +379,11 @@ window.onload = function() {
         },
         setToNeutral: function() {
             if (ColorManager.isBright) {
-                elems.body.animate({
+                elems.body.velocity({
                     backgroundColor: '#aaa'
                 }, 50);
             } else {
-                elems.navBar.animate({
+                elems.navBar.velocity({
                     backgroundColor: '#aaa',
                     text: '#aaa'
                 }, 50);
@@ -392,7 +392,7 @@ window.onload = function() {
         },
         setElemBgToGenreColor: function(elem) {
             var color = Utils.genreNumToColor(StationsManager.getActiveGenre());
-            elem.stop(true).animate({
+            elem.stop(true).velocity({
                'backgroundColor': color
             }, 666);
         },
@@ -516,7 +516,7 @@ window.onload = function() {
             $.get('/get-station-info/?stationUrl='+infoUrl,  _setName, 'html');
         }
         function _animateOpen() {
-            elems.stationInfo.stop(true).animate({
+            elems.stationInfo.stop(true).velocity({
                 'max-height': 300,
                 'padding-top': '15px',
                 'padding-bottom': '15px'
@@ -526,7 +526,7 @@ window.onload = function() {
         }
         function _animateClosed() {
             elems.stationInfo.children().css('visibility','hidden');
-            elems.stationInfo.stop(true).animate({
+            elems.stationInfo.stop(true).velocity({
                 'max-height': 0,
                 'padding-top': 0,
                 'padding-bottom': 0
