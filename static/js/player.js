@@ -76,6 +76,7 @@ window.onload = function() {
      * Utility functions used throughout.
      */
     var Utils = {
+        ZEROES : '00000000000000000000000000000000',
         genreNumToColor: function (genreNum) {
             var totalGenres = StationsManager.getGenreCount();
             var colorNum = (genreNum * 360) / totalGenres;
@@ -83,23 +84,24 @@ window.onload = function() {
         },
         ipToHashCode: function(ip) {
             var parts = ip.split(':');
-            var port = (parts.length === 1 ? '80' : parts[1]);
-            var hashcode = parts[0].split('.').reduce(function (accumulator, octetAsString) {
-                if (parseInt(octetAsString) < 16) {
-                    accumulator += '0';
-                }
-                return accumulator + parseInt(octetAsString).toString(16);
+            var hashcode = parts[0].split('.').reduce(function (accumulator,octetAsString) {
+                var bin = Utils.ZEROES + parseInt(octetAsString).toString(2);
+                return accumulator + bin.substr(-8);
             }, '');
-            hashcode += parseInt(port).toString(16);
-            return hashcode;
+            var port = Utils.ZEROES + parseInt(parts[1]).toString(2);
+            hashcode += port.substr(-16);
+            return (Utils.ZEROES + parseInt(hashcode.substr(0, 24), 2).toString(32)).substr(-5) +
+                    (Utils.ZEROES + parseInt(hashcode.substr(24), 2).toString(32)).substr(-5);
         },
         hashCodeToIp: function(hashcode) {
+            var bin = (Utils.ZEROES +parseInt(hashcode.substr(0, 5), 32).toString(2)).substr(-24) +
+                    (Utils.ZEROES + parseInt(hashcode.substr(5), 32).toString(2)).substr(-24);
             var ip = '';
-            for (var i = 0; i < 8; i += 2) {
-                ip += parseInt(hashcode.substr(i, 2), 16).toString().trim() + '.';
+            for (var i = 0; i < 32; i += 8) {
+                ip += parseInt(bin.substr(i, 8), 2).toString().trim() + '.';
             }
             ip = ip.slice(0, -1);
-            ip += ':' + parseInt(hashcode.substr(8, 12), 16).toString();
+            ip += ':' + parseInt(bin.substr(-16), 2).toString();
             return ip;
         },
         hsvToRgb: function(h, s, v) {
