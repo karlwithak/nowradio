@@ -97,11 +97,11 @@ a:link, a:visited, a:hover, a:active {
     cursor: pointer;
     padding: 10px;
     top: auto;
-    bottom: 0;
+    bottom: -8px;
 }
 
 #prevGenreButton {
-    left:0;
+    left: 0;
 }
 
 #nextGenreButton {
@@ -118,6 +118,15 @@ a:link, a:visited, a:hover, a:active {
 
 #prevStationButton {
     left: calc(25% - 10px);
+}
+
+.innerArrow {
+    top: 8px;
+    pointer-events: none;
+}
+
+.innerBox {
+    pointer-events: none;
 }
 
 .faveBox {
@@ -142,7 +151,6 @@ a:link, a:visited, a:hover, a:active {
     left: 33px;
     top: -10px;
     color: white;
-    font-size: 0.8em;
     position: relative;
 }
 

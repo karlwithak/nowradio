@@ -7,7 +7,7 @@ $(function() {
     });
 
     function turnGrey(elem) {
-        $(elem.target).css("color", "#505050");
+        $(elem.target).css("color", "#505050").children().css("color", "#505050");
     }
     function turnLightGrey(elem) {
         $(elem.target).css("color", "#EEEEEE");
@@ -16,7 +16,7 @@ $(function() {
         $(elem.target).css("color", "#ffffff");
     }
     function turnBlack(elem) {
-        $(elem.target).css("color", "#000000");
+        $(elem.target).css("color", "#000000").children().css("color", "#000000");
     }
 
     // enable tooltips and hover listeners if this is not a mobile device

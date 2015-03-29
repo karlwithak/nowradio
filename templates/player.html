@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    <link href="{{ url_for('static', filename='css/player.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/player.css') }}" rel="stylesheet">
 
     <noscript>
         <style type="text/css">
@@ -41,7 +41,7 @@
         <p class="lead">
             {{ config['APP_SLOGAN'] }}
         </p>
-        <span id="bigPlayButton" style="display: none">
+        <span id="bigPlayButton" class="clickable" style="display: none">
             <span class="fa fa-5x fa-play-circle-o"></span>
         </span>
         <div class="stillLoading">
@@ -59,12 +59,25 @@
 
         <nav id="controlBar" class="navbar-fixed-bottom">
             <span class="spectrumClickBar clickable"></span>
-            <span class="fa fa-2x fa-step-backward playerButtonIcon" title="last station" id="prevStationButton"></span>
-            <span class="fa fa-2x fa-play playerButtonIcon" title="play" id="playButton"></span>
-            <span class="fa fa-2x fa-pause playerButtonIcon" title="pause" id="stopButton"></span>
-            <span class="fa fa-2x fa-step-forward playerButtonIcon" title="next station" id="nextStationButton"></span>
-            <span class="fa fa-2x fa-arrow-left playerButtonIcon" title="last genre" id="prevGenreButton"></span>
-            <span class="fa fa-2x fa-arrow-right playerButtonIcon" title="next genre" id="nextGenreButton"></span>
+            <span class="fa fa-2dot8 fa-share-square-o fa-flip-horizontal playerButtonIcon"
+                    title="last genre" id="prevGenreButton"></span>
+            <span class="fa-stack fa-1dot6 playerButtonIcon" title="last station" id="prevStationButton">
+                <span class="fa fa-arrow-left fa-stack-1x innerArrow"></span>
+                <span class="fa fa-square-o fa-stack-2x innerBox"></span>
+            </span>
+            <span class="fa-stack fa-1dot6 playerButtonIcon" title="play" id="playButton">
+                <span class="fa fa-play fa-stack-1x innerArrow"></span>
+                <span class="fa fa-square-o fa-stack-2x innerBox"></span>
+            </span>
+            <span class="fa-stack fa-1dot6 playerButtonIcon" title="pause" id="stopButton">
+                <span class="fa fa-pause fa-stack-1x innerArrow"></span>
+                <span class="fa fa-square-o fa-stack-2x innerBox"></span>
+            </span>
+            <span class="fa-stack fa-1dot6 playerButtonIcon" title="next station" id="nextStationButton">
+                <span class="fa fa-arrow-right fa-stack-1x innerArrow"></span>
+                <span class="fa fa-square-o fa-stack-2x innerBox"></span>
+            </span>
+            <span class="fa fa-2dot8 fa-share-square-o playerButtonIcon" title="next genre" id="nextGenreButton"></span>
             <img src="{{ url_for('static', filename='img/spectrum.png') }}" id="spectrum"/>
             <span class="fa fa-4x fa-sort-desc spectrumMarker clickable"></span>
         </nav>
