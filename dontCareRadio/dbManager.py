@@ -46,10 +46,10 @@ class Queries:
         WHERE id = %s
     '''
     get_ips_by_genre = '''
-        SELECT ip_addr
+        SELECT min(ip_addr)
         FROM station_info
         WHERE our_genre = %(genre_name)s AND is_up = TRUE
-        GROUP BY ip_addr, name
+        GROUP BY name
         ORDER BY max(active_listeners) DESC
         LIMIT %(page_size)s
     '''
