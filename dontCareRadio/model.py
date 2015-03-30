@@ -1,4 +1,4 @@
-# Make sure to run ourGenreSetter on the server after changing this file
+# Make sure to run ourGenreUpdater on the server after changing this file
 
 genre_list = [
     ['electro%', 'techno%', 'drum and bass%'],
