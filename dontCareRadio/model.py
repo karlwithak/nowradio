@@ -1,45 +1,37 @@
 # Make sure to run ourGenreUpdater on the server after changing this file
 
 genre_list = [
-    ['electro%', 'techno%', 'drum and bass%'],
-    ['house%', 'trance%', 'deep house%'],
-    ['party%', 'club%', 'dance%', 'edm%'],
-    ['pop%', 'top40%', 'top 40%'],
-    ['hip%', 'rap%', 'urban%'],
-    ['rnb%', 'r&b%'],
-    ['country%'],
+    ['electro%', 'techno%', 'drum and bass%', 'dub%', 'trance%'],
+    ['party%', 'club%', 'dance%', 'edm%', 'house%', 'deep house%'],
+    ['hip%', 'rap%', 'rnb%', 'r&b%'],
+    ['jazz%', 'smooth jazz%', 'live jazz'],
+    ['classical', 'classical music', 'classical,'],
     ['blues%'],
+    ['country%'],
     ['rock%', 'classic rock%'],
     ['metal%', 'death metal%', 'hard rock%', 'heavy metal%'],
-    ['jazz%', 'smooth jazz%'],
-    ['classical', 'classical music'],
-    ['chill%', 'ambient%', 'downtempo%', 'lounge%'],
-    ['vari%', 'misc%', 'alternative%', 'mixed%', 'assorted'],
+    ['alternative%', 'indie%'],
+    ['folk%'],
     ['60s%', '70%', '80%', '90s%', 'classic hits%', 'oldies%', 'old time%'],
-    ['bolivia%', 'croatia%', 'euro%', 'greek%', 'nederlands%', 'polsk%'],
-    ['reggae%', 'caribbean'],
-    ['folk']
+    ['reggae%', 'caribbean', 'tropical'],
+    ['chill%', 'ambient%', 'downtempo%', 'lounge%']
 ]
 
 genre_names = [
     'electro',
-    'house',
     'party',
-    'pop',
     'hiphop',
-    'rnb',
-    'country',
-    'blues',
-    'rock',
-    'metal',
     'jazz',
     'classical',
-    'chill',
-    'misc',
+    'blues',
+    'country',
+    'rock',
+    'metal',
+    'alt',
+    'folk',
     'oldies',
-    'european',
     'reggae',
-    'folk'
+    'chill'
 ]
 
 assert len(genre_list) == len(genre_names)
