@@ -115,15 +115,15 @@ a:link, a:visited, a:hover, a:active {
 }
 
 #playButton, #stopButton {
-    left: calc(50% - 23px);
+    left: calc(50% - 37px);
 }
 
 #nextStationButton {
-    left: calc(75% - 25px);
+    left: calc(75% - 53px);
 }
 
 #prevStationButton {
-    left: calc(25% - 10px);
+    left: calc(25% - 20px);
 }
 
 .innerArrow {
