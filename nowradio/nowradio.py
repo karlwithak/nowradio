@@ -13,8 +13,8 @@ import serverInfo
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
-app.config['APP_NAME'] = "Don't Care Radio"
-app.config['APP_SLOGAN'] = "Find new music"
+app.config['APP_NAME'] = "nowrad.io"
+app.config['APP_SLOGAN'] = "Listen to music now."
 app.config['DEBUG'] = serverInfo.is_development
 file_handler = FileHandler(serverInfo.flask_log_file)
 file_handler.setLevel(logging.INFO)
