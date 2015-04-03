@@ -36,7 +36,8 @@ window.onload = function() {
         'favePlayIcon'     : $('span.favePlay'),
         'loader'           : $('div.stillLoading'),
         'spectrumMarker'   : $('span.spectrumMarker').hide(),
-        'spectrumClickBar' : $('span.spectrumClickBar')
+        'spectrumClickBar' : $('span.spectrumClickBar'),
+        'centerContainer'  : $('div.verticalCenter')
     };
     var changeStationTimeout;
     var initialStationsHaveLoaded = false;
@@ -371,17 +372,19 @@ window.onload = function() {
         isBright: true,
         setToGenreColor: function() {
             if (ColorManager.isBright) {
-                ColorManager.setElemBgToGenreColor(elems.body);
-                ColorManager.setElemBgToGenreColor(elems.newFaveBox);
+                ColorManager.setElemBgToGenreColor(elems.centerContainer);
+                ColorManager.setElemBgToGenreColor(elems.centerContainer);
+                $('meta[name="theme-color"]').attr('content', ColorManager.currentGenreColor());
             } else {
                 ColorManager.setElemBgToGenreColor(elems.navBar);
                 ColorManager.setElemFgToGenreColor(elems.stationInfo);
                 ColorManager.setElemBgToGenreColor(elems.newFaveBox);
+                $('meta[name="theme-color"]').attr('content', "#000000");
             }
         },
         setToNeutral: function() {
             if (ColorManager.isBright) {
-                elems.body.velocity({
+                elems.centerContainer.velocity({
                     backgroundColor: '#aaa'
                 }, 50);
             } else {
@@ -393,13 +396,13 @@ window.onload = function() {
             elems.newFaveBox.css("background-color", "#aaa");
         },
         setElemBgToGenreColor: function(elem) {
-            var color = Utils.genreNumToColor(StationsManager.getActiveGenre());
+            var color = ColorManager.currentGenreColor();
             elem.velocity('finish').velocity({
                'backgroundColor': color
             }, 666);
         },
         setElemFgToGenreColor: function(elem) {
-            var color = Utils.genreNumToColor(StationsManager.getActiveGenre());
+            var color = ColorManager.currentGenreColor();
             elem.css({
                 'color': color,
                 'border-color': color
@@ -408,11 +411,12 @@ window.onload = function() {
         switchBrightness: function() {
             if (ColorManager.isBright) {
                 ColorManager.isBright = false;
-                elems.body.velocity('finish');
-                elems.body.css("background-color" , "black");
+                elems.centerContainer.velocity('finish');
+                elems.centerContainer.css("background-color" , "black");
                 elems.navBar.css("color", "black");
                 elems.landingContainer.css("color", "white");
                 ColorManager.setToGenreColor();
+                $('meta[name="theme-color"]').attr('content', "#000000");
             } else {
                 ColorManager.isBright = true;
                 elems.navBar.velocity('finish');
@@ -422,7 +426,11 @@ window.onload = function() {
                                  .css("border-color", "black");
                 elems.landingContainer.css("color", "black");
                 ColorManager.setToGenreColor();
+                $('meta[name="theme-color"]').attr('content', ColorManager.currentGenreColor());
             }
+        },
+        currentGenreColor: function() {
+            return Utils.genreNumToColor(StationsManager.getActiveGenre());
         }
     };
 
