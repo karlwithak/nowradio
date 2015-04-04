@@ -22,7 +22,7 @@ var Nowradio = (function(nr) {
         'body'             : $('body'),
         'navBar'           : $('nav.navigationBar'),
         'player'           : $('audio#player'),
-        'spectrum'         : $('img#spectrum'),
+        'spectrum'         : $('canvas#spectrum'),
         'mainContainer'    : $('div#mainContainer').hide(),
         'landingContainer' : $('div#landingContainer'),
         'currentSongText'  : $('span#currentSong'),

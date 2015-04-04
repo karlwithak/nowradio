@@ -43,6 +43,21 @@ var Nowradio = (function(nr) {
             nr.$elems.spectrumMarker.velocity('stop', true).velocity({translateX: xVal + "px"});
         }).bind('mouseout', this.updateMarker.bind(nr.SpectrumManager));
     };
-
+    $(document).ready(function () {
+        var canvas = nr.$elems.spectrum[0];
+        var ctx = canvas.getContext("2d");
+        function drawLine(color, x, y) {
+            ctx.strokeStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x,0);
+            ctx.lineTo(x,y);
+            ctx.stroke();
+        }
+        for (var i = 0; i < canvas.width; ++i) {
+            var ratio = i / canvas.width;
+            var hue = Math.floor(360 * ratio);
+            drawLine(nr.Utils.hsvToRgb(hue, 30, 99), i, canvas.height);
+        }
+    });
     return nr;
 }(Nowradio || {}));
