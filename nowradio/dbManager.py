@@ -50,7 +50,7 @@ class Queries:
         FROM station_info
         WHERE our_genre = %(genre_name)s AND is_up = TRUE
         GROUP BY name
-        ORDER BY max(active_listeners) DESC
+        ORDER BY max(active_listeners + faves) DESC
         LIMIT %(page_size)s
     '''
     set_our_genre_by_genre = '''

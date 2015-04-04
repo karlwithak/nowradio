@@ -2,10 +2,10 @@
 /*jshint -W069 */
 /*jshint -W116 */
 
-    /**
-     * Handles all player controller buttons and actions. Responsible for station changes and play
-     * state changes.
-     */
+/**
+ * Handles all player controller buttons and actions. Responsible for station changes and play
+ * state changes.
+ */
 var Nowradio = (function(nr) {
     'use strict';
     nr.MainController = {
