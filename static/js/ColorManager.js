@@ -10,15 +10,18 @@ var Nowradio = (function(nr) {
     nr.ColorManager = {
         isBright: true
     };
-    nr.ColorManager.setToGenreColor = function () {
+    nr.ColorManager.updateToGenreColor = function () {
+        nr.ColorManager.updateColors(this.currentGenreColor());
+    };
+    nr.ColorManager.updateColors = function (color) {
         if (this.isBright) {
-            this.setElemBgToGenreColor(nr.$elems.centerContainer);
-            this.setElemBgToGenreColor(nr.$elems.newFaveBox);
-            $('meta[name="theme-color"]').attr('content', this.currentGenreColor());
+            this.setElemBgToColor(nr.$elems.centerContainer, color);
+            this.setElemBgToColor(nr.$elems.newFaveBox, color);
+            $('meta[name="theme-color"]').attr('content', color);
         } else {
-            this.setElemBgToGenreColor(nr.$elems.navBar);
-            this.setElemFgToGenreColor(nr.$elems.stationInfo);
-            this.setElemBgToGenreColor(nr.$elems.newFaveBox);
+            this.setElemBgToColor(nr.$elems.navBar, color);
+            this.setElemFgToColor(nr.$elems.stationInfo, color);
+            this.setElemBgToColor(nr.$elems.newFaveBox, color);
             $('meta[name="theme-color"]').attr('content', "#000000");
         }
     };
@@ -35,14 +38,12 @@ var Nowradio = (function(nr) {
         }
         nr.$elems.newFaveBox.css("background-color", "#aaa");
     };
-    nr.ColorManager.setElemBgToGenreColor = function (elem) {
-        var color = this.currentGenreColor();
+    nr.ColorManager.setElemBgToColor = function (elem, color) {
         elem.velocity('finish').velocity({
             'backgroundColor': color
         }, 666);
     };
-    nr.ColorManager.setElemFgToGenreColor = function (elem) {
-        var color = this.currentGenreColor();
+    nr.ColorManager.setElemFgToColor = function (elem, color) {
         elem.css({
             'color': color,
             'border-color': color
@@ -55,7 +56,7 @@ var Nowradio = (function(nr) {
             nr.$elems.centerContainer.css("background-color", "black");
             nr.$elems.navBar.css("color", "black");
             nr.$elems.landingContainer.css("color", "white");
-            this.setToGenreColor();
+            this.updateToGenreColor();
             $('meta[name="theme-color"]').attr('content', "#000000");
         } else {
             this.isBright = true;
@@ -65,7 +66,7 @@ var Nowradio = (function(nr) {
             nr.$elems.stationInfo.css("color", "black")
                 .css("border-color", "black");
             nr.$elems.landingContainer.css("color", "black");
-            this.setToGenreColor();
+            this.updateToGenreColor();
             $('meta[name="theme-color"]').attr('content', this.currentGenreColor());
         }
     };

@@ -18,7 +18,8 @@ var Nowradio = (function(nr) {
     };
     nr.MainController.readyToPlay = function() {
         clearTimeout(this.changeStationTimeout);
-        nr.ColorManager.setToGenreColor();
+        nr.ColorManager.updateToGenreColor();
+        nr.FaviconManager.updateToGenreColor();
         this.playingStatePlay();
         nr.SpectrumManager.updateMarker();
     };

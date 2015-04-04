@@ -26,7 +26,7 @@ var Nowradio = (function(nr) {
         if ($oldFaveBox.length > this.maxFaves) return;
         var faveCount = $oldFaveBox.length - 1;
         var newBox = nr.$elems.oldFaveBox.clone(true).insertBefore(nr.$elems.oldFaveBox).show();
-        nr.ColorManager.setElemBgToGenreColor(newBox);
+        nr.ColorManager.setElemBgToColor(newBox, nr.ColorManager.currentGenreColor());
         var ipHash = nr.UrlManager.getHash();
         var genreNum = nr.StationsManager.getActiveGenre();
         this.faves[faveCount] = {"ipHash": ipHash, "genreNum": genreNum};
