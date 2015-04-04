@@ -1,80 +1,77 @@
 /*global $:false */
-/*jshint -W069 */
 /*jshint -W116 */
 
 /**
  * Manages the genres and their stations. Keeps track of what genres and stations have been
  * played and what will be played in the future.
  */
-var Nowradio = (function(nr) {
+var NowRadio = (function(nr) {
     'use strict';
-    nr.StationsManager = {
-        genreLists : [],
-        genreMarkers : [],
-        genreNum : 0
-    };
+    var genreLists = [];
+    var genreMarkers = [];
+    var genreNum = 0;
+    
+    nr.StationsManager = {};
     nr.StationsManager.getNextGenre = function() {
-        this.genreNum = (this.genreNum + 1) % this.genreLists.length;
-        return this.genreNum;
+        genreNum = (genreNum + 1) % genreLists.length;
+        return genreNum;
     };
     nr.StationsManager.getPrevGenre = function() {
-        this.genreNum = (this.genreNum + this.genreLists.length - 1) % this.genreLists.length;
-        return this.genreNum;
+        genreNum = (genreNum + genreLists.length - 1) % genreLists.length;
+        return genreNum;
     };
     nr.StationsManager.getNextStation = function() {
-        this.genreMarkers[this.genreNum] = (this.genreMarkers[this.genreNum] + 1) % this.genreLists[this.genreNum].length;
-        return this.genreLists[this.genreNum][this.genreMarkers[this.genreNum]];
+        genreMarkers[genreNum] = (genreMarkers[genreNum] + 1) % genreLists[genreNum].length;
+        return genreLists[genreNum][genreMarkers[genreNum]];
     };
     nr.StationsManager.getPrevStation = function() {
-        this.genreMarkers[this.genreNum] = (this.genreMarkers[this.genreNum] + (this.genreLists[this.genreNum].length - 1)) %
-                                                            this.genreLists[this.genreNum].length;
-        return this.genreLists[this.genreNum][this.genreMarkers[this.genreNum]];
+        genreMarkers[genreNum] = (genreMarkers[genreNum] + (genreLists[genreNum].length - 1)) %
+                                                            genreLists[genreNum].length;
+        return genreLists[genreNum][genreMarkers[genreNum]];
     };
     nr.StationsManager.getActiveGenre = function() {
-        return this.genreNum;
+        return genreNum;
     };
     nr.StationsManager.setActiveGenre = function(genreInfo) {
-        if (this.genreNum === genreInfo) return false;
-        this.genreNum = genreInfo;
+        if (genreNum === genreInfo) return false;
+        genreNum = genreInfo;
         return true;
     };
     nr.StationsManager.removeCurrentThenNext = function() {
-        this.genreLists[this.genreNum].splice(this.genreMarkers[this.genreNum], 1);
-        this.genreMarkers[this.genreNum] -= 1;
+        genreLists[genreNum].splice(genreMarkers[genreNum], 1);
+        genreMarkers[genreNum] -= 1;
         nr.StationChanger.nextStation();
     };
     nr.StationsManager.getGenreCount = function() {
-        return this.genreLists.length;
+        return genreLists.length;
     };
     nr.StationsManager.setStationFirstUnique = function(src) {
-        var _this = this;
         callback();
         function callback() {
-            if (_this.genreMarkers.length < 1) return window.setTimeout(callback, 200);
-            var currentLocation = _this.genreLists[_this.genreNum].indexOf(src);
+            if (genreMarkers.length < 1) return window.setTimeout(callback, 200);
+            var currentLocation = genreLists[genreNum].indexOf(src);
             if (currentLocation != -1) {
-                _this.genreLists[_this.genreNum][currentLocation] = _this.genreLists[_this.genreNum][0];
-                _this.genreLists[_this.genreNum][0] = src;
-                _this.genreMarkers[_this.genreNum] = 0;
+                genreLists[genreNum][currentLocation] = genreLists[genreNum][0];
+                genreLists[genreNum][0] = src;
+                genreMarkers[genreNum] = 0;
             } else {
-                _this.genreLists[_this.genreNum].push(src);
-                _this.genreMarkers[_this.genreNum] = _this.genreLists[_this.genreNum].length - 1;
+                genreLists[genreNum].push(src);
+                genreMarkers[genreNum] = genreLists[genreNum].length - 1;
             }
         }
     };
-    $(document).ready(function () {
-        var _this = nr.StationsManager;
+    $(document).ready(function() {
         $.get('/get-initial-stations/', function(data) {
-            data['stations'].forEach(function (stationList) {
-                _this.genreLists.push(stationList);
-                _this.genreMarkers.push(-1);
+            data.stations.forEach(function(stationList) {
+                genreLists.push(stationList);
+                genreMarkers.push(-1);
             });
             if (nr.UrlManager.getHash().length == 0) {
-                _this.genreNum = Math.floor(Math.random() * _this.genreLists.length);
+                genreNum = Math.floor(Math.random() * genreLists.length);
             }
             nr.MainController.initialStationsLoaded();
         });
     });
 
     return nr;
-}(Nowradio || {}));
+}(NowRadio || {}));

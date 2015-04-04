@@ -1,14 +1,11 @@
 /*global $:false */
-/*jshint -W069 */
-/*jshint -W116 */
 
 /**
  * Manages the favicon and it's changing of colors;
  */
-var Nowradio = (function(nr) {
+var NowRadio = (function(nr) {
     'use strict';
-    nr.FaviconManager = {};
-    var canvas, link, ctx;
+    var canvas, ctx;
     function drawCircle(fill) {
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -34,18 +31,19 @@ var Nowradio = (function(nr) {
         // Draw outer black circle
         drawCircle(false);
 
-        link.attr('href', canvas.toDataURL('image/png'));
+        nr.$elems.faviconLink.attr('href', canvas.toDataURL('image/png'));
     }
+
+    nr.FaviconManager = {};
     nr.FaviconManager.updateToGenreColor = function() {
         updateToColor(nr.ColorManager.currentGenreColor());
     };
-    $(document).ready(function () {
+    $(document).ready(function() {
         canvas = document.createElement('canvas');
-        link = $('link#favicon');
         canvas.width = canvas.height = 16;
         ctx = canvas.getContext('2d');
         updateToColor("#bbb");
     });
 
     return nr;
-}(Nowradio || {}));
+}(NowRadio || {}));

@@ -1,30 +1,34 @@
 /*global $:false */
-/*jshint -W069 */
 /*jshint -W116 */
 
 /**
  * Controls the volume of the player
  */
-var Nowradio = (function(nr) {
+var NowRadio = (function(nr) {
     'use strict';
-    nr.VolumeManager = {};
-    nr.VolumeManager.soundOff = function() {
+    function soundOff() {
         nr.$elems.player[0].muted = true;
         nr.$buttons.mute.hide();
         nr.$buttons.unmute.show();
-    };
-    nr.VolumeManager.soundOn = function() {
+    }
+    function soundOn() {
         nr.$elems.player[0].muted = false;
         nr.$buttons.mute.show();
         nr.$buttons.unmute.hide();
-    };
+    }
+
+    nr.VolumeManager = {};
     nr.VolumeManager.soundToggle = function() {
         if (nr.$elems.player[0].muted) {
-            this.soundOn();
+            soundOn();
         } else {
-            this.soundOff();
+            soundOff();
         }
     };
+    $(document).ready(function() {
+        nr.$buttons.mute.click(soundOff);
+        nr.$buttons.unmute.click(soundOn);
+    });
 
     return nr;
-}(Nowradio || {}));
+}(NowRadio || {}));

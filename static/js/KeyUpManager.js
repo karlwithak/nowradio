@@ -1,30 +1,26 @@
 /*global $:false */
-/*jshint -W069 */
-/*jshint -W116 */
 
 /**
  * Handles all keyboard controls for player.
  */
-var Nowradio = (function(nr) {
+var NowRadio = (function(nr) {
     'use strict';
-    nr.KeyUpManager = {
-        singleRightPress : false,
-        singleLeftPress : false,
-        leftTimeout: -1,
-        rightTimeout: -1
-    };
-    nr.KeyUpManager.clearTimeouts = function() {
-        clearTimeout(this.leftTimeout);
-        clearTimeout(this.rightTimeout);
-        if (this.singleLeftPress) {
+    var singleRightPress = false;
+    var singleLeftPress = false;
+    var leftTimeout = -1;
+    var rightTimeout = -1;
+    function clearTimeouts() {
+        clearTimeout(leftTimeout);
+        clearTimeout(rightTimeout);
+        if (singleLeftPress) {
             nr.StationChanger.prevStation();
-        } else if (this.singleRightPress) {
+        } else if (singleRightPress) {
             nr.StationChanger.nextStation();
         }
-        this.singleLeftPress = false;
-        this.singleRightPress = false;
-    };
-    nr.KeyUpManager.handleKeyUp = function(event) {
+        singleLeftPress = false;
+        singleRightPress = false;
+    }
+    function handleKeyUp(event) {
         if (event.keyCode === 32) {
             nr.MainController.playingStateToggle();
         } else if (event.keyCode === 77) {
@@ -32,31 +28,29 @@ var Nowradio = (function(nr) {
         } else if (event.keyCode === 83) {
             nr.FaveManager.addFave();
         } else if (event.keyCode === 37) {
-            if (this.singleLeftPress) {
+            if (singleLeftPress) {
                 nr.StationChanger.prevGenre();
-                this.singleLeftPress = false;
-                this.clearTimeouts();
+                singleLeftPress = false;
+                clearTimeouts();
             } else {
-                this.singleLeftPress = true;
-                this.leftTimeout = window.setTimeout(this.clearTimeouts.bind(nr.KeyUpManager), 333);
+                singleLeftPress = true;
+                leftTimeout = window.setTimeout(clearTimeouts, 333);
             }
         } else if (event.keyCode === 39) {
-            if (this.singleRightPress) {
+            if (singleRightPress) {
                 nr.StationChanger.nextGenre();
-                this.singleRightPress = false;
-                this.clearTimeouts();
+                singleRightPress = false;
+                clearTimeouts();
             } else {
-                this.singleRightPress = true;
-                this.rightTimeout = window.setTimeout(this.clearTimeouts.bind(nr.KeyUpManager), 333);
+                singleRightPress = true;
+                rightTimeout = window.setTimeout(clearTimeouts, 333);
             }
         } else {
-            clearTimeout(this.leftTimeout);
-            clearTimeout(this.rightTimeout);
+            clearTimeout(leftTimeout);
+            clearTimeout(rightTimeout);
         }
-    };
-    $(document).ready(function () {
-        window.onkeyup = nr.KeyUpManager.handleKeyUp.bind(nr.KeyUpManager);
-    });
+    }
+    window.onkeyup = handleKeyUp;
 
     return nr;
-}(Nowradio || {}));
+}(NowRadio || {}));
