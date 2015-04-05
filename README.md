@@ -36,17 +36,17 @@ Login as postgres user
 
 Create new database user
 
-`createuser -dP nowradioUser`
+`createuser -dP nowradio_user`
 
-Enter password: `nowradioPass` or whatever you have in serverInfo.py
+Enter password: `nowradio_pass` or whatever you have in serverInfo.py
 
 Create database;
 
-`createdb --owner=nowradioUser nowradioDb`
+`createdb --owner=nowradio_user nowradio_db`
 
 Fill up database;
 
-`psql nowradioDb < db/station_info_dump.sql`
+`psql nowradio_db < db/station_info_dump.sql`
 
 Exit postgres user;
 

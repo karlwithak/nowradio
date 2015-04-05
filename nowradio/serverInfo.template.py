@@ -4,9 +4,9 @@ is_development = True
 
 public_port = 5000
 
-db_pass = "nowradioPass"
-db_name = "nowradioDb"
-db_user = "nowradioUser"
+db_pass = "nowradio_pass"
+db_name = "nowradio_db"
+db_user = "nowradio_user"
 db_host = "localhost"
 
 # We use yandex.com to find new station. You only need to fill this in if you want to run the
