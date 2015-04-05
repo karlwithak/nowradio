@@ -1,18 +1,14 @@
 /*global $:false */
-/*jshint -W069 */
-/*jshint -W116 */
 
 /**
  * Controls all aspects of the currently playing song name.
  */
-var Nowradio = (function(nr) {
+var NowRadio = (function(nr) {
     'use strict';
-    nr.SongNameManager = {
-        songName : '-1',
-        duplicateSongCheck : false,
-        intervalId : -1
-    };
-    nr.SongNameManager.setName = function(data, status) {
+    var songName = '-1';
+    var duplicateSongCheck = false;
+    var intervalId = -1;
+    function setName(data, status) {
         if (status !== "success") {
             nr.StationsManager.removeCurrentThenNext();
         }
@@ -27,22 +23,24 @@ var Nowradio = (function(nr) {
         var newName = dataList.slice(6).join();
         // Check to see if this new station is playing the same song as the last one,
         //  if so, it's probably a duplicate station so go to the next one
-        if (newName === this.songName && this.duplicateSongCheck) {
+        if (newName === songName && duplicateSongCheck) {
             nr.StationsManager.removeCurrentThenNext();
-        } else if (newName !== this.songName) {
+        } else if (newName !== songName) {
             nr.$elems.currentSongText.text(newName);
-            this.songName = newName;
-            this.duplicateSongCheck = false;
-            clearInterval(this.intervalId);
-            this.intervalId = setInterval(this.updateName.bind(nr.SongNameManager), 10000);
+            songName = newName;
+            duplicateSongCheck = false;
+            clearInterval(intervalId);
+            intervalId = setInterval(nr.SongNameManager.updateName.bind(nr.SongNameManager), 10000);
         }
-    };
-    nr.SongNameManager.updateName = function(doDuplicateSongCheck) {
-        if (doDuplicateSongCheck === true) {
-            this.duplicateSongCheck = doDuplicateSongCheck;
+    }
+
+    nr.SongNameManager = {};
+    nr.SongNameManager.updateName = function(_doDuplicateSongCheck) {
+        if (_doDuplicateSongCheck === true) {
+            duplicateSongCheck = _doDuplicateSongCheck;
         }
         var infoUrl = nr.UrlManager.getMetaDataUrl();
-        $.get('/get-station-info/?stationUrl='+infoUrl, this.setName.bind(nr.SongNameManager), 'html');
+        $.get('/get-station-info/?stationUrl='+infoUrl, setName, 'html');
     };
     nr.SongNameManager.animateOpen = function() {
         nr.$elems.stationInfo.velocity('finish').velocity({
@@ -52,7 +50,7 @@ var Nowradio = (function(nr) {
         }, {
             duration: 333,
             easing: 'swing',
-            complete: function () {
+            complete: function() {
                 nr.$elems.stationInfo.children().css('visibility', 'visible');
             }
         });
@@ -65,11 +63,11 @@ var Nowradio = (function(nr) {
         }, {
             duration:  333,
             easing: 'swing',
-            begin : function () {
+            begin : function() {
                 nr.$elems.stationInfo.children().css('visibility','hidden');
             }
         });
     };
 
     return nr;
-}(Nowradio || {}));
+}(NowRadio || {}));

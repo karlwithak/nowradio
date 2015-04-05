@@ -1,34 +1,33 @@
 /*global $:false */
-/*jshint -W069 */
 /*jshint -W116 */
 
 /**
  * Utility functions used throughout.
  */
-var Nowradio = (function(nr) {
+var NowRadio = (function(nr) {
     'use strict';
-    nr.Utils = {
-        ZEROES: '00000000000000000000000000000000'
-    };
-    nr.Utils.genreNumToColor = function (genreNum) {
+    var ZEROES=  '00000000000000000000000000000000';
+    
+    nr.Utils = {};
+    nr.Utils.genreNumToColor = function(genreNum) {
         var totalGenres = nr.StationsManager.getGenreCount();
         var colorNum = (genreNum * 360) / totalGenres;
         return this.hsvToRgb(colorNum, 26, 99);
     };
-    nr.Utils.ipToHashCode = function (ip) {
+    nr.Utils.ipToHashCode = function(ip) {
         var parts = ip.split(':');
-        var hashcode = parts[0].split('.').reduce(function (accumulator, octetAsString) {
-            var bin = nr.Utils.ZEROES + parseInt(octetAsString).toString(2);
+        var hashcode = parts[0].split('.').reduce(function(accumulator, octetAsString) {
+            var bin = ZEROES + parseInt(octetAsString).toString(2);
             return accumulator + bin.substr(-8);
         }, '');
-        var port = this.ZEROES + parseInt(parts[1]).toString(2);
+        var port = ZEROES + parseInt(parts[1]).toString(2);
         hashcode += port.substr(-16);
-        return (this.ZEROES + parseInt(hashcode.substr(0, 24), 2).toString(32)).substr(-5) +
-            (this.ZEROES + parseInt(hashcode.substr(24), 2).toString(32)).substr(-5);
+        return (ZEROES + parseInt(hashcode.substr(0, 24), 2).toString(32)).substr(-5) +
+            (ZEROES + parseInt(hashcode.substr(24), 2).toString(32)).substr(-5);
     };
-    nr.Utils.hashCodeToIp = function (hashcode) {
-        var bin = (this.ZEROES + parseInt(hashcode.substr(0, 5), 32).toString(2)).substr(-24) +
-            (this.ZEROES + parseInt(hashcode.substr(5), 32).toString(2)).substr(-24);
+    nr.Utils.hashCodeToIp = function(hashcode) {
+        var bin = (ZEROES + parseInt(hashcode.substr(0, 5), 32).toString(2)).substr(-24) +
+            (ZEROES + parseInt(hashcode.substr(5), 32).toString(2)).substr(-24);
         var ip = '';
         for (var i = 0; i < 32; i += 8) {
             ip += parseInt(bin.substr(i, 8), 2).toString().trim() + '.';
@@ -37,7 +36,7 @@ var Nowradio = (function(nr) {
         ip += ':' + parseInt(bin.substr(-16), 2).toString();
         return ip;
     };
-    nr.Utils.hsvToRgb = function (h, s, v) {
+    nr.Utils.hsvToRgb = function(h, s, v) {
         var r, g, b, i, f, p, q, t;
         h = Math.max(0, Math.min(360, h));
         s = Math.max(0, Math.min(100, s));
@@ -91,4 +90,4 @@ var Nowradio = (function(nr) {
     };
 
     return nr;
-}(Nowradio || {}));
+}(NowRadio || {}));
