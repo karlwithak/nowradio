@@ -108,6 +108,8 @@ def our_genre_setter(connection):
 
 
 def main():
+    assert serverInfo.yandex_key != "", "Yandex_key is empty is serverInfo."
+    assert serverInfo.yandex_user != "", "Yandex_user is empty is serverInfo."
     genres = ourUtils.flatten_list(model.genre_list)
     url_set = set()
     ourUtils.multi_thread_runner(genres, yandex_query, url_set)
