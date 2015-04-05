@@ -16,7 +16,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: station_info; Type: TABLE; Schema: public; Owner: radiodb; Tablespace: 
+-- Name: station_info; Type: TABLE; Schema: public; Owner: nowradioUser; Tablespace:
 --
 
 CREATE TABLE station_info (
@@ -35,10 +35,10 @@ CREATE TABLE station_info (
 );
 
 
-ALTER TABLE public.station_info OWNER TO radiodb;
+ALTER TABLE public.station_info OWNER TO nowradioUser;
 
 --
--- Name: station_info_id_seq; Type: SEQUENCE; Schema: public; Owner: radiodb
+-- Name: station_info_id_seq; Type: SEQUENCE; Schema: public; Owner: nowradioUser
 --
 
 CREATE SEQUENCE station_info_id_seq
@@ -49,24 +49,24 @@ CREATE SEQUENCE station_info_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.station_info_id_seq OWNER TO radiodb;
+ALTER TABLE public.station_info_id_seq OWNER TO nowradioUser;
 
 --
--- Name: station_info_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: radiodb
+-- Name: station_info_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: nowradioUser
 --
 
 ALTER SEQUENCE station_info_id_seq OWNED BY station_info.id;
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: radiodb
+-- Name: id; Type: DEFAULT; Schema: public; Owner: nowradioUser
 --
 
 ALTER TABLE ONLY station_info ALTER COLUMN id SET DEFAULT nextval('station_info_id_seq'::regclass);
 
 
 --
--- Data for Name: station_info; Type: TABLE DATA; Schema: public; Owner: radiodb
+-- Data for Name: station_info; Type: TABLE DATA; Schema: public; Owner: nowradioUser
 --
 
 COPY station_info (id, active_listeners, max_listeners, peak_listeners, name, genre, date_added, last_updated, is_up, ip_addr, our_genre, faves) FROM stdin;
@@ -8261,14 +8261,14 @@ COPY station_info (id, active_listeners, max_listeners, peak_listeners, name, ge
 
 
 --
--- Name: station_info_id_seq; Type: SEQUENCE SET; Schema: public; Owner: radiodb
+-- Name: station_info_id_seq; Type: SEQUENCE SET; Schema: public; Owner: nowradioUser
 --
 
 SELECT pg_catalog.setval('station_info_id_seq', 10712, true);
 
 
 --
--- Name: station_info_pkey; Type: CONSTRAINT; Schema: public; Owner: radiodb; Tablespace: 
+-- Name: station_info_pkey; Type: CONSTRAINT; Schema: public; Owner: nowradioUser; Tablespace:
 --
 
 ALTER TABLE ONLY station_info
@@ -8276,7 +8276,7 @@ ALTER TABLE ONLY station_info
 
 
 --
--- Name: unique_ip_addr; Type: CONSTRAINT; Schema: public; Owner: radiodb; Tablespace: 
+-- Name: unique_ip_addr; Type: CONSTRAINT; Schema: public; Owner: nowradioUser; Tablespace:
 --
 
 ALTER TABLE ONLY station_info
