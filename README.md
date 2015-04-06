@@ -1,6 +1,6 @@
-#nowradio
+#NowRadio
 
-nowradio is an internet radio music player. It allows users to easily navigate between different 
+NowRadio is an internet radio music player. It allows users to easily navigate between different 
 stations and different genres so they can find something they like. Check it out at  http://nowrad.io
 
 ##SETUP
@@ -19,7 +19,7 @@ sudo apt-get install -y \
     build-essential libxml2-dev libxslt-dev 
 ```
 
-Go to the directory where you want nowradio to be installed
+Go to the directory where you want NowRadio to be installed
 
 `git clone https://github.com/karlwithak/nowradio.git`
 
@@ -59,7 +59,7 @@ a different password for the database user, it must also be changed here.
 
 `cp serverInfo.template.py serverInfo.py`
 
-Start nowradio!
+Start NowRadio!
 
 `python nowradio.py`
 

@@ -13,7 +13,7 @@ import serverInfo
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
-app.config['APP_NAME'] = "nowrad.io"
+app.config['APP_NAME'] = "NowRadio"
 app.config['APP_SLOGAN'] = "Listen to music now."
 app.config['DEBUG'] = serverInfo.is_development
 file_handler = FileHandler(serverInfo.flask_log_file)
