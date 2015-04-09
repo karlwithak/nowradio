@@ -58,6 +58,10 @@ class Queries:
         SET our_genre = %(our_genre)s
         WHERE genre ILIKE ANY(%(genre_names)s)
     '''
+    set_our_genre_null = '''
+        UPDATE station_info
+        SET our_genre = NULL
+    '''
     get_all_ips = '''
         SELECT id, ip_addr
         FROM station_info

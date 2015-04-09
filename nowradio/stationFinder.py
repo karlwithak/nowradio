@@ -99,6 +99,7 @@ def insert_new_station(ip_list, connection):
 
 def our_genre_setter(connection):
     curr = connection.cursor()
+    curr.execute(Queries.set_our_genre_null)
     for i in range(len(model.genre_list)):
         data = {
             'our_genre': model.genre_names[i],
