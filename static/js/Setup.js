@@ -48,7 +48,7 @@ var NowRadio = (function(nr) {
      */
     $(document).ready(function() {
         nr.$elems.player.bind('error', function(e) {
-            window.console.error(e);
+            window.console.log(e);
         });
         nr.$buttons.info.click(function() {
            window.open('/info/', '_blank');

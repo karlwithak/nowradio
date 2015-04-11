@@ -20,11 +20,13 @@ var NowRadio = (function(nr) {
         nr.$buttons.stop.hide();
         nr.$buttons.play.show();
         nr.$elems.player[0].pause();
+        nr.$elems.player.attr('src', '');
         nr.SongNameManager.animateClosed();
     }
     function playingStateReload() {
         nr.$buttons.play.hide();
         nr.$buttons.stop.show();
+        nr.$elems.player.attr('src', nr.UrlManager.getMediaUrl());
         nr.$elems.player[0].load();
     }
     function readyToPlay() {
