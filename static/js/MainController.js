@@ -34,9 +34,6 @@ var NowRadio = (function(nr) {
         playingStatePlay();
         nr.SpectrumManager.updateMarker();
     }
-    function playingStateIsPlaying() {
-        return !nr.$elems.player[0].paused;
-    }
     function stationPlayingChecker() {
         if (_skipThisCheck()) return;
         var timeCheckStart = nr.$elems.player[0].played.end(0);
@@ -49,7 +46,7 @@ var NowRadio = (function(nr) {
             }
         }
         function _skipThisCheck() {
-            return !playingStateIsPlaying() ||
+            return !nr.MainController.playingStateIsPlaying() ||
                     nr.$elems.player[0].currentTime === null ||
                     nr.$elems.player[0].currentTime < 1 ||
                     nr.$elems.player[0].played.length < 1;
@@ -87,11 +84,14 @@ var NowRadio = (function(nr) {
         changeStationTimeout = setTimeout(changeTimeout, 10000);
     };
     nr.MainController.playingStateToggle = function() {
-        if (playingStateIsPlaying()) {
+        if (this.playingStateIsPlaying()) {
             playingStateStop();
         } else {
             playingStateReload();
         }
+    };
+    nr.MainController.playingStateIsPlaying = function() {
+        return !nr.$elems.player[0].paused;
     };
     $(document).ready(function() {
         nr.$buttons.stop.click(playingStateStop);

@@ -1,4 +1,5 @@
 /*global $:false */
+/*jshint -W116 */
 
 /**
  * Controls all aspects of the currently playing song name.
@@ -36,6 +37,7 @@ var NowRadio = (function(nr) {
 
     nr.SongNameManager = {};
     nr.SongNameManager.updateName = function(_doDuplicateSongCheck) {
+        if (!nr.MainController.playingStateIsPlaying() && !_doDuplicateSongCheck) return;
         if (_doDuplicateSongCheck === true) {
             duplicateSongCheck = _doDuplicateSongCheck;
         }
