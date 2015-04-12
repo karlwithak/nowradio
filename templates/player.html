@@ -24,11 +24,15 @@
         </div>
     </div>
     <div class="pull-right smallButtonsHolder">
-       <!--  <span id="shareButton" class="fa fa-lg fa-share-square-o clickable topRightIcon"></span> -->
+        <span id="volumeSlider" class="fa fa fa-circle"></span>
+        <span id="volumeBar" class="clickable">
+            <span id="volumeLine"></span>
+        </span>
+        <span id="volHiButton" class="fa fa-lg fa-volume-up clickable topRightIcon volumeControl"></span>
+        <span id="volMidButton" class="fa fa-lg fa-volume-down clickable topRightIcon volumeControl"></span>
+        <span id="volLoButton" class="fa fa-lg fa-volume-off clickable topRightIcon volumeControl"></span>
         <span id="infoButton" class="fa fa-lg fa-info-circle clickable topRightIcon"></span>
         <span id="brightnessButton" class="fa fa-lg fa-adjust clickable topRightIcon"></span>
-        <span id="unmuteButton" class="fa fa-lg fa-volume-off clickable topRightIcon"></span>
-        <span id="muteButton" class="fa fa-lg fa-volume-up clickable topRightIcon"></span>
     </div>
 {% endblock %}
 

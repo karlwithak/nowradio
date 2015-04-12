@@ -180,6 +180,7 @@ span.navbar-brand {
 
 .smallButtonsHolder {
     padding-bottom: 10px;
+    cursor: default;
 }
 
 .spectrumMarker {
@@ -201,4 +202,31 @@ span.navbar-brand {
     font-size: 1.15em;
     padding : 1.5em;
     max-width: 50em;
+}
+
+#volumeBar {
+    width: 0;
+    height: 25px;
+    display: inline-block;
+    padding: 0 5px;
+}
+
+#volumeLine {
+    border-top: 2px solid;
+    width: 100%;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+#volumeSlider {
+    pointer-events: none;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

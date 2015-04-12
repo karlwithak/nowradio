@@ -23,8 +23,10 @@ var NowRadio = (function(nr) {
     function handleKeyUp(event) {
         if (event.keyCode === 32) {
             nr.MainController.playingStateToggle();
-        } else if (event.keyCode === 77) {
-            nr.VolumeManager.soundToggle();
+        } else if (event.keyCode === 38) {
+            nr.VolumeManager.soundUp();
+        } else if (event.keyCode === 40) {
+            nr.VolumeManager.soundDown();
         } else if (event.keyCode === 83) {
             nr.FaveManager.addFave();
         } else if (event.keyCode === 37) {
