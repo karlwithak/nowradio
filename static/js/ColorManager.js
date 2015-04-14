@@ -21,7 +21,7 @@ var NowRadio = (function(nr) {
     function switchBrightness() {
         if (isBright) {
             isBright = false;
-            nr.$elems.centerContainer.velocity('finish');
+            nr.$elems.centerContainer.velocity('stop', true);
             nr.$elems.centerContainer.css("background-color", "black");
             nr.$elems.navBar.css("color", "black");
             nr.$elems.landingContainer.css("color", "white");
@@ -29,7 +29,7 @@ var NowRadio = (function(nr) {
             nr.$elems.metaThemeColor.attr('content', "#000000");
         } else {
             isBright = true;
-            nr.$elems.navBar.velocity('finish');
+            nr.$elems.navBar.velocity('stop', true);
             nr.$elems.navBar.css("backgroundColor", "black");
             nr.$elems.navBar.css("color", "white");
             nr.$elems.stationInfo.css("color", "black")
@@ -46,11 +46,11 @@ var NowRadio = (function(nr) {
     };
     nr.ColorManager.setToNeutral = function() {
         if (isBright) {
-            nr.$elems.centerContainer.velocity({
+            nr.$elems.centerContainer.velocity('stop', true).velocity({
                 backgroundColor: '#aaa'
             }, 50);
         } else {
-            nr.$elems.navBar.velocity({
+            nr.$elems.navBar.velocity('stop', true).velocity({
                 backgroundColor: '#aaa',
                 text: '#aaa'
             }, 50);
@@ -58,7 +58,7 @@ var NowRadio = (function(nr) {
         nr.$elems.newFaveBox.css("background-color", "#aaa");
     };
     nr.ColorManager.setElemBgToColor = function(elem, color) {
-        elem.velocity('finish').velocity({
+        elem.velocity('stop', true).velocity({
             'backgroundColor': color
         }, 666);
     };
