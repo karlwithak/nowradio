@@ -8,6 +8,7 @@
 var NowRadio = (function(nr) {
     'use strict';
     var changeStationTimeout = -1;
+    var landingPageHidden = false;
     function changeTimeout() {
         nr.StationsManager.removeCurrentThenNext();
         clearTimeout(changeStationTimeout);
@@ -55,9 +56,12 @@ var NowRadio = (function(nr) {
         }
     }
     function hideLandingPage() {
+        if (landingPageHidden) return;
+        landingPageHidden = true;
         nr.$elems.landingContainer.hide();
         nr.$elems.mainContainer.show();
         nr.FaveManager.showHideNewFaveBox();
+        nr.ColorManager.restoreColor();
     }
 
     nr.MainController = {

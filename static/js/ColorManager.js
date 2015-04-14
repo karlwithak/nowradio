@@ -24,7 +24,6 @@ var NowRadio = (function(nr) {
             nr.$elems.centerContainer.velocity('stop', true);
             nr.$elems.centerContainer.css("background-color", "black");
             nr.$elems.navBar.css("color", "black");
-            nr.$elems.landingContainer.css("color", "white");
             nr.ColorManager.updateToGenreColor();
             nr.$elems.metaThemeColor.attr('content', "#000000");
         } else {
@@ -34,10 +33,10 @@ var NowRadio = (function(nr) {
             nr.$elems.navBar.css("color", "white");
             nr.$elems.stationInfo.css("color", "black")
                 .css("border-color", "black");
-            nr.$elems.landingContainer.css("color", "black");
             nr.ColorManager.updateToGenreColor();
             nr.$elems.metaThemeColor.attr('content', nr.ColorManager.currentGenreColor());
         }
+        window.localStorage.setItem("isBright", isBright);
     }
 
     nr.ColorManager = {};
@@ -70,6 +69,12 @@ var NowRadio = (function(nr) {
     };
     nr.ColorManager.currentGenreColor = function() {
         return nr.Utils.genreNumToColor(nr.StationsManager.getActiveGenre());
+    };
+    nr.ColorManager.restoreColor = function() {
+        var bright = window.localStorage.getItem("isBright");
+        if (bright === "false") {
+            switchBrightness();
+        }
     };
     $(document).ready(function() {
         nr.$buttons.brightness.click(switchBrightness);
