@@ -66,3 +66,14 @@ Start NowRadio!
 
 You should now be able to view the running app at localhost:5000
 or if installed on a server will be running at \[server ip\]:5000
+
+##CONTRIBUTING
+
+Contributions are always welcome.
+ 
+Please submit changes for review by [forking and sending a pull request from your topic branch]
+(https://help.github.com/articles/using-pull-requests).
+Feel free to submit pull requests for any existing issue that has not already been assigned to 
+someone else. If you want to add a major new feature or improvement that does not have an existing 
+issue **please create a new issue explaining it before creating a PR or spending much time working 
+on it.** By creating an issue, it gives us a way to discuss the potential change.
