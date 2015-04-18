@@ -63,6 +63,7 @@ def db_quick_query(db_conn, query, data=None):
         pass
     finally:
         cursor.close()
+        db_conn.commit()
         return result
 
 

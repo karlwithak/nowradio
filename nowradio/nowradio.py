@@ -47,6 +47,8 @@ def get_initial_stations():
         cur.execute(Queries.get_ips_by_genre, data)
         result = ourUtils.flatten_list(cur.fetchall())
         stations.append(result)
+    cur.close()
+    db_conn.commit()
     return jsonify(stations=stations)
 
 
