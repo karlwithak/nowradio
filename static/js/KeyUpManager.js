@@ -29,6 +29,8 @@ var NowRadio = (function(nr) {
             nr.VolumeManager.soundDown();
         } else if (event.keyCode === 83) {
             nr.FaveManager.addFave();
+        } else if (event.keyCode >= 49 && event.keyCode <= 53) {
+            nr.FaveManager.playFaveNumber(event.keyCode - 49);
         } else if (event.keyCode === 37) {
             if (singleLeftPress) {
                 nr.StationChanger.prevGenre();

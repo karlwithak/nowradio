@@ -88,6 +88,12 @@ var NowRadio = (function(nr) {
             }
         });
     };
+    nr.FaveManager.playFaveNumber = function(faveNumber) {
+        var $oldFaveBox = $('div#oldFaveBox');
+        if (faveNumber < $oldFaveBox.length - 1) {
+            $oldFaveBox.eq(faveNumber).find("span.favePlay").click();
+        }
+    };
     $(document).ready(function() {
         loadOldFaves();
         nr.$elems.oldFaveBox.hide();
