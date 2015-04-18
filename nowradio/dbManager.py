@@ -20,8 +20,8 @@ class Queries:
 
     insert_station = '''
         INSERT INTO station_info
-        (active_listeners, max_listeners, peak_listeners, name, genre, ip_addr, is_up)
-        VALUES (%(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s, %(ip)s, TRUE);
+        (active_listeners, max_listeners, peak_listeners, name, genre, ip_addr, is_up, blacklisted)
+        VALUES (%(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s, %(ip)s, TRUE, FALSE);
     '''
     check_for_station = '''
         SELECT 1
@@ -45,10 +45,15 @@ class Queries:
         SET is_up = FALSE
         WHERE id = %s
     '''
-    get_ips_by_genre = '''
+    set_station_blacklisted = '''
+        UPDATE station_info
+        SET blacklisted = TRUE
+        WHERE id = %s
+    '''
+    get_good_ips_by_genre = '''
         SELECT min(ip_addr)
         FROM station_info
-        WHERE our_genre = %(genre_name)s AND is_up = TRUE
+        WHERE our_genre = %(genre_name)s AND is_up AND NOT blacklisted
         GROUP BY name
         ORDER BY max(active_listeners + faves) DESC
         LIMIT %(page_size)s

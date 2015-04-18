@@ -44,7 +44,7 @@ def get_initial_stations():
     data = {'page_size': page_size}
     for genre in model.genre_names:
         data['genre_name'] = genre
-        cur.execute(Queries.get_ips_by_genre, data)
+        cur.execute(Queries.get_good_ips_by_genre, data)
         result = ourUtils.flatten_list(cur.fetchall())
         stations.append(result)
     cur.close()
