@@ -48,7 +48,7 @@ class Queries:
     set_station_blacklisted = '''
         UPDATE station_info
         SET blacklisted = TRUE
-        WHERE id = %s
+        WHERE ip_addr = %s
     '''
     get_good_ips_by_genre = '''
         SELECT min(ip_addr)
