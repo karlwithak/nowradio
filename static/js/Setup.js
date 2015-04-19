@@ -54,9 +54,6 @@ var NowRadio = (function(nr) {
         nr.$elems.player.bind('error', function(e) {
             window.console.log(e);
         });
-        nr.$buttons.info.click(function() {
-           window.open('/info/', '_blank');
-        });
 
         if (window.location.hash.length !== 0) {
             nr.UrlManager.restoreFromHash();
