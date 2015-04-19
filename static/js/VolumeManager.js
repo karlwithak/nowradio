@@ -72,12 +72,14 @@ var NowRadio = (function(nr) {
         nr.$elems.player[0].volume = volume;
         initializeSlider();
         showHideVolIcons(volume);
+        window.localStorage.setItem("volume", volume.toString());
     };
     nr.VolumeManager.soundDown = function() {
         var volume = Math.max(0, nr.$elems.player[0].volume - 0.2);
         nr.$elems.player[0].volume = volume;
         initializeSlider();
         showHideVolIcons(volume);
+        window.localStorage.setItem("volume", volume.toString());
     };
     $(document).ready(function() {
         var initialVolume = window.localStorage.getItem('volume') || "1";
