@@ -10,24 +10,28 @@ var NowRadio = (function(nr) {
     var genreLists = [];
     var genreMarkers = [];
     var genreNum = 0;
-    
+
     nr.StationsManager = {};
+
     nr.StationsManager.getNextGenre = function() {
         genreNum = (genreNum + 1) % genreLists.length;
-        return genreNum;
+        return this.getCurrentStation();
     };
     nr.StationsManager.getPrevGenre = function() {
         genreNum = (genreNum + genreLists.length - 1) % genreLists.length;
-        return genreNum;
+        return this.getCurrentStation();
     };
     nr.StationsManager.getNextStation = function() {
         genreMarkers[genreNum] = (genreMarkers[genreNum] + 1) % genreLists[genreNum].length;
+        return this.getCurrentStation();
+    };
+    nr.StationsManager.getCurrentStation = function() {
         return genreLists[genreNum][genreMarkers[genreNum]];
     };
     nr.StationsManager.getPrevStation = function() {
         genreMarkers[genreNum] = (genreMarkers[genreNum] + (genreLists[genreNum].length - 1)) %
                                                             genreLists[genreNum].length;
-        return genreLists[genreNum][genreMarkers[genreNum]];
+        return this.getCurrentStation();
     };
     nr.StationsManager.getActiveGenre = function() {
         return genreNum;
@@ -64,7 +68,7 @@ var NowRadio = (function(nr) {
         $.get('/get-initial-stations/', function(data) {
             data.stations.forEach(function(stationList) {
                 genreLists.push(stationList);
-                genreMarkers.push(-1);
+                genreMarkers.push(0);
             });
             if (nr.UrlManager.getHash().length == 0) {
                 genreNum = Math.floor(Math.random() * genreLists.length);

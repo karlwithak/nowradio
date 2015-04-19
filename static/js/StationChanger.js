@@ -15,14 +15,16 @@ var NowRadio = (function(nr) {
         var src = nr.StationsManager.getPrevStation();
         nr.MainController.updateViewForNewSource(src);
     };
+    nr.StationChanger.currentStation = function() {
+        var src = nr.StationsManager.getCurrentStation();
+        nr.MainController.updateViewForNewSource(src);
+    };
     nr.StationChanger.nextGenre = function() {
-        nr.StationsManager.getNextGenre();
-        var src = nr.StationsManager.getNextStation();
+        var src = nr.StationsManager.getNextGenre();
         nr.MainController.updateViewForNewSource(src);
     };
     nr.StationChanger.prevGenre = function() {
-        nr.StationsManager.getPrevGenre();
-        var src = nr.StationsManager.getNextStation();
+        var src = nr.StationsManager.getPrevGenre();
         nr.MainController.updateViewForNewSource(src);
     };
     nr.StationChanger.fromArgs = function(src, genreNum) {

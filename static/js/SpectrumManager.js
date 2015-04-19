@@ -14,7 +14,7 @@ var NowRadio = (function(nr) {
         var genreCount = nr.StationsManager.getGenreCount();
         var genreNum = Math.min(Math.round((xVal / totalWidth) * genreCount), genreCount - 1);
         if (nr.StationsManager.setActiveGenre(genreNum)) {
-            nr.StationChanger.nextStation();
+            nr.StationChanger.currentStation();
         } else {
             nr.SpectrumManager.updateMarker();
         }
