@@ -23,7 +23,9 @@ def worker(id_url_list, connection):
             print("unknown error   : " + url)
             cur.execute(Queries.set_station_down, (id_ip[0],))
         else:
-            if response.status_code in (200, 304) and response.text.count(",") >= 6:
+            if response.status_code in (200, 304) \
+                    and response.text.count(",") >= 6 \
+                    and response.text.count("\n") == 0:
                 info = response.text.split(",")
                 data = {
                     'is_up':  bool(info[1]),
@@ -35,6 +37,7 @@ def worker(id_url_list, connection):
                 cur.execute(Queries.update_station_by_id, data)
             else:
                 print("bad response: " + url)
+                cur.execute(Queries.set_station_down, (id_ip[0],))
     cur.close()
 
 
