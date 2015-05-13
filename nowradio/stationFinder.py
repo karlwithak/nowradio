@@ -20,7 +20,7 @@ def yandex_query(genre_list, url_set):
         genre = genre.replace("%", "")
         for page_num in range(10):
             r = requests.get(
-                "https://xmlsearch.yandex.com/xmlsearch?"
+                "https://yandex.com/search/xml?"
                 "user=" + serverInfo.yandex_user +
                 "&key=" + serverInfo.yandex_key +
                 "&query=%22SHOUTcast+Administrator%22+%2B+%22" + genre + "%22"
