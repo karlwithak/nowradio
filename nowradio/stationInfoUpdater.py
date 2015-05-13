@@ -25,7 +25,7 @@ def worker(id_url_list, connection):
         else:
             if response.status_code in (200, 304) \
                     and response.text.count(",") >= 6 \
-                    and response.text.count("\n") == 0:
+                    and len(response.text) < 2048:
                 info = response.text.split(",")
                 data = {
                     'is_up':  bool(info[1]),
