@@ -30,6 +30,9 @@ a:link, a:visited, a:hover, a:active {
     font-size: 2.5em;
     color: inherit;
 }
+#bigPlayButton:hover {
+    color: dimgrey;
+}
 
 #controlBar {
     text-align: center;
@@ -91,6 +94,9 @@ a:link, a:visited, a:hover, a:active {
     z-index: 10;
     width: 1em;
 }
+.topRightIcon:hover {
+    color: grey;
+}
 
 #spectrum {
     width: 100%;
@@ -104,6 +110,9 @@ a:link, a:visited, a:hover, a:active {
     padding: 10px;
     top: auto;
     bottom: -8px;
+}
+.playerButtonIcon:hover {
+    color: dimgrey;
 }
 
 #prevGenreButton {
@@ -152,12 +161,18 @@ a:link, a:visited, a:hover, a:active {
     color: black;
     position: relative;
 }
+.faveAdd:hover {
+    color: dimgrey;
+}
 
 .faveRemove {
     left: 33px;
     top: -10px;
     color: white;
     position: relative;
+}
+.faveRemove:hover {
+    color: grey;
 }
 
 .favePlay {
@@ -166,6 +181,10 @@ a:link, a:visited, a:hover, a:active {
     color: black;
     position: relative;
 }
+.favePlay:hover {
+    color: dimgrey;
+}
+
 
 nav.navigationBar {
     min-height: 55px;

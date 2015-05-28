@@ -84,7 +84,7 @@ var NowRadio = (function(nr) {
             if (fave.ipHash === nr.UrlManager.getHash()) {
                 $("span.favePlay").eq(index).css('color', 'white');
             } else {
-                $("span.favePlay").eq(index).css('color', 'black');
+                $("span.favePlay").eq(index).attr('style', '');
             }
         });
     };
