@@ -71,7 +71,28 @@ var NowRadio = (function(nr) {
                 genreMarkers.push(0);
             });
             if (nr.UrlManager.getHash().length == 0) {
-                genreNum = Math.floor(Math.random() * genreLists.length);
+                var faves = JSON.parse(localStorage.getItem('faves'));
+                var faveStations = {};
+                for(var i=0; i < faves.length; i++){
+                    if(faves[i]['genreNum'] in faveStations) {
+                        faveStations[faves[i]['genreNum']]++;
+                    }
+                    else {
+                        faveStations[faves[i]['genreNum']] = 1;
+                    }
+                }
+                var max_value = 0;
+                var genreNumList = new Array();
+                for(var key in faveStations) {
+                    if(faveStations[key] > max_value) {
+                        genreNumList = new Array(key);
+                        max_value = faveStations[key];
+                    }
+                    else if (faveStations[key] == max_value) {
+                        genreNumList.push(key);
+                    }
+                }
+                genreNum = genreNumList[Math.floor(Math.random() * genreNumList.length)];
             }
             nr.MainController.initialStationsLoaded();
         });
