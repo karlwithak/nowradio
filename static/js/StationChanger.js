@@ -8,11 +8,11 @@ var NowRadio = (function(nr) {
     'use strict';
     nr.StationChanger = {};
     nr.StationChanger.nextStation = function() {
-        var src = nr.StationsManager.getNextStation();
+        var src = nr.StationsManager.changeToNextStation();
         nr.MainController.updateViewForNewSource(src);
     };
     nr.StationChanger.prevStation = function() {
-        var src = nr.StationsManager.getPrevStation();
+        var src = nr.StationsManager.changeToPrevStation();
         nr.MainController.updateViewForNewSource(src);
     };
     nr.StationChanger.currentStation = function() {
@@ -20,11 +20,11 @@ var NowRadio = (function(nr) {
         nr.MainController.updateViewForNewSource(src);
     };
     nr.StationChanger.nextGenre = function() {
-        var src = nr.StationsManager.getNextGenre();
+        var src = nr.StationsManager.changeToNextGenre();
         nr.MainController.updateViewForNewSource(src);
     };
     nr.StationChanger.prevGenre = function() {
-        var src = nr.StationsManager.getPrevGenre();
+        var src = nr.StationsManager.changeToPrevGenre();
         nr.MainController.updateViewForNewSource(src);
     };
     nr.StationChanger.fromArgs = function(src, genreNum) {
