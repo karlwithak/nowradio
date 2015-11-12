@@ -7,7 +7,6 @@ from dbManager import Queries, get_connection
 from lxml import html
 import serverInfo
 
-
 # This program queries Yandex to get potential stations and puts the station information into the
 #   database if they are up and serving mp3 and don't cause any other problems.
 # Note, it will not make ANY modifications to db entries that have the same ip. Specifically it
