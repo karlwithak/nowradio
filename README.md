@@ -1,6 +1,6 @@
 #NowRadio
 
-NowRadio is an internet radio music player. It allows users to easily navigate between different 
+NowRadio is an internet radio music player. It allows users to easily navigate between different
 stations and different genres so they can find something they like. Check it out at  http://nowrad.io
 
 ##SETUP
@@ -16,7 +16,7 @@ sudo apt-get install -y \
     postgresql-9.3 postgresql-server-dev-9.3 \
     git \
     python-psycopg2 python-dev python-pip \
-    build-essential libxml2-dev libxslt-dev 
+    build-essential libxml2-dev libxslt-dev
 ```
 
 Go to the directory where you want NowRadio to be installed
@@ -25,10 +25,19 @@ Go to the directory where you want NowRadio to be installed
 
 `cd nowradio`
 
-Install necessary python packages. Note: Depending on your setup, you may want to use a 
-[virtual environment](https://virtualenv.pypa.io)
+Optional: Set up virtualenv.
 
-`sudo pip install -r python_requirements.txt`
+```
+pip install virtualenv
+virtualenv venv
+source venv/bin/activate
+```
+
+Now, Python packages will be installed in a virtual environment and not conflict with other packages on your system. However, you will have to run `source venv/bin/activate` whenever you run the app.
+
+Install necessary python packages.
+
+`pip install -r python_requirements.txt`
 
 Login as postgres user
 
@@ -70,10 +79,10 @@ or if installed on a server will be running at \[server ip\]:5000
 ##CONTRIBUTING
 
 Contributions are always welcome.
- 
+
 Please submit changes for review by [forking and sending a pull request from your topic branch]
 (https://help.github.com/articles/using-pull-requests).
-Feel free to submit pull requests for any existing issue that has not already been assigned to 
-someone else. If you want to add a major new feature or improvement that does not have an existing 
-issue **please create a new issue explaining it before creating a PR or spending much time working 
+Feel free to submit pull requests for any existing issue that has not already been assigned to
+someone else. If you want to add a major new feature or improvement that does not have an existing
+issue **please create a new issue explaining it before creating a PR or spending much time working
 on it.** By creating an issue, it gives us a way to discuss the potential change.
