@@ -71,7 +71,9 @@ var NowRadio = (function(nr) {
                 genreMarkers.push(0);
             });
             if (nr.UrlManager.getHash().length == 0) {
-                // selecting genreNum based on the current 
+                // selecting genreNum based on the current selection of favorites
+                // if there are no favorites, a random genre is picked
+                // else, it selects randomly amongst the genres with the most favorites
                 var faves = JSON.parse(localStorage.getItem('faves'));
                 if (faves.length == 0) {
                     genreNum = Math.floor(Math.random() * genreLists.length);
