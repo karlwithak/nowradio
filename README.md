@@ -25,8 +25,13 @@ Go to the directory where you want NowRadio to be installed
 
 `cd nowradio`
 
-Install necessary python packages. Note: Depending on your setup, you may want to use a 
-[virtual environment](https://virtualenv.pypa.io)
+Set up virtualenv.
+
+`pip install virtualenv
+virtualenv venv
+source venv/bin/activate`
+
+Install necessary python packages.
 
 `sudo pip install -r python_requirements.txt`
 
