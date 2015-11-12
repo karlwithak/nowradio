@@ -25,15 +25,19 @@ Go to the directory where you want NowRadio to be installed
 
 `cd nowradio`
 
-Set up virtualenv.
+Optional: Set up virtualenv.
 
-`pip install virtualenv
+```
+pip install virtualenv
 virtualenv venv
-source venv/bin/activate`
+source venv/bin/activate
+```
+
+Now, Python packages will be installed in a virtual environment and not conflict with other packages on your system. However, you will have to run `source venv/bin/activate` whenever you run the app.
 
 Install necessary python packages.
 
-`sudo pip install -r python_requirements.txt`
+`pip install -r python_requirements.txt`
 
 Login as postgres user
 
