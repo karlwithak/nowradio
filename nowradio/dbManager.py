@@ -55,7 +55,7 @@ class Queries:
         FROM station_info
         WHERE our_genre = %(genre_name)s AND is_up AND NOT blacklisted
         GROUP BY name
-        ORDER BY max((%(active)s * active_listeners) + (%(fav)s * faves) - (%(timeout)s * timeout_count)) DESC
+        ORDER BY max((%(active_weight)s * active_listeners) + (%(faves_weight)s * faves) - (%(timeout_weight)s * timeout_count)) DESC
         LIMIT %(page_size)s
     '''
     set_our_genre_by_genre = '''

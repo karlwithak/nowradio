@@ -43,9 +43,9 @@ def get_initial_stations():
     stations = []
     data = {
         'page_size': page_size,
-        'active': constants.ACTIVE_LISTENER_WEIGHT,
-        'fav': constants.FAV_WEIGHT,
-        'timeout': constants.TIMEOUT_COUNT_WEIGHT
+        'active_weight': constants.ACTIVE_LISTENER_WEIGHT,
+        'faves_weight': constants.FAVE_WEIGHT,
+        'timeout_weight': constants.TIMEOUT_COUNT_WEIGHT
     }
     for genre in constants.genre_names:
         data['genre_name'] = genre
