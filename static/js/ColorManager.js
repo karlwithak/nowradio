@@ -46,15 +46,15 @@ var NowRadio = (function(nr) {
     nr.ColorManager.setToNeutral = function() {
         if (isBright) {
             nr.$elems.centerContainer.velocity('stop', true).velocity({
-                backgroundColor: '#aaa'
+                backgroundColor: '#ddd'
             }, 50);
         } else {
             nr.$elems.navBar.velocity('stop', true).velocity({
-                backgroundColor: '#aaa',
-                text: '#aaa'
+                backgroundColor: '#ddd',
+                text: '#ddd'
             }, 50);
         }
-        nr.$elems.newFaveBox.css("background-color", "#aaa");
+        nr.$elems.newFaveBox.css("background-color", "#ddd");
     };
     nr.ColorManager.setElemBgToColor = function(elem, color) {
         elem.velocity('stop', true).velocity({
