@@ -91,7 +91,6 @@ class Queries:
         SET faves = faves - 1
         WHERE ip_addr = %s
     '''
-
     report_timeout = '''
         UPDATE station_info
         SET timeout_count = timeout_count + 1

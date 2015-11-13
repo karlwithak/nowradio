@@ -11,7 +11,6 @@ var NowRadio = (function(nr) {
     var genreLists = [];
     var genreMarkers = [];
     var genreNum = 0;
-
     function reportTimeout(ip) {
         $.post("/report-timeout/", {ip: ip});
     }
