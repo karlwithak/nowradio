@@ -1,5 +1,6 @@
 body {
     padding-top: 50px;
+    font-weight: 300;
     background-color: #ddd;
     font-family: 'Ubuntu', Arial, sans-serif;
     margin: 0;
@@ -11,7 +12,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 h1, h3 {
-    font-weight: 200;
+    font-weight: 300;
 }
 
 #landingContainer {
@@ -195,6 +196,7 @@ nav.navigationBar {
 }
 
 span.navbar-brand {
+    font-weight: 300;
     font-size: 19px;
     padding: 16px;
     float: left;
