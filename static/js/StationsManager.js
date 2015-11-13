@@ -47,7 +47,7 @@ var NowRadio = (function(nr) {
         var current_ip = genreLists[genreNum][current_index];
         blacklist[current_ip] = true;
         window.localStorage.setItem("blacklist", JSON.stringify(blacklist));
-        genreLists[genreNum].splice(genreMarkers[genreNum], 1);
+        genreLists[genreNum].splice(current_index, 1);
         genreMarkers[genreNum] -= 1;
         nr.StationChanger.nextStation();
     };
@@ -80,8 +80,6 @@ var NowRadio = (function(nr) {
                 });
                 genreLists.push(approved_stations);
                 genreMarkers.push(0);
-                console.log("Initialized " + approved_stations.length +
-                    " of " + stationList.length + " stations.");
             });
             if (nr.UrlManager.getHash().length == 0) {
                 genreNum = Math.floor(Math.random() * genreLists.length);
