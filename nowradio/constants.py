@@ -1,4 +1,10 @@
-# Make sure to run ourGenreUpdater on the server after changing this file
+# Weights used to determine top initial stations.
+
+ACTIVE_LISTENER_WEIGHT = 1
+FAVE_WEIGHT = 6
+TIMEOUT_COUNT_WEIGHT = 2
+
+# Make sure to run ourGenreUpdater on the server after changing either genre_list or genre_names
 
 genre_list = [
     ['electro%', 'techno%', 'drum and bass%', 'dub%', 'trance%'],

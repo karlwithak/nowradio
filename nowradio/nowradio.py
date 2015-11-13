@@ -3,7 +3,7 @@ import logging
 import requests
 from flask import Flask, render_template, request, jsonify, abort
 from dbManager import Queries, get_connection
-import model
+import constants
 import ourUtils
 import serverInfo
 
@@ -41,8 +41,13 @@ def render_info():
 def get_initial_stations():
     cur = db_conn.cursor()
     stations = []
-    data = {'page_size': page_size}
-    for genre in model.genre_names:
+    data = {
+        'page_size': page_size,
+        'active_weight': constants.ACTIVE_LISTENER_WEIGHT,
+        'faves_weight': constants.FAVE_WEIGHT,
+        'timeout_weight': constants.TIMEOUT_COUNT_WEIGHT
+    }
+    for genre in constants.genre_names:
         data['genre_name'] = genre
         cur.execute(Queries.get_good_ips_by_genre, data)
         result = ourUtils.flatten_list(cur.fetchall())
@@ -58,7 +63,7 @@ def get_genre_by_ip():
     results = ourUtils.db_quick_query(db_conn, Queries.get_our_genre_by_ip, (ip,))
     if len(results) == 0:
         abort(400)
-    genre_num = model.genre_names.index(results[0][0])
+    genre_num = constants.genre_names.index(results[0][0])
     return jsonify(genreNum=genre_num)
 
 
