@@ -61,7 +61,6 @@ var NowRadio = (function(nr) {
         nr.$elems.landingContainer.hide();
         nr.$elems.mainContainer.show();
         nr.FaveManager.showHideNewFaveBox();
-        nr.ColorManager.restoreColor();
     }
 
     nr.MainController = {

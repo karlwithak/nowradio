@@ -17,7 +17,6 @@ var NowRadio = (function(nr) {
         'volHi'         : $('span#volHiButton'),
         'volMid'        : $('span#volMidButton').hide(),
         'volLo'         : $('span#volLoButton').hide(),
-        'brightness'    : $('span#brightnessButton'),
         'info'          : $('#infoButton'),
         'playerControl' : $('span.playerButtonIcon')
     };
