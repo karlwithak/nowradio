@@ -10,6 +10,10 @@ a:link, a:visited, a:hover, a:active {
     text-decoration: none;
 }
 
+h1, h3 {
+    font-weight: 200;
+}
+
 #landingContainer {
     text-align: center;
     color: #000000;
