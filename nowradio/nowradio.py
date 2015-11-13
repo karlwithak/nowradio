@@ -50,7 +50,14 @@ def get_initial_stations():
     for genre in constants.genre_names:
         data['genre_name'] = genre
         cur.execute(Queries.get_good_ips_by_genre, data)
-        result = ourUtils.flatten_list(cur.fetchall())
+        rows = cur.fetchall()
+        result = []
+        for row in rows:
+            station = {}
+            station['ip_addr'] = row[0]
+            station['latitude'] = row[1]
+            station['longitude'] = row[2]
+            result.append(station)
         stations.append(result)
     cur.close()
     db_conn.commit()

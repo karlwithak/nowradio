@@ -51,10 +51,16 @@ class Queries:
         WHERE ip_addr = %s
     '''
     get_good_ips_by_genre = '''
-        SELECT min(ip_addr)
+        SELECT ip_addr, latitude, longitude
         FROM station_info
-        WHERE our_genre = %(genre_name)s AND is_up AND NOT blacklisted
-        GROUP BY name
+        WHERE ip_addr IN
+            (
+                SELECT min(ip_addr)
+                FROM station_info
+                WHERE our_genre = %(genre_name)s AND is_up AND NOT blacklisted
+                GROUP BY name
+            )
+        GROUP BY ip_addr, latitude, longitude
         ORDER BY max((%(active_weight)s * active_listeners) + (%(faves_weight)s * faves) - (%(timeout_weight)s * timeout_count)) DESC
         LIMIT %(page_size)s
     '''
