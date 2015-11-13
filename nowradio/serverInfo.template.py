@@ -15,5 +15,5 @@ db_host = "localhost"
 yandex_user = ""
 yandex_key = ""
 
-log_base_dir = "../logs/"
+log_base_dir = "logs/"
 flask_log_file = log_base_dir + "flask.log"

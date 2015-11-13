@@ -61,17 +61,14 @@ Exit postgres user;
 
 `exit`
 
-`cd nowradio`
-
 Note that serverInfo.py is never checked in and may contain secret info. If you want to use
 a different password for the database user, it must also be changed here.
 
-`cp serverInfo.template.py serverInfo.py`
+`cp nowradio/serverInfo.template.py nowradio/serverInfo.py`
 
 Start NowRadio!
 
-`python nowradio.py`
-
+`./start-dev`
 
 You should now be able to view the running app at localhost:5000
 or if installed on a server will be running at \[server ip\]:5000
