@@ -1,6 +1,6 @@
 from xml.etree.ElementTree import fromstring
 import ourUtils
-import model
+import constants
 import requests
 import socket
 from dbManager import Queries, get_connection
@@ -100,10 +100,10 @@ def insert_new_station(ip_list, connection):
 def our_genre_setter(connection):
     curr = connection.cursor()
     curr.execute(Queries.set_our_genre_null)
-    for i in range(len(model.genre_list)):
+    for i in range(len(constants.genre_list)):
         data = {
-            'our_genre': model.genre_names[i],
-            'genre_names': model.genre_list[i]
+            'our_genre': constants.genre_names[i],
+            'genre_names': constants.genre_list[i]
         }
         curr.execute(Queries.set_our_genre_by_genre, data)
 
@@ -111,7 +111,7 @@ def our_genre_setter(connection):
 def main():
     assert serverInfo.yandex_key != "", "Yandex_key is empty is serverInfo."
     assert serverInfo.yandex_user != "", "Yandex_user is empty is serverInfo."
-    genres = ourUtils.flatten_list(model.genre_list)
+    genres = ourUtils.flatten_list(constants.genre_list)
     url_set = set()
     ourUtils.multi_thread_runner(genres, yandex_query, url_set)
     print("done yandex_query")
