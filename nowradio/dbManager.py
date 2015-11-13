@@ -20,8 +20,8 @@ class Queries:
 
     insert_station = '''
         INSERT INTO station_info
-        (active_listeners, max_listeners, peak_listeners, name, genre, ip_addr, is_up, blacklisted)
-        VALUES (%(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s, %(ip)s, TRUE, FALSE);
+        (active_listeners, max_listeners, peak_listeners, name, genre, ip_addr, is_up, blacklisted, timeout_count)
+        VALUES (%(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s, %(ip)s, TRUE, FALSE, 0);
     '''
     check_for_station = '''
         SELECT 1
@@ -89,5 +89,10 @@ class Queries:
     update_fave_decrease = '''
         UPDATE station_info
         SET faves = faves - 1
+        WHERE ip_addr = %s
+    '''
+    report_timeout = '''
+        UPDATE station_info
+        SET timeout_count = timeout_count + 1
         WHERE ip_addr = %s
     '''
