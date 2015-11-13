@@ -92,11 +92,14 @@ var NowRadio = (function(nr) {
     };
     $(document).ready(function() {
         $.get('/get-initial-stations/', function (data) {
+            // data.stations is a list (one for each genre) of lists (one for each station dictionary)
             data.stations.forEach(function (stationList) {
+                // stationList is a list of station dictionaries for a particular genre
                 var approved_stations = [];
-                stationList.forEach(function (station) {
-                    if (blacklist[station] == null) {
-                        approved_stations.push(station);
+                stationList.forEach(function (station_dict) {
+                    // station_dict is a dictionary that has ip_addr, latitude, longitude
+                    if (blacklist[station_dict.ip_addr] == null) {
+                        approved_stations.push(station_dict.ip_addr);
                     }
                 });
                 genreLists.push(approved_stations);
