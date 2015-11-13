@@ -189,7 +189,6 @@ NowRadio.MapManager = (function (nr) {
         google.maps.event.addListenerOnce(map, 'idle', function() {
                 google.maps.event.trigger(map, 'resize');
         });
-        console.log(style)
         NowRadio.MapManager.map = map;
     }
     return MapManager;
