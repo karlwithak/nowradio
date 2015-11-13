@@ -74,6 +74,14 @@ def report_fave_changed():
     return 'OK'
 
 
+@app.route('/report-timeout/', methods=['POST'])
+def report_timeout():
+    ip = request.form['ip']
+    ourUtils.db_quick_query(db_conn, Queries.report_timeout, (ip,))
+    db_conn.commit()
+    return 'OK'
+
+
 @app.route('/get-station-info/')
 def get_station_info():
     result = requests.get(request.args.get('stationUrl'), headers=ourUtils.request_header)

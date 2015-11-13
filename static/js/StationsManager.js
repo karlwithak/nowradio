@@ -12,6 +12,10 @@ var NowRadio = (function(nr) {
     var genreMarkers = [];
     var genreNum = 0;
 
+    function reportTimeout(ip) {
+        $.post("/report-timeout/", {ip: ip});
+    }
+
     nr.StationsManager = {};
 
     nr.StationsManager.changeToNextGenre = function() {
@@ -64,6 +68,7 @@ var NowRadio = (function(nr) {
         var current_ip = genreLists[genreNum][current_index];
         blacklist[current_ip] = true;
         window.localStorage.setItem("blacklist", JSON.stringify(blacklist));
+        reportTimeout(current_ip);
         genreLists[genreNum].splice(current_index, 1);
         genreMarkers[genreNum] -= 1;
         nr.StationChanger.nextStation();
