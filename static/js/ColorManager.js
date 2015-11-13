@@ -8,7 +8,6 @@ var NowRadio = (function(nr) {
     var isBright = true;
     function updateColors(color) {
         if (isBright) {
-            nr.ColorManager.setElemBgToColor(nr.$elems.centerContainer, color);
             nr.ColorManager.setElemBgToColor(nr.$elems.newFaveBox, color);
             nr.$elems.metaThemeColor.attr('content', color);
         } else {
@@ -25,10 +24,6 @@ var NowRadio = (function(nr) {
     };
     nr.ColorManager.setToNeutral = function() {
         if (isBright) {
-            nr.$elems.centerContainer.velocity('stop', true).velocity({
-                backgroundColor: '#ddd'
-            }, 50);
-        } else {
             nr.$elems.navBar.velocity('stop', true).velocity({
                 backgroundColor: '#ddd',
                 text: '#ddd'
