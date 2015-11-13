@@ -7,6 +7,7 @@
  */
 var NowRadio = (function(nr) {
     'use strict';
+    var blacklist = JSON.parse(window.localStorage.getItem("blacklist")) || {};
     var genreLists = [];
     var genreMarkers = [];
     var genreNum = 0;
@@ -59,7 +60,11 @@ var NowRadio = (function(nr) {
         return true;
     };
     nr.StationsManager.removeCurrentThenNext = function() {
-        genreLists[genreNum].splice(genreMarkers[genreNum], 1);
+        var current_index = genreMarkers[genreNum];
+        var current_ip = genreLists[genreNum][current_index];
+        blacklist[current_ip] = true;
+        window.localStorage.setItem("blacklist", JSON.stringify(blacklist));
+        genreLists[genreNum].splice(current_index, 1);
         genreMarkers[genreNum] -= 1;
         nr.StationChanger.nextStation();
     };
@@ -82,9 +87,15 @@ var NowRadio = (function(nr) {
         }
     };
     $(document).ready(function() {
-        $.get('/get-initial-stations/', function(data) {
-            data.stations.forEach(function(stationList) {
-                genreLists.push(stationList);
+        $.get('/get-initial-stations/', function (data) {
+            data.stations.forEach(function (stationList) {
+                var approved_stations = [];
+                stationList.forEach(function (station) {
+                    if (blacklist[station] == null) {
+                        approved_stations.push(station);
+                    }
+                });
+                genreLists.push(approved_stations);
                 genreMarkers.push(0);
             });
             if (nr.UrlManager.getHash().length == 0) {
