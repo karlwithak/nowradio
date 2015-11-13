@@ -1,8 +1,19 @@
 import socket
 import threading
 from psycopg2 import ProgrammingError
+import requests
+import json
 
 request_header = {'User-Agent': 'Mozilla/5.0'}
+
+
+def location_from_ip(ip):
+    try:
+        response_string = requests.get("http://geoip.nowrad.io/json/" + ip + "/")
+    except Exception:
+        return (None, None)
+    response = json.loads(response_string.text)
+    return (response['latitude'], response['longitude'])
 
 
 def ip_from_url(url):

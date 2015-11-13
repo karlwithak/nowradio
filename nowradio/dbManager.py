@@ -20,8 +20,8 @@ class Queries:
 
     insert_station = '''
         INSERT INTO station_info
-        (active_listeners, max_listeners, peak_listeners, name, genre, ip_addr, is_up, blacklisted, timeout_count)
-        VALUES (%(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s, %(ip)s, TRUE, FALSE, 0);
+        (active_listeners, max_listeners, peak_listeners, name, genre, ip_addr, is_up, blacklisted, timeout_count, latitude, longitude)
+        VALUES (%(active)s, %(max)s, %(peak)s, %(name)s, %(genre)s, %(ip)s, TRUE, FALSE, 0, %(latitude)s, %(longitude)s);
     '''
     check_for_station = '''
         SELECT 1

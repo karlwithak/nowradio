@@ -6,6 +6,7 @@ import socket
 from dbManager import Queries, get_connection
 from lxml import html
 import serverInfo
+import json
 
 # This program queries Yandex to get potential stations and puts the station information into the
 #   database if they are up and serving mp3 and don't cause any other problems.
@@ -74,6 +75,7 @@ def insert_new_station(ip_list, connection):
                 continue
             page = requests.get("http://" + ip, headers=ourUtils.request_header, timeout=2)
             info = html.fromstring(page.text).xpath("//b")
+            (latitude, longitude) = ourUtils.location_from_ip(ip)
             if info[0].text == "Server is currently up and public." and info[6].text == "audio/mpeg":
                 listeners = info[2].text
                 cur_listeners = listeners[:listeners.index(" ")]
@@ -83,12 +85,14 @@ def insert_new_station(ip_list, connection):
                 genre = info[7].text
                 if cur_listeners.isdigit() and max_listeners.isdigit() and peak_listeners.isdigit():
                     data = {
-                        'active': cur_listeners,
-                        'max':    max_listeners,
-                        'peak':   peak_listeners,
-                        'name':   name,
-                        'genre':  genre,
-                        'ip':     ip
+                        'active':    cur_listeners,
+                        'max':       max_listeners,
+                        'peak':      peak_listeners,
+                        'name':      name,
+                        'genre':     genre,
+                        'ip':        ip,
+                        'latitude':  latitude,
+                        'longitude': longitude,
                     }
                     cur.execute(Queries.insert_station, data)
                     print("added new station: " + str(ip))
