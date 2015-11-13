@@ -13,25 +13,42 @@ var NowRadio = (function(nr) {
 
     nr.StationsManager = {};
 
-    nr.StationsManager.getNextGenre = function() {
+    nr.StationsManager.changeToNextGenre = function() {
         genreNum = (genreNum + 1) % genreLists.length;
         return this.getCurrentStation();
     };
-    nr.StationsManager.getPrevGenre = function() {
+    nr.StationsManager.getNextGenre = function() {
+        var temp_genreNum = (genreNum + 1) % genreLists.length;
+        return genreLists[temp_genreNum][(genreMarkers[temp_genreNum] + 1) % genreLists[temp_genreNum].length];
+    };
+    nr.StationsManager.changeToPrevGenre = function() {
         genreNum = (genreNum + genreLists.length - 1) % genreLists.length;
         return this.getCurrentStation();
     };
-    nr.StationsManager.getNextStation = function() {
+    nr.StationsManager.getPrevGenre = function() {
+        var temp_genreNum = (genreNum + genreLists.length - 1) % genreLists.length;
+        return genreLists[temp_genreNum][(genreMarkers[temp_genreNum] + 1) % genreLists[temp_genreNum].length];
+    };
+    nr.StationsManager.changeToNextStation = function() {
         genreMarkers[genreNum] = (genreMarkers[genreNum] + 1) % genreLists[genreNum].length;
         return this.getCurrentStation();
     };
-    nr.StationsManager.getCurrentStation = function() {
-        return genreLists[genreNum][genreMarkers[genreNum]];
+    nr.StationsManager.getNextStation = function() {
+        var temp_marker = (genreMarkers[genreNum] + 1) % genreLists[genreNum].length;
+        return genreLists[genreNum][temp_marker];
     };
-    nr.StationsManager.getPrevStation = function() {
+    nr.StationsManager.changeToPrevStation = function() {
         genreMarkers[genreNum] = (genreMarkers[genreNum] + (genreLists[genreNum].length - 1)) %
                                                             genreLists[genreNum].length;
         return this.getCurrentStation();
+    };
+    nr.StationsManager.getPrevStation = function() {
+        var temp_marker = (genreMarkers[genreNum] + (genreLists[genreNum].length - 1)) %
+                                                            genreLists[genreNum].length;
+        return genreLists[genreNum][temp_marker];
+    };
+    nr.StationsManager.getCurrentStation = function() {
+        return genreLists[genreNum][genreMarkers[genreNum]];
     };
     nr.StationsManager.getActiveGenre = function() {
         return genreNum;
