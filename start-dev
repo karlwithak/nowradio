@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [ -z "$VIRTUAL_ENV" ]; then
+    source venv/bin/activate;
+fi
+
+echo "Starting dev server in background ..."
+python nowradio/nowradio.py &
