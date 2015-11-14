@@ -41,7 +41,7 @@ var NowRadio = (function (nr) {
         var iconStyle = {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 8,
-            fillOpacity: 0.4,
+            fillOpacity: 0.8,
             strokeWeight: 1.5,
             strokeColor: '#000',
             fillColor: nr.Utils.genreNumToColor(genreNum),
