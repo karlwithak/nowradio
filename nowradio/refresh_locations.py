@@ -1,6 +1,12 @@
 from dbManager import Queries, get_connection
 import ourUtils
 
+# This batch is used to fill in the longitude and latitude data
+# for every ip in our station_info table. It collects all of our ips
+# and spawns off threads which use a geolocation API (ourUtils.location_from_ip)
+# to find the lat and long values for each ip. 
+# Finally inserts these values in the appropriate rows.
+
 
 def insert_locations_by_ip(conn, location_tuples):
     for location in location_tuples:
