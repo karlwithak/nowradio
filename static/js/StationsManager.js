@@ -102,9 +102,14 @@ var NowRadio = (function(nr) {
                         approved_stations.push(station_dict.ip_addr);
                     }
                 });
+
                 genreLists.push(approved_stations);
                 genreMarkers.push(0);
             });
+
+            // Pass station data to MapManager, set inital markers.
+            nr.MapManager.showInitialMarkers(data.stations);
+
             if (nr.UrlManager.getHash().length == 0) {
                 // selecting genreNum based on the current selection of favorites
                 // if there are no favorites, a random genre is picked
