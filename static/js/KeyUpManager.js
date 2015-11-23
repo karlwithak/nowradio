@@ -22,11 +22,7 @@ var NowRadio = (function(nr) {
     }
     function handleKeyUp(event) {
         if (event.keyCode === 32) {
-            if (nr.$buttons.bigPlay.is(":visible")) {
-                nr.$buttons.bigPlay.click();
-            } else {
-                nr.MainController.playingStateToggle();
-            }
+            nr.MainController.playingStateToggle();
         } else if (event.keyCode === 38) {
             nr.VolumeManager.soundUp();
         } else if (event.keyCode === 40) {
