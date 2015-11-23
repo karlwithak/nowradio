@@ -7,7 +7,6 @@ var NowRadio = (function(nr) {
      * Global jQuery variables;
      */
     nr.$buttons = {
-        'bigPlay'       : $('span#bigPlayButton'),
         'play'          : $('span#playButton').hide(),
         'stop'          : $('span#stopButton'),
         'nextStation'   : $('span#nextStationButton'),
@@ -25,8 +24,7 @@ var NowRadio = (function(nr) {
         'navBar'           : $('nav.navigationBar'),
         'player'           : $('audio#player'),
         'spectrum'         : $('canvas#spectrum'),
-        'mainContainer'    : $('div#mainContainer').hide(),
-        'landingContainer' : $('div#landingContainer'),
+        'mainContainer'    : $('div#mainContainer'),
         'currentSongText'  : $('span#currentSong'),
         'stationInfo'      : $('div#stationInfo'),
         'oldFaveBox'       : $('div#oldFaveBox'),

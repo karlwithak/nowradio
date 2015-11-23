@@ -8,7 +8,6 @@
 var NowRadio = (function(nr) {
     'use strict';
     var changeStationTimeout = -1;
-    var landingPageHidden = false;
     function changeTimeout() {
         nr.StationsManager.removeCurrentThenNext();
         clearTimeout(changeStationTimeout);
@@ -55,24 +54,18 @@ var NowRadio = (function(nr) {
                     nr.$elems.player[0].played.length < 1;
         }
     }
-    function hideLandingPage() {
-        if (landingPageHidden) return;
-        landingPageHidden = true;
-        nr.$elems.landingContainer.hide();
-        nr.$elems.mainContainer.show();
-        nr.FaveManager.showHideNewFaveBox();
-    }
 
     nr.MainController = {
         initialStationsHaveLoaded : false
     };
     nr.MainController.initialStationsLoaded = function() {
         nr.$elems.loader.hide();
-        nr.$buttons.bigPlay.show();
         nr.FaveManager.initOldFaves();
         nr.SpectrumManager.updateMarker();
         nr.SpectrumManager.hoverHandler();
         this.initialStationsHaveLoaded = true;
+        nr.StationChanger.nextStation();
+        playingStatePlay();
     };
     nr.MainController.updateViewForNewSource = function(src) {
         nr.UrlManager.setUrlHash(src);
@@ -83,7 +76,7 @@ var NowRadio = (function(nr) {
         nr.FaveManager.showPlayingFave();
         nr.SongNameManager.updateName(true);
         nr.SongNameManager.animateClosed();
-        hideLandingPage();
+        nr.FaveManager.showHideNewFaveBox();
 
         clearTimeout(changeStationTimeout);
         changeStationTimeout = setTimeout(changeTimeout, 10000);

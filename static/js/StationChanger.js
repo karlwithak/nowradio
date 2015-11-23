@@ -41,7 +41,6 @@ var NowRadio = (function(nr) {
         nr.$buttons.nextGenre.click(nr.StationChanger.nextGenre.bind(nr.StationChanger));
         nr.$buttons.prevStation.click(nr.StationChanger.prevStation.bind(nr.StationChanger));
         nr.$buttons.prevGenre.click(nr.StationChanger.prevGenre.bind(nr.StationChanger));
-        nr.$buttons.bigPlay.click(nr.StationChanger.nextStation.bind(nr.StationChanger));
     });
 
     return nr;

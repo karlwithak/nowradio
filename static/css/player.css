@@ -15,28 +15,9 @@ h1, h3 {
     font-weight: 300;
 }
 
-#landingContainer {
-    text-align: center;
-    color: #000000;
-    font-size: 1.33em;
-    box-shadow: inset 0 0 5px 1px black;
-    position: absolute;
-    top: 53px;
-    width: 100%;
-    height: calc(100% - 53px);
-}
-
 #mainPlay {
     padding: 40px 15px;
     text-align: center;
-}
-
-#bigPlayButton {
-    font-size: 2.5em;
-    color: inherit;
-}
-#bigPlayButton:hover {
-    color: dimgrey;
 }
 
 #controlBar {

@@ -37,23 +37,7 @@
 
 
 {% block content %}
-    <div id="landingContainer">
-        <h1>
-            {{ config['APP_NAME'] }}
-        </h1>
-        <p class="lead">
-            {{ config['APP_SLOGAN'] }}
-        </p>
-        <span id="bigPlayButton" class="clickable" style="display: none">
-            <span class="fa fa-5x fa-play-circle-o"></span>
-        </span>
-        <div class="stillLoading">
-            <span id="bigCog" class="fa fa-5x fa-cog fa-spin"></span>
-            <p>Loading...</p>
-        </div>
-    </div>
-
-    <div id="mainContainer" style="display: none;">
+    <div id="mainContainer">
         <div class="verticalCenter">
             <div id="stationInfo">
                 <span>Currently Playing:</span> <span id="currentSong">Song</span>
