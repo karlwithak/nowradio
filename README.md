@@ -1,7 +1,7 @@
 #NowRadio
 
 NowRadio is an internet radio music player. It allows users to easily navigate between different
-stations and different genres so they can find something they like. Check it out at  http://nowrad.io
+stations and different genres so they can find something they like.
 
 ##SETUP
 
