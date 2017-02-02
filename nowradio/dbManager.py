@@ -102,3 +102,17 @@ class Queries:
         SET timeout_count = timeout_count + 1
         WHERE ip_addr = %s
     '''
+    get_total_rows = '''
+        SELECT COUNT(*)
+        FROM station_info
+    '''
+    get_batch_ips = '''
+        SELECT ip_addr
+        FROM station_info
+        LIMIT %(batch_size)s OFFSET %(offset)s
+    '''
+    insert_location_for_ip = '''
+        UPDATE station_info
+        SET (latitude, longitude) = (%(latitude)s, %(longitude)s)
+        WHERE ip_addr = %(ip)s
+    '''

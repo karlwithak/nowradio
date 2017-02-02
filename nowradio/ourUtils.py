@@ -9,7 +9,7 @@ request_header = {'User-Agent': 'Mozilla/5.0'}
 
 def location_from_ip(ip):
     try:
-        response_string = requests.get("http://geoip.nowrad.io/json/" + ip + "/")
+        response_string = requests.get("http://geoip.nowrad.io/json/" + ip)
     except Exception:
         return (None, None)
     response = json.loads(response_string.text)
